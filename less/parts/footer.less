@@ -1,0 +1,47 @@
+footer {
+	padding: 60px 0;
+
+	a {
+		color: @brand-orange;
+	}
+
+	p {
+		font-size: 13px;
+		margin: 0;
+		text-align: left;
+
+		strong {
+			font-size: 16px;
+		}
+	}
+
+	.footer-midcol {
+		ul {
+			padding: 0;
+
+			@media @min-sm {
+				text-align: center;
+			}
+
+			li {
+				list-style: none;
+				display: inline-block;
+				margin-right: 15px;
+
+				a {
+					opacity: 1;
+
+					&:hover {
+						opacity: 0.5;
+					}
+				}
+			}
+		}
+	}
+
+	.text-right {
+		@media @only-xs {
+			text-align: left;
+		}
+	}
+}

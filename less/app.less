@@ -1,0 +1,48 @@
+// Less than the Grid Float Breakpoint
+@max-breakpoint: ~"(max-width: @{grid-float-breakpoint-max})";
+// Greater than the Grid Float Breakpoint
+@min-breakpoint: ~"(min-width: @{grid-float-breakpoint})";
+
+// Only Extra-small
+@only-xs: ~"(max-width: @{screen-xs-max})";
+
+// Small and less
+@max-sm: ~"(max-width: @{screen-sm-max})";
+// Only Small
+@only-sm: ~"(min-width: @{screen-sm-min}) and (max-width: @{screen-sm-max})";
+// Small and greater
+@min-sm: ~"(min-width: @{screen-sm-min})";
+
+// Medium and less
+@max-md: ~"(max-width: @{screen-md-max})";
+// Only Medium
+@only-md: ~"(min-width: @{screen-md-min}) and (max-width: @{screen-md-max})";
+// Medium and greater
+@min-md: ~"(min-width: @{screen-md-min})";
+
+// Only Large
+@only-lg: ~"(min-width: @{screen-lg-min})";
+
+@brand-green: #A1C323;
+@brand-orange: #FF762F;
+@brand-off-white: #f4f5fc;
+@brand-off-black: #222222;
+@brand-grey: #353535;
+
+* {
+	box-sizing: border-box;
+}
+
+body, html {
+	background-color: @brand-off-black;
+	overflow-x: hidden;
+}
+
+@import "components/bootstrap";
+@import "parts/accordions";
+@import "styles";
+@import "fullscreen";
+@import "parts/footer";
+// @import "components/queries";
+// @import "components/flexslider";
+@import "components/animate";

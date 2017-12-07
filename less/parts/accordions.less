@@ -1,0 +1,28 @@
+.accordion {
+	margin-top: 30px;
+
+	.panel {
+		background: @brand-grey;
+		border: 0;
+		border-radius: 0;
+		color: @brand-green;
+
+		.panel-heading {
+			background: @brand-grey;
+			border: 0;
+			border-bottom: 1px solid #4a4a4a;
+			border-radius: 0;
+			transition: background .3s;
+
+			&:hover {
+				background: #4a4a4a;
+				cursor: pointer;
+			}
+
+			a {
+				color: @brand-green;
+				text-decoration: none;
+			}
+		}
+	}
+}
