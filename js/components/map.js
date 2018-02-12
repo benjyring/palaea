@@ -10,34 +10,43 @@ function rand(min,max){
 	return Math.floor(Math.random()*(max-min+1)+min);
 }
 
-var totalCells = Math.pow(4,7);
+// var totalCells = 400 * 225;// Just a number. May be updated in the future. 16x9 aspect ratio
 var cellArray = [];
 
-for (var i = 0; i < totalCells; i++) {
-	var newMapCell = new mapCell('cell-'+i);
-	cellArray.push(newMapCell);
-	var mapCellDiv = document.createElement('div');
-	mapCellDiv.id = newMapCell.name;
-	mapCellDiv.className = 'borders t-' + newMapCell.a + ' r-' + newMapCell.b + ' b-' + newMapCell.c + ' l-' + newMapCell.d;
-	document.getElementById('map').appendChild(mapCellDiv);
+
+function mapGrid( rows, cols ){
+	var i = 0;
+	var grid = document.getElementById('map');
+	for (var r = 0; r < rows; ++r){
+		var tr = grid.appendChild(document.createElement('tr'));
+		for (var c = 0; c < cols; ++c){
+			var newMapCell = new mapCell('X-'+ (c+1) + '-Y-' + (r+1));
+			cellArray.push(newMapCell);
+
+			var cell = tr.appendChild(document.createElement('td'));
+			cell.id = newMapCell.name;
+
+			cell.className = 'cell t-' + newMapCell.a + ' r-' + newMapCell.b + ' b-' + newMapCell.c + ' l-' + newMapCell.d;
+			cell.innerHTML = '<span class="hidden">' + ++i + '</span>';
+		}
+	}
+	return grid;
 }
+
+//y, x
+mapGrid(95, 150);
 
 // TO DO
 // 1. Vary Side Lengths
 //specify an empty points array
 var points = [];
 
-//get a random number in range min, max - 1
-function randRange(min, max) {
-	return Math.floor(Math.random() * ((max) - min) + min);
-}
-
 function definePoints(numPoints, mapSize) {
 	//we want to take a group of points that will fit on our map at random
 	for(var i = 0; i < numPoints; i++) {
 		//here's the random points
-		var x = randRange(0, mapSize);
-		var y = randRange(0, mapSize);
+		var x = rand(0, mapSize);
+		var y = rand(0, mapSize);
 		//type: decides which point it is
 		//x, y: location
 		//citizens: the cells in our grid that belong to this point

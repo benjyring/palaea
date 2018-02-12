@@ -1,66 +1,87 @@
 #map {
-	height: 100vh;
+	overflow: scroll;
 
-	div.borders {
-		border: 1px solid;
-		float: left;
-		height: 8px;
-		width: 8px;
+	tr {
+		display: block;
 
-		&.t {
-			&-1 {
-				border-top-color: @blue;
+		td.cell {
+			border: 1px solid;
+			display: block;
+			float: left;
+			height: 10px;
+			width: 10px;
+
+			&.t {
+				&-1 {
+					background-color: @blue;
+					border-top-color: @blue;
+				}
+				&-2 {
+					background-color: @green;
+					border-top-color: @green;
+				}
+				&-3 {
+					background-color: @brown;
+					border-top-color: @brown;
+				}
+				&-4 {
+					background-color: @white;
+					border-top-color: @white;
+				}
 			}
-			&-2 {
-				border-top-color: @green;
+			&.r {
+				&-1 {
+					background-color: @blue;
+					border-right-color: @blue;
+				}
+				&-2 {
+					background-color: @green;
+					border-right-color: @green;
+				}
+				&-3 {
+					background-color: @brown;
+					border-right-color: @brown;
+				}
+				&-4 {
+					background-color: @white;
+					border-right-color: @white;
+				}
 			}
-			&-3 {
-				border-top-color: @brown;
+			&.b {
+				&-1 {
+					background-color: @blue;
+					border-bottom-color: @blue;
+				}
+				&-2 {
+					background-color: @green;
+					border-bottom-color: @green;
+				}
+				&-3 {
+					background-color: @brown;
+					border-bottom-color: @brown;
+				}
+				&-4 {
+					background-color: @white;
+					border-bottom-color: @white;
+				}
 			}
-			&-4 {
-				border-top-color: @white;
-			}
-		}
-		&.r {
-			&-1 {
-				border-right-color: @blue;
-			}
-			&-2 {
-				border-right-color: @green;
-			}
-			&-3 {
-				border-right-color: @brown;
-			}
-			&-4 {
-				border-right-color: @white;
-			}
-		}
-		&.b {
-			&-1 {
-				border-bottom-color: @blue;
-			}
-			&-2 {
-				border-bottom-color: @green;
-			}
-			&-3 {
-				border-bottom-color: @brown;
-			}
-			&-4 {
-				border-bottom-color: @white;
-			}
-		}
-		&.l {
-			&-1 {
-				border-left-color: @blue;
-			}
-			&-2 {
-				border-left-color: @green;
-			}
-			&-3 {
-				border-left-color: @brown;
-			}
-			&-4 {
-				border-left-color: @white;
+			&.l {
+				&-1 {
+					background-color: @blue;
+					border-left-color: @blue;
+				}
+				&-2 {
+					background-color: @green;
+					border-left-color: @green;
+				}
+				&-3 {
+					background-color: @brown;
+					border-left-color: @brown;
+				}
+				&-4 {
+					background-color: @white;
+					border-left-color: @white;
+				}
 			}
 		}
 	}
