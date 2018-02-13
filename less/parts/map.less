@@ -1,86 +1,117 @@
+@cell-size-xs: 6px;
+@cell-size-sm: 10px;
+@cell-size-lg: 16px;
+
 #map {
 	overflow: scroll;
+	height: @cell-size-sm * 95;
+	width: @cell-size-sm * 150;
+
+	@media @only-xs {
+		height: @cell-size-xs * 95;
+		width: @cell-size-xs * 150;
+	}
+	@media @only-lg {
+		height: @cell-size-lg * 95;
+		width: @cell-size-lg * 150;
+	}
 
 	tr {
 		display: block;
 
 		td.cell {
-			border: 1px solid;
+			border: 2px solid;
 			display: block;
+			height: @cell-size-sm;
 			float: left;
-			height: 10px;
-			width: 10px;
+			width: @cell-size-sm;
+			
+			@media @only-xs {
+				border: 1px solid;
+				height: @cell-size-xs;
+				width: @cell-size-xs;
+			}
+
+			@media @only-lg {
+				border: 3px solid;
+				height: @cell-size-lg;
+				width: @cell-size-lg;
+			}
+
+			&#continent {
+				&-1 {
+					background: red;
+					border-color: red;
+				}
+				&-2 {
+					background: red;
+					border-color: red;
+				}
+				&-3 {
+					background: red;
+					border-color: red;
+				}
+				&-4 {
+					background: red;
+					border-color: red;
+				}
+				&-5 {
+					background: red;
+					border-color: red;
+				}
+				&-6 {
+					background: red;
+					border-color: red;
+				}
+			}
 
 			&.t {
 				&-1 {
-					background-color: @blue;
-					border-top-color: @blue;
+					background-color: @lightbrown;
+					border-top-color: @lightbrown;
 				}
 				&-2 {
 					background-color: @green;
 					border-top-color: @green;
 				}
-				&-3 {
-					background-color: @brown;
-					border-top-color: @brown;
-				}
-				&-4 {
-					background-color: @white;
-					border-top-color: @white;
-				}
 			}
 			&.r {
 				&-1 {
-					background-color: @blue;
-					border-right-color: @blue;
+					background-color: @lightbrown;
+					border-right-color: @lightbrown;
 				}
 				&-2 {
 					background-color: @green;
 					border-right-color: @green;
 				}
-				&-3 {
-					background-color: @brown;
-					border-right-color: @brown;
-				}
-				&-4 {
-					background-color: @white;
-					border-right-color: @white;
-				}
 			}
 			&.b {
 				&-1 {
-					background-color: @blue;
-					border-bottom-color: @blue;
+					background-color: @lightbrown;
+					border-bottom-color: @lightbrown;
 				}
 				&-2 {
 					background-color: @green;
 					border-bottom-color: @green;
 				}
-				&-3 {
-					background-color: @brown;
-					border-bottom-color: @brown;
-				}
-				&-4 {
-					background-color: @white;
-					border-bottom-color: @white;
-				}
 			}
 			&.l {
 				&-1 {
-					background-color: @blue;
-					border-left-color: @blue;
+					background-color: @lightbrown;
+					border-left-color: @lightbrown;
 				}
 				&-2 {
 					background-color: @green;
 					border-left-color: @green;
 				}
-				&-3 {
-					background-color: @brown;
-					border-left-color: @brown;
+			}
+
+			&.z {
+				&-below {
+					background-color: @blue;
 				}
-				&-4 {
+				&-snow {
 					background-color: @white;
-					border-left-color: @white;
 				}
 			}
 		}

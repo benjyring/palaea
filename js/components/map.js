@@ -1,17 +1,19 @@
-function mapCell(name,a,b,c,d){
+
+var totalX = 130,
+totalY = 80,
+cellArray = [];
+
+function mapCell(name,a,b,c,d,z){
 	this.name = name;
-	this.a = a || rand(1, 4);
-	this.b = b || rand(1, 4);
-	this.c = c || rand(1, 4);
-	this.d = d || rand(1, 4);
+	this.a = a || rand(1, 2);
+	this.b = b || rand(1, 2);
+	this.c = c || rand(1, 2);
+	this.d = d || rand(1, 2);
 }
 
 function rand(min,max){
 	return Math.floor(Math.random()*(max-min+1)+min);
 }
-
-// var totalCells = 400 * 225;// Just a number. May be updated in the future. 16x9 aspect ratio
-var cellArray = [];
 
 
 function mapGrid( rows, cols ){
@@ -20,26 +22,42 @@ function mapGrid( rows, cols ){
 	for (var r = 0; r < rows; ++r){
 		var tr = grid.appendChild(document.createElement('tr'));
 		for (var c = 0; c < cols; ++c){
-			var newMapCell = new mapCell('X-'+ (c+1) + '-Y-' + (r+1));
+			var newMapCell = new mapCell('X'+ (c+1) + '-Y' + (r+1));
 			cellArray.push(newMapCell);
 
 			var cell = tr.appendChild(document.createElement('td'));
-			cell.id = newMapCell.name;
-
-			cell.className = 'cell t-' + newMapCell.a + ' r-' + newMapCell.b + ' b-' + newMapCell.c + ' l-' + newMapCell.d;
+			// cell.id = newMapCell.name;
+			cell.dataset.x = c+1;
+			cell.dataset.y = r+1;
+			cell.className = 'cell t-' + newMapCell.a + ' r-' + newMapCell.b + ' b-' + newMapCell.c + ' l-' + newMapCell.d + ' z-' + newMapCell.z;
 			cell.innerHTML = '<span class="hidden">' + ++i + '</span>';
 		}
 	}
 	return grid;
 }
 
-//y, x
-mapGrid(95, 150);
+function createContinents(numberOfContinents){
+	for (var i = 0; i < numberOfContinents; i++){
+		var randX = rand(1, totalX),
+		randY = rand(1, totalY),
+		continentNumber = 'continent-' + (i+1),
+		rXrY = document.querySelector("[data-x='" + randX + "'][data-y='" + randY + "']");
+		rXrY.id = continentNumber;
+	}
+}
+
+
+// BUILD THE WORLD
+mapGrid(totalY, totalX);
+
+createContinents(rand(2, 6));
+
+
+
 
 // TO DO
 // 1. Vary Side Lengths
 //specify an empty points array
-var points = [];
 
 function definePoints(numPoints, mapSize) {
 	//we want to take a group of points that will fit on our map at random
