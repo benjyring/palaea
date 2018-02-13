@@ -9,12 +9,26 @@ function mapCell(name,a,b,c,d,z){
 	this.b = b || rand(1, 2);
 	this.c = c || rand(1, 2);
 	this.d = d || rand(1, 2);
+	// this.z = z || seaLevel(rand(-10, 10));
 }
 
 function rand(min,max){
 	return Math.floor(Math.random()*(max-min+1)+min);
 }
 
+Array.prototype.min = function() {
+	return Math.min.apply(null, this);
+};
+
+// function seaLevel(z){
+// 	if (z >= 0 && z < 8){
+// 		return "above";
+// 	}else if(z >= 8 ){
+// 		return "snow";
+// 	}else{
+// 		return "below";
+// 	}
+// }
 
 function mapGrid( rows, cols ){
 	var i = 0;
@@ -46,65 +60,56 @@ function createContinents(numberOfContinents){
 	}
 }
 
+function pathFinder(){
+	var cells = document.getElementsByClassName('cell'),
+	continents = document.querySelectorAll('*[id^="continent"]');
+
+	for (var i = 0; i < cells.length; i++){
+		var currentCellX = cells[i].dataset.x,
+		currentCellY = cells[i].dataset.y,
+		paths = [];
+
+		for (var c = 0; c < continents.length; c++){
+			var diffX, diffY;
+			if (continents[c].dataset.x >= currentCellX){
+				var diffX = continents[c].dataset.x - currentCellX;
+			} else {
+				var diffX = currentCellX - continents[c].dataset.x;
+			}
+			if (continents[c].dataset.y >= currentCellY){
+				var diffY = continents[c].dataset.y - currentCellY;
+			} else {
+				var diffY = currentCellY - continents[c].dataset.y;
+			}
+		paths.push((diffX + diffY) + ':' + continents[c].id);
+		}
+		var pathsObj = {};
+		for (var d = 0; d < paths.length; d++) {
+			var split = paths[d].split(':');
+			pathsObj[split[0].trim()] = split[1].trim();
+		}
+		var min = Object.keys(pathsObj).min();
+		var shortest = pathsObj[min];
+		cells[i].dataset.continent = shortest;
+	}
+}
+
 
 // BUILD THE WORLD
 mapGrid(totalY, totalX);
 
 createContinents(rand(2, 6));
 
-
+pathFinder();
 
 
 // TO DO
-// 1. Vary Side Lengths
-//specify an empty points array
-
-function definePoints(numPoints, mapSize) {
-	//we want to take a group of points that will fit on our map at random
-	for(var i = 0; i < numPoints; i++) {
-		//here's the random points
-		var x = rand(0, mapSize);
-		var y = rand(0, mapSize);
-		//type: decides which point it is
-		//x, y: location
-		//citizens: the cells in our grid that belong to this point
-		points.push({type: i, x: x, y: y, citizens: []});
-	}
-	//brute force-y but it works
-	//for each cell in the grid
-	for(var x = 0; x < mapSize; x++) {
-		for(var y = 0; y < mapSize; y++) {
-			//find the nearest point
-			var lowestDelta = {pointId: 0, delta: mapSize * mapSize};
-			for(var p = 0; p < points.length; p++) {
-				//for each point get the difference in distance between our point and the current cell
-				var delta = Math.abs(points[p].x - x) + Math.abs(points[p].y - y);
-				//store the point as nearest if it's closer than the last one
-				if(delta < lowestDelta.delta) {
-					lowestDelta = {pointId: p, delta: delta};
-				}
-			}
-			//push the cell to the nearest point
-			var activePoint = points[lowestDelta.pointId];
-			var dx = x - activePoint.x;
-			var dy = y - activePoint.y;
-			//log delta in cell for drawing
-			activePoint.citizens.push({
-				dx: dx, 
-				dy: dy
-			});
-		}
-	}
-}
-
-definePoints(20, 40);
-
-for(var point of points) {
-	for(var citizen of point.citizens) {
-		//set color of cell based on point
-		//draw cell at (point.x + citizen.dx) * cellSize, (point.y + citizen.dy) * cellSize
-	}
-}
+// for(var point of points) {
+// 	for(var citizen of point.citizens) {
+// 		//set color of cell based on point
+// 		//draw cell at (point.x + citizen.dx) * cellSize, (point.y + citizen.dy) * cellSize
+// 	}
+// }
 // 2. Make these lengths make visual sense
 // if (previous row exists && while in row of Cells){
 // 	currentCell.f.length = previousRowCellMinus1.c.length;
@@ -115,5 +120,3 @@ for(var point of points) {
 // 4. Loop through mapCells, see which main point is closest
 // 5. Make array of chunks
 // 6. On edges of adjacent chunks, create mountain ranges with z
-// 7. Set ocean height at random value
-// 8. Cells above this value, place in new array of chunks
