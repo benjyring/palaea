@@ -95,7 +95,7 @@ function pathFinder(){
 // BUILD THE WORLD
 mapGrid(totalY, totalX);
 
-createContinents(rand(4, 8));
+createContinents(rand(6, 12));
 
 pathFinder();
 
