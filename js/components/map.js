@@ -5,16 +5,21 @@ cellArray = [];
 
 function mapCell(name,a,b,c,d,z){
 	this.name = name;
-	this.a = a || rand(1, 2);
-	this.b = b || rand(1, 2);
-	this.c = c || rand(1, 2);
-	this.d = d || rand(1, 2);
+	// this.a = a || rand(1, 2);
+	// this.b = b || rand(1, 2);
+	// this.c = c || rand(1, 2);
+	// this.d = d || rand(1, 2);
 	// this.z = z || seaLevel(rand(-10, 10));
 }
 
 function rand(min,max){
 	return Math.floor(Math.random()*(max-min+1)+min);
 }
+
+// function pythagoras(a,b){
+// 	var cSquared = Math.pow(a,2) + Math.pow(a,2);
+// 	return Math.sqrt(cSquared);
+// }
 
 Array.prototype.min = function() {
 	return Math.min.apply(null, this);
@@ -43,8 +48,9 @@ function mapGrid( rows, cols ){
 			// cell.id = newMapCell.name;
 			cell.dataset.x = c+1;
 			cell.dataset.y = r+1;
-			cell.className = 'cell t-' + newMapCell.a + ' r-' + newMapCell.b + ' b-' + newMapCell.c + ' l-' + newMapCell.d + ' z-' + newMapCell.z;
-			cell.innerHTML = '<span class="hidden">' + ++i + '</span>';
+			cell.className = 'cell';
+			// cell.className = 'cell t-' + newMapCell.a + ' r-' + newMapCell.b + ' b-' + newMapCell.c + ' l-' + newMapCell.d + ' z-' + newMapCell.z;
+			// cell.innerHTML = '<span class="hidden">' + ++i + '</span>';
 		}
 	}
 	return grid;
@@ -70,18 +76,9 @@ function pathFinder(){
 		paths = [];
 
 		for (var c = 0; c < continents.length; c++){
-			var diffX, diffY;
-			if (continents[c].dataset.x >= currentCellX){
-				var diffX = continents[c].dataset.x - currentCellX;
-			} else {
-				var diffX = currentCellX - continents[c].dataset.x;
-			}
-			if (continents[c].dataset.y >= currentCellY){
-				var diffY = continents[c].dataset.y - currentCellY;
-			} else {
-				var diffY = currentCellY - continents[c].dataset.y;
-			}
-		paths.push((diffX + diffY) + ':' + continents[c].id);
+			var diffX = Math.abs(continents[c].dataset.x - currentCellX);
+			var diffY = Math.abs(continents[c].dataset.y - currentCellY);
+			paths.push((diffX + diffY) + ':' + continents[c].id);
 		}
 		var pathsObj = {};
 		for (var d = 0; d < paths.length; d++) {

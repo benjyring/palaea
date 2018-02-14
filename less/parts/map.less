@@ -1,20 +1,9 @@
-@cell-size-xs: 6px;
-@cell-size-sm: 10px;
-@cell-size-lg: 16px;
+@cell-size: 10px;
 
 #map {
 	overflow: scroll;
-	height: @cell-size-sm * 95;
-	width: @cell-size-sm * 150;
-
-	@media @only-xs {
-		height: @cell-size-xs * 95;
-		width: @cell-size-xs * 150;
-	}
-	@media @only-lg {
-		height: @cell-size-lg * 95;
-		width: @cell-size-lg * 150;
-	}
+	height: @cell-size * 80;
+	width: @cell-size * 130;
 
 	tr {
 		display: block;
@@ -22,98 +11,110 @@
 		td.cell {
 			border: 2px solid;
 			display: block;
-			height: @cell-size-sm;
+			height: @cell-size;
 			float: left;
-			width: @cell-size-sm;
-			
-			@media @only-xs {
-				border: 1px solid;
-				height: @cell-size-xs;
-				width: @cell-size-xs;
-			}
-
-			@media @only-lg {
-				border: 3px solid;
-				height: @cell-size-lg;
-				width: @cell-size-lg;
-			}
+			width: @cell-size;
 
 			&#continent {
 				&-1 {
-					background: red;
+					background: #d78fd3;
 					border-color: red;
 				}
 				&-2 {
-					background: red;
+					background: #8ea930;
 					border-color: red;
 				}
 				&-3 {
-					background: red;
+					background: #96bc70;
 					border-color: red;
 				}
 				&-4 {
-					background: red;
+					background: #af4c40;
 					border-color: red;
 				}
 				&-5 {
-					background: red;
+					background: #f7b12d;
 					border-color: red;
 				}
 				&-6 {
-					background: red;
+					background: #258352;
 					border-color: red;
 				}
 			}
-
-			&.t {
-				&-1 {
-					background-color: @lightbrown;
-					border-top-color: @lightbrown;
-				}
-				&-2 {
-					background-color: @green;
-					border-top-color: @green;
-				}
+			&[data-continent="continent-1"] {
+				background: @green;
+				border-color: @green;
 			}
-			&.r {
-				&-1 {
-					background-color: @lightbrown;
-					border-right-color: @lightbrown;
-				}
-				&-2 {
-					background-color: @green;
-					border-right-color: @green;
-				}
+			&[data-continent="continent-2"] {
+				background: @brown;
+				border-color: @brown;
 			}
-			&.b {
-				&-1 {
-					background-color: @lightbrown;
-					border-bottom-color: @lightbrown;
-				}
-				&-2 {
-					background-color: @green;
-					border-bottom-color: @green;
-				}
+			&[data-continent="continent-3"] {
+				background: @lightgreen;
+				border-color: @lightgreen;
 			}
-			&.l {
-				&-1 {
-					background-color: @lightbrown;
-					border-left-color: @lightbrown;
-				}
-				&-2 {
-					background-color: @green;
-					border-left-color: @green;
-				}
+			&[data-continent="continent-4"] {
+				background: @lightbrown;
+				border-color: @lightbrown;
+			}
+			&[data-continent="continent-5"] {
+				background: @darkgreen;
+				border-color: @darkgreen;
+			}
+			&[data-continent="continent-6"] {
+				background: @darkbrown;
+				border-color: @darkbrown;
 			}
 
-			&.z {
-				&-below {
-					background-color: @blue;
-				}
-				&-snow {
-					background-color: @white;
-				}
-			}
+			// &.t {
+			// 	&-1 {
+			// 		background-color: @lightbrown;
+			// 		border-top-color: @lightbrown;
+			// 	}
+			// 	&-2 {
+			// 		background-color: @green;
+			// 		border-top-color: @green;
+			// 	}
+			// }
+			// &.r {
+			// 	&-1 {
+			// 		background-color: @lightbrown;
+			// 		border-right-color: @lightbrown;
+			// 	}
+			// 	&-2 {
+			// 		background-color: @green;
+			// 		border-right-color: @green;
+			// 	}
+			// }
+			// &.b {
+			// 	&-1 {
+			// 		background-color: @lightbrown;
+			// 		border-bottom-color: @lightbrown;
+			// 	}
+			// 	&-2 {
+			// 		background-color: @green;
+			// 		border-bottom-color: @green;
+			// 	}
+			// }
+			// &.l {
+			// 	&-1 {
+			// 		background-color: @lightbrown;
+			// 		border-left-color: @lightbrown;
+			// 	}
+			// 	&-2 {
+			// 		background-color: @green;
+			// 		border-left-color: @green;
+			// 	}
+			// }
+
+			// &.z {
+			// 	&-below {
+			// 		background-color: @blue;
+			// 	}
+			// 	&-snow {
+			// 		background-color: @white;
+			// 	}
+			// }
 		}
 	}
 }
