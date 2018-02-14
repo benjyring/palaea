@@ -1,0 +1,8 @@
+"budget": {
+	"C": "household consumption expenditures / personal consumption expenditures",
+	"I": "gross private domestic investment",
+	"G": "government consumption and gross investment expenditures",
+	"X": "gross exports of goods and services",
+	"M": "gross imports of goods and services"
+	// GDP = C + G + I + (X-M)
+},
