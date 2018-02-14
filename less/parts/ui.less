@@ -1,5 +1,7 @@
 aside {
 	background-color: @white;
+	border-radius: 4px;
+	box-shadow: 0 0 8px rgba(0, 0, 0, .7);
 	color: @black;
 	height: 300px;
 	padding: @grid-gutter-width;
@@ -12,5 +14,36 @@ aside {
 	ul {
 		list-style-type: none;
 		padding: 0;
+
+		li.color-palette {
+			height: 20px;
+			margin: 10px;
+			width: 20px;
+
+			&.cp1 {
+				background-color: @lightgreen;
+			}
+			&.cp2 {
+				background-color: @green;
+			}
+			&.cp3 {
+				background-color: @darkgreen;
+			}
+			&.cp4 {
+				background-color: @darkergreen;
+			}
+			&.cp5 {
+				background-color: @lighterbrown;
+			}
+			&.cp6 {
+				background-color: @lightbrown;
+			}
+			&.cp7 {
+				background-color: @brown;
+			}
+			&.cp8 {
+				background-color: @darkbrown;
+			}
+		}
 	}
 }

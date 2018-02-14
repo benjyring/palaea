@@ -16,97 +16,38 @@
 			width: @cell-size;
 
 			&#continent {
-				&-1 {
-					background: #d78fd3;
+				&-1, &-2, &-3, &-4, &-5, &-6, &-7, &-8 {
 					border-color: red;
 				}
-				&-2 {
-					background: #8ea930;
-					border-color: red;
-				}
-				&-3 {
-					background: #96bc70;
-					border-color: red;
-				}
-				&-4 {
-					background: #af4c40;
-					border-color: red;
-				}
-				&-5 {
-					background: #f7b12d;
-					border-color: red;
-				}
-				&-6 {
-					background: #258352;
-					border-color: red;
-				}
+			}
+			.continent-mixin(@color){
+				background: @color;
+				border-color: @color;
 			}
 			&[data-continent="continent-1"] {
-				background: @green;
-				border-color: @green;
+				.continent-mixin(@green);
 			}
 			&[data-continent="continent-2"] {
-				background: @brown;
-				border-color: @brown;
+				.continent-mixin(@brown);
 			}
 			&[data-continent="continent-3"] {
-				background: @lightgreen;
-				border-color: @lightgreen;
+				.continent-mixin(@lightgreen);
 			}
 			&[data-continent="continent-4"] {
-				background: @lightbrown;
-				border-color: @lightbrown;
+				.continent-mixin(@lightbrown);
 			}
 			&[data-continent="continent-5"] {
-				background: @darkgreen;
-				border-color: @darkgreen;
+				.continent-mixin(@darkgreen);
 			}
 			&[data-continent="continent-6"] {
-				background: @darkbrown;
-				border-color: @darkbrown;
+				.continent-mixin(@darkbrown);
 			}
-
-			// &.t {
-			// 	&-1 {
-			// 		background-color: @lightbrown;
-			// 		border-top-color: @lightbrown;
-			// 	}
-			// 	&-2 {
-			// 		background-color: @green;
-			// 		border-top-color: @green;
-			// 	}
-			// }
-			// &.r {
-			// 	&-1 {
-			// 		background-color: @lightbrown;
-			// 		border-right-color: @lightbrown;
-			// 	}
-			// 	&-2 {
-			// 		background-color: @green;
-			// 		border-right-color: @green;
-			// 	}
-			// }
-			// &.b {
-			// 	&-1 {
-			// 		background-color: @lightbrown;
-			// 		border-bottom-color: @lightbrown;
-			// 	}
-			// 	&-2 {
-			// 		background-color: @green;
-			// 		border-bottom-color: @green;
-			// 	}
-			// }
-			// &.l {
-			// 	&-1 {
-			// 		background-color: @lightbrown;
-			// 		border-left-color: @lightbrown;
-			// 	}
-			// 	&-2 {
-			// 		background-color: @green;
-			// 		border-left-color: @green;
-			// 	}
-			// }
-
+			&[data-continent="continent-7"] {
+				.continent-mixin(@darkergreen);
+			}
+			&[data-continent="continent-8"] {
+				.continent-mixin(@lighterbrown);
+			}
 			// &.z {
 			// 	&-below {
 			// 		background-color: @blue;
