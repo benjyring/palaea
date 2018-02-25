@@ -1,16 +1,36 @@
-@cell-size: 10px;
+@cell-size: 12px;
 
 #map {
 	height: @cell-size * 80;
 	width: @cell-size * 130;
 
+	&[data-zoom="-2"] {
+		@cell-size: 4px;
+	}
+	&[data-zoom="-1"] {
+		@cell-size: 8px;
+	}
+	&[data-zoom="0"] {
+		@cell-size: 12px;
+	}
+	&[data-zoom="1"] {
+		@cell-size: 16px;
+	}
+	&[data-zoom="2"] {
+		@cell-size: 20px;
+	}
+
 	.cell {
-		border: 2px solid;
+		border: (@cell-size/4) solid;
 		display: block;
 		height: @cell-size;
 		float: left;
 		width: @cell-size;
 
+		&.aboveSnowLevel{
+			background: @white !important;
+			border-color: @white !important;
+		}
 		&.belowSeaLevel{
 			background: @blue !important;
 			border-color: @blue !important;
@@ -62,18 +82,9 @@
 			.continent-mixin(@waterside-mountainous);
 		}
 	}
-
-	.loader {
-		height: 100px;
-		width: 20%;
-		text-align: center;
-		padding: 1em;
-		margin: 50vh auto;
-		display: none;
-		vertical-align: top;
-	}
-	svg path,
-	svg rect{
-		fill: #FF6700;
+	#splashscreen {
+		position: absolute;
+		top: 0;
+		z-index: 2;
 	}
 }
