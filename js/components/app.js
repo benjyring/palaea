@@ -39,9 +39,45 @@ $(function() {
 	// ======================
 	// TABLE OF CONTENTS
 	//
-	// _HEXAGONS
+	// 1. Visualize Map
 	// ======================
 	///////////////////////////////
+	var map = $('#map');
+
+	// 1. Visualize Map
+	$('button#buildMap').click(function(){
+		$('.loader').show();
+
+		if (!map.find('.cell').length){
+			// Create grid
+			$.each(cellArray, function(index, i) {
+				map.append('<div class="' + i.className + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
+			});
+			// Visualize continents
+			$.each(continentsArray, function(index, i) {
+				$('.cell[data-x=' + i.x + '][data-y=' + i.y + ']').attr('id', 'continent-' + i.continent);
+			});
+		} else {
+			alert('Map already has cells.');
+		}
+
+		$('.loader').remove();
+	});
+
+	// var cell = $('.cell');
+
+	// // _Visualize Sea Level
+	// cell.each(function(){
+	// 	if (parseInt(cell.data('z')) < 1){
+	// 		$(this).addClass('belowSeaLevel');
+	// 	}
+	// });
+
+	// 2. UI
+	// Colors
+	$('button#colorPalette').click(function(){
+		$('ul#colors').toggleClass('visible');
+	});
 
 });
 

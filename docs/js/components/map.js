@@ -31,70 +31,62 @@ function zmod(element, raiseBy, degreeOfVariation){
 // 	}
 // }
 
-function mapCell(name,z){
-// function mapCell(name,a,b,c,d,z){
-	this.name = name;
-	// this.a = a || rand(1, 2);
-	// this.b = b || rand(1, 2);
-	// this.c = c || rand(1, 2);
-	// this.d = d || rand(1, 2);
+function mapCell(x,y,z,continent){
+	this.x = x;
+	this.y = y;
 	this.z = z || rand(1, 3);
+	this.continent = continent;
+	this.className = "cell";
 }
 
-function mapGrid( rows, cols ){
-	var i = 0;
-	var grid = document.getElementById('map');
+function mapGrid(rows, cols){
 	for (var r = 0; r < rows; ++r){
-		var tr = grid.appendChild(document.createElement('tr'));
 		for (var c = 0; c < cols; ++c){
-			var newMapCell = new mapCell('X'+ (c+1) + '-Y' + (r+1));
+			var newMapCell = new mapCell(c+1, r+1, rand(1,3));
 			cellArray.push(newMapCell);
-
-			var cell = tr.appendChild(document.createElement('td'));
-			// cell.id = newMapCell.name;
-			cell.dataset.x = c+1;
-			cell.dataset.y = r+1;
-			cell.dataset.z = rand(1, 3);
-			cell.className = 'cell';
-			// cell.className = 'cell t-' + newMapCell.a + ' r-' + newMapCell.b + ' b-' + newMapCell.c + ' l-' + newMapCell.d + ' z-' + newMapCell.z;
-			// cell.innerHTML = '<span class="hidden">' + ++i + '</span>';
 		}
 	}
-	return grid;
 }
 
 function createContinents(numberOfContinents){
 	for (var i = 0; i < numberOfContinents; i++){
 		var randX = rand(1, totalX),
 		randY = rand(1, totalY),
-		continentNumber = 'continent-' + (i+1),
-		rXrY = document.querySelector("[data-x='" + randX + "'][data-y='" + randY + "']");
-		rXrY.id = continentNumber;
+		continentNumber = (i+1),
+		rXrYArray = cellArray.filter(function(cell){
+			return cell.x === randX && cell.y === randY;
+		}),
+		rXrY = rXrYArray[0];
+
+		rXrY.continent = continentNumber;
+		continentsArray.push(rXrY);
 	}
 }
 
 function pathFinder(){
-	var cells = document.getElementsByClassName('cell'),
-	continents = document.querySelectorAll('*[id^="continent"]');
+	for (var i = 0; i < cellArray.length; i++){
+		var currentCellX = cellArray[i].x,
+		currentCellY = cellArray[i].y,
+		paths = [],
+		pathsObj = {};
 
-	for (var i = 0; i < cells.length; i++){
-		var currentCellX = cells[i].dataset.x,
-		currentCellY = cells[i].dataset.y,
-		paths = [];
+		for (var c = 0; c < continentsArray.length; c++){
+			var diffX = Math.abs(continentsArray[c].x - currentCellX),
+			diffY = Math.abs(continentsArray[c].y - currentCellY);
 
-		for (var c = 0; c < continents.length; c++){
-			var diffX = Math.abs(continents[c].dataset.x - currentCellX);
-			var diffY = Math.abs(continents[c].dataset.y - currentCellY);
-			paths.push((diffX + diffY) + ':' + continents[c].id);
+			paths.push((diffX + diffY) + ':' + continentsArray[c].continent.toString());
 		}
-		var pathsObj = {};
+
 		for (var d = 0; d < paths.length; d++) {
 			var split = paths[d].split(':');
+
 			pathsObj[split[0].trim()] = split[1].trim();
 		}
-		var min = Object.keys(pathsObj).min();
-		var shortest = pathsObj[min];
-		cells[i].dataset.continent = shortest;
+
+		var min = Object.keys(pathsObj).min(),
+		shortest = pathsObj[min];
+
+		cellArray[i].continent = shortest;
 	}
 }
 
@@ -183,11 +175,11 @@ function plateGeography(){
 }
 
 
-// BUILD THE WORLD
+// // BUILD THE WORLD
 mapGrid(totalY, totalX);
 createContinents(rand(6, 12));
 pathFinder();
-plateGeography();
+// plateGeography();
 
 
 // TO DO

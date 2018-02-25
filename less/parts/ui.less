@@ -3,58 +3,76 @@ aside {
 	border-radius: 4px;
 	box-shadow: 0 0 8px rgba(0, 0, 0, .7);
 	color: @black;
-	height: 300px;
 	padding: @grid-gutter-width;
 	position: fixed;
 	right: @grid-gutter-width;
 	top: @grid-gutter-width;
-	width: 200px;
 	z-index: 2;
+
+	button {
+		margin-bottom: 15px;
+	}
 
 	ul {
 		list-style-type: none;
 		padding: 0;
 
-		li.color-palette {
-			height: 20px;
-			margin: 10px;
-			width: 20px;
+		&#colors {
+			height: 0%;
+			overflow: hidden;
+			transition: height .3s ease;
 
-			&.cp1 {
-				background-color: @deciduous-flat;
+			&.visible {
+				height: 100%;
+
+				li.color-palette {
+					height: 20px;
+					margin: 10px 0;
+				}
 			}
-			&.cp2 {
-				background-color: @deciduous-hills;
-			}
-			&.cp3 {
-				background-color: @deciduous-mountainous;
-			}
-			&.cp4 {
-				background-color: @plains-flat;
-			}
-			&.cp5 {
-				background-color: @rocky-hills;
-			}
-			&.cp6 {
-				background-color: @rocky2;
-			}
-			&.cp7 {
-				background-color: @rocky3;
-			}
-			&.cp8 {
-				background-color: @rocky4;
-			}
-			&.cp9 {
-				background-color: @rocky5;
-			}
-			&.cp10 {
-				background-color: @waterside-flat;
-			}
-			&.cp11 {
-				background-color: @waterside-hilly;
-			}
-			&.cp12 {
-				background-color: @waterside-mountainous;
+
+			li.color-palette {
+				height: 0;
+				margin: 0;
+				width: 20px;
+				transition: all .3s ease;
+
+				&.cp1 {
+					background-color: @deciduous-flat;
+				}
+				&.cp2 {
+					background-color: @deciduous-hills;
+				}
+				&.cp3 {
+					background-color: @deciduous-mountainous;
+				}
+				&.cp4 {
+					background-color: @plains-flat;
+				}
+				&.cp5 {
+					background-color: @rocky-hills;
+				}
+				&.cp6 {
+					background-color: @rocky2;
+				}
+				&.cp7 {
+					background-color: @rocky3;
+				}
+				&.cp8 {
+					background-color: @rocky4;
+				}
+				&.cp9 {
+					background-color: @rocky5;
+				}
+				&.cp10 {
+					background-color: @waterside-flat;
+				}
+				&.cp11 {
+					background-color: @waterside-hilly;
+				}
+				&.cp12 {
+					background-color: @waterside-mountainous;
+				}
 			}
 		}
 	}

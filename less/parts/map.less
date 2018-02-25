@@ -1,79 +1,79 @@
 @cell-size: 10px;
 
 #map {
-	overflow: scroll;
 	height: @cell-size * 80;
 	width: @cell-size * 130;
 
-	tr {
+	.cell {
+		border: 2px solid;
 		display: block;
+		height: @cell-size;
+		float: left;
+		width: @cell-size;
 
-		td.cell {
-			border: 2px solid;
-			display: block;
-			height: @cell-size;
-			float: left;
-			width: @cell-size;
-
-			&.belowSeaLevel{
-				background: @blue !important;
-				border-color: @blue !important;
-			}
-
-			&#continent {
-				&-1, &-2, &-3, &-4, &-5, &-6, &-7, &-8, &-9, &-10, &-11, &-12 {
-					border-color: red;
-				}
-			}
-			.continent-mixin(@color){
-				background: @color;
-				border-color: @color;
-			}
-			&[data-continent="continent-1"] {
-				.continent-mixin(@deciduous-flat);
-			}
-			&[data-continent="continent-2"] {
-				.continent-mixin(@deciduous-hills);
-			}
-			&[data-continent="continent-3"] {
-				.continent-mixin(@deciduous-mountainous);
-			}
-			&[data-continent="continent-4"] {
-				.continent-mixin(@plains-flat);
-			}
-			&[data-continent="continent-5"] {
-				.continent-mixin(@rocky-hills);
-			}
-			&[data-continent="continent-6"] {
-				.continent-mixin(@rocky2);
-			}
-			&[data-continent="continent-7"] {
-				.continent-mixin(@rocky3);
-			}
-			&[data-continent="continent-8"] {
-				.continent-mixin(@rocky4);
-			}
-			&[data-continent="continent-9"] {
-				.continent-mixin(@rocky5);
-			}
-			&[data-continent="continent-10"] {
-				.continent-mixin(@waterside-flat);
-			}
-			&[data-continent="continent-11"] {
-				.continent-mixin(@waterside-hilly);
-			}
-			&[data-continent="continent-12"] {
-				.continent-mixin(@waterside-mountainous);
-			}
-
-			// &.z {
-			// 	&-below {
-			// 		background-color: @blue;
-			// 	}
-			// 	&-snow {
-			// 		background-color: @white;
-			// 	}
-			// }
+		&.belowSeaLevel{
+			background: @blue !important;
+			border-color: @blue !important;
 		}
+
+		&#continent {
+			&-1, &-2, &-3, &-4, &-5, &-6, &-7, &-8, &-9, &-10, &-11, &-12 {
+				border-color: red;
+			}
+		}
+		.continent-mixin(@color){
+			background: @color;
+			border-color: @color;
+		}
+		&[data-continent="1"] {
+			.continent-mixin(@deciduous-flat);
+		}
+		&[data-continent="2"] {
+			.continent-mixin(@deciduous-hills);
+		}
+		&[data-continent="3"] {
+			.continent-mixin(@deciduous-mountainous);
+		}
+		&[data-continent="4"] {
+			.continent-mixin(@plains-flat);
+		}
+		&[data-continent="5"] {
+			.continent-mixin(@rocky-hills);
+		}
+		&[data-continent="6"] {
+			.continent-mixin(@rocky2);
+		}
+		&[data-continent="7"] {
+			.continent-mixin(@rocky3);
+		}
+		&[data-continent="8"] {
+			.continent-mixin(@rocky4);
+		}
+		&[data-continent="9"] {
+			.continent-mixin(@rocky5);
+		}
+		&[data-continent="10"] {
+			.continent-mixin(@waterside-flat);
+		}
+		&[data-continent="11"] {
+			.continent-mixin(@waterside-hilly);
+		}
+		&[data-continent="12"] {
+			.continent-mixin(@waterside-mountainous);
+		}
+	}
+
+	.loader {
+		height: 100px;
+		width: 20%;
+		text-align: center;
+		padding: 1em;
+		margin: 50vh auto;
+		display: none;
+		vertical-align: top;
+	}
+	svg path,
+	svg rect{
+		fill: #FF6700;
 	}
 }
