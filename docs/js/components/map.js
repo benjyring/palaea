@@ -15,21 +15,11 @@ Array.prototype.min = function() {
 	return Math.min.apply(null, this);
 };
 
-function zmod(element, raiseBy, degreeOfVariation){
-	var existingZ = parseInt(element.getAttribute('data-z')),
+function zmod(currentCell, raiseBy, degreeOfVariation){
+	var existingZ = currentCell.z,
 	newZ = rand((raiseBy + existingZ), (raiseBy*Math.abs(degreeOfVariation)));
-	element.setAttribute('data-z', parseInt(newZ));
+	currentCell.z = newZ;
 }
-
-// function seaLevel(z){
-// 	if (z >= 0 && z < 8){
-// 		return "above";
-// 	}else if(z >= 8 ){
-// 		return "snow";
-// 	}else{
-// 		return "below";
-// 	}
-// }
 
 function mapCell(x,y,z,continent){
 	this.x = x;
@@ -91,32 +81,33 @@ function pathFinder(){
 }
 
 function plateGeography(){
-	var cells = document.getElementsByClassName('cell'),
-	continents = document.querySelectorAll('*[id^="continent"]');
-
-	for (var c = 0; c < continents.length; c++){
-		continents[c].dataset.force = rand(1,10);
-		continents[c].dataset.direction = rand(1,4);
+	for (var c = 0; c < continentsArray.length; c++){
+		continentsArray[c].force = rand(1,10);
+		continentsArray[c].direction = rand(1,4);
 	}
 
-	for (var i = 0; i < cells.length; i++){
-		var currentCellX = parseInt(cells[i].dataset.x),
-		currentCellY = parseInt(cells[i].dataset.y),
-		currentCell = cells[i];
-		contCurrent = document.getElementById(cells[i].dataset.continent),
-		ccd = contCurrent.dataset.direction,
-		cellToE, contNextE, ced,
-		cellToS, contNextS, csd;
+	for (var i = 0; i < cellArray.length; i++){
+		var currentCellX = cellArray[i].x,
+		currentCellY = cellArray[i].y,
+		currentCell = cellArray[i];
+		contCurrent = continentsArray[parseInt(currentCell.continent) - 1],
+		ccd = contCurrent.direction,
+		cellToE, contNextE, ced, cef,
+		cellToS, contNextS, csd, csf;
 
-		if (document.querySelector('[data-x="'+ (currentCellX+1) +'"][data-y="'+ (currentCellY) +'"]')){
-			var cellToE = document.querySelector('[data-x="'+ (currentCellX+1) +'"][data-y="'+ (currentCellY) +'"]'),
-			contNextE = document.getElementById(cellToE.dataset.continent),
-			ced = contNextE.dataset.direction;
+		// if (document.querySelector('[data-x="'+ (currentCellX+1) +'"][data-y="'+ (currentCellY) +'"]')){
+		if (cellArray.filter(cell => cell.x == currentCellX+1 && cell.y == currentCellY)[0]){
+			var cellToE = cellArray.filter(cell => cell.x == currentCellX+1 && cell.y == currentCellY)[0],
+			contNextE = continentsArray[parseInt(cellToE.continent) - 1],
+			ced = contNextE.direction,
+			cef = contNextE.force;
 		}
-		if (document.querySelector('[data-x="'+ currentCellX +'"][data-y="'+ (currentCellY+1) +'"]')){
-			var cellToS = document.querySelector('[data-x="'+ currentCellX +'"][data-y="'+ (currentCellY+1) +'"]'),
-			contNextS = document.getElementById(cellToS.dataset.continent),
-			csd = contNextS.dataset.direction;
+		// if (document.querySelector('[data-x="'+ currentCellX +'"][data-y="'+ (currentCellY+1) +'"]')){
+		if (cellArray.filter(cell => cell.x == currentCellX && cell.y == currentCellY+1)){
+			var cellToS = cellArray.filter(cell => cell.x == currentCellX && cell.y == currentCellY+1)[0],
+			contNextS = continentsArray[parseInt(cellToS.continent) - 1],
+			csd = contNextS.direction,
+			csf = contNextS.force;
 		}
 
 		if (cellToE != null){
@@ -125,22 +116,22 @@ function plateGeography(){
 				if (!isOdd(ccd) && !isOdd(ced)){
 					if (ccd < ced){
 						// Mountain
-						zmod(currentCell,2,2);
-						zmod(cellToE,2,2);
+						zmod(currentCell,2,cef+csf);
+						zmod(cellToE,2,cef+csf);
 					} else {
 						// Canyon
-						zmod(currentCell,-2,2);
-						zmod(cellToE,-2,2);
+						zmod(currentCell,-2,cef+csf);
+						zmod(cellToE,-2,cef+csf);
 					}
 				} else if ((!isOdd(ccd) && isOdd(ced)) || (isOdd(ccd) && !isOdd(ced)) ) {
 					if (ccd < ced){
 						// Hill
-						zmod(currentCell,1,2);
-						zmod(cellToE,1,2);
+						zmod(currentCell,1,cef+csf);
+						zmod(cellToE,1,cef+csf);
 					} else {
 						// Valley
-						zmod(currentCell,-1,2);
-						zmod(cellToE,-1,2);
+						zmod(currentCell,-1,cef+csf);
+						zmod(cellToE,-1,cef+csf);
 					}
 				}
 			}
@@ -151,22 +142,22 @@ function plateGeography(){
 				if (isOdd(ccd) && isOdd(csd)){
 					if (ccd > csd){
 						// Mountain
-						zmod(currentCell,2,2);
-						zmod(cellToE,2,2);
+						zmod(currentCell,2,cef+csf);
+						zmod(cellToE,2,cef+csf);
 					} else {
 						// Canyon
-						zmod(currentCell,-2,2);
-						zmod(cellToE,-2,2);
+						zmod(currentCell,-2,cef+csf);
+						zmod(cellToE,-2,cef+csf);
 					}
 				} else if ((!isOdd(ccd) && isOdd(csd)) || (isOdd(ccd) && !isOdd(csd)) ) {
 					if (ccd > csd){
 						// Hill
-						zmod(currentCell,1,2);
-						zmod(cellToE,1,2);
+						zmod(currentCell,1,cef+csf);
+						zmod(cellToE,1,cef+csf);
 					} else {
 						// Valley
-						zmod(currentCell,-1,2);
-						zmod(cellToE,-1,2);
+						zmod(currentCell,-1,cef+csf);
+						zmod(cellToE,-1,cef+csf);
 					}
 				}
 			}
@@ -179,7 +170,7 @@ function plateGeography(){
 mapGrid(totalY, totalX);
 createContinents(rand(6, 12));
 pathFinder();
-// plateGeography();
+plateGeography();
 
 
 // TO DO

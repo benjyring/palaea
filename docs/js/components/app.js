@@ -43,25 +43,33 @@ $(function() {
 	// ======================
 	///////////////////////////////
 	var map = $('#map');
-
 	// 1. Visualize Map
 	$('button#buildMap').click(function(){
-		$('.loader').show();
-
 		if (!map.find('.cell').length){
 			// Create grid
 			$.each(cellArray, function(index, i) {
-				map.append('<div class="' + i.className + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
+				var levelClass;
+				if (i.z < 0){
+					levelClass = "belowSeaLevel";
+				} else if (i.z >= 25 ){
+					levelClass = "aboveSnowLevel";
+				} else {
+					levelClass = "normal";
+				}
+				map.append('<div class="' + i.className + ' ' + levelClass + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
 			});
 			// Visualize continents
 			$.each(continentsArray, function(index, i) {
-				$('.cell[data-x=' + i.x + '][data-y=' + i.y + ']').attr('id', 'continent-' + i.continent);
+				$('.cell[data-x=' + i.x + '][data-y=' + i.y + ']').attr('id', 'continent-' + i.continent)
+				.attr('force', i.force)
+				.attr('direction', i.direction);
 			});
 		} else {
-			alert('Map already has cells.');
+			alert('Map is already generated.');
 		}
-
-		$('.loader').remove();
+		$('.cell').promise().done(function(){
+			$('#splashscreen').remove();
+		});
 	});
 
 	// var cell = $('.cell');
@@ -75,66 +83,84 @@ $(function() {
 
 	// 2. UI
 	// Colors
-	$('button#colorPalette').click(function(){
-		$('ul#colors').toggleClass('visible');
+	$('#colorPalette').click(function(){
+		$('#colors').toggleClass('visible');
+	});
+	// Zoom
+	var getZoom = function(){
+		parseInt(map.data('zoom'));
+	};
+	var setZoom = function(n){
+		map.attr('data-zoom', n);
+	};
+
+	$('#zoomIn').click(function(){
+		if (getZoom() < 3) {
+			setZoom(getZoom()+1);
+		}
+	});
+	$('#zoomOut').click(function(){
+		if (getZoom() > -3) {
+			setZoom(getZoom()-1);
+		}
 	});
 
 });
 
-// If you need to load or unload things based on the current media query, use Enquire:
-// http://wicky.nillia.ms/enquire.js
-Modernizr.on('load', [
+// // If you need to load or unload things based on the current media query, use Enquire:
+// // http://wicky.nillia.ms/enquire.js
+// Modernizr.on('load', [
 
-	// Test for placeholder support, IE8 and IE9 doesn't support input placeholders, target it with '.placeholder' and other normal ways to style placeholders.
-	{
-		test: Modernizr.placeholder,
-		nope: template_path + "js/jquery.placeholder.js",
-		complete: function() {
+// 	// Test for placeholder support, IE8 and IE9 doesn't support input placeholders, target it with '.placeholder' and other normal ways to style placeholders.
+// 	{
+// 		test: Modernizr.placeholder,
+// 		nope: template_path + "js/jquery.placeholder.js",
+// 		complete: function() {
 
-			if ( ! Modernizr.placeholder ) {
-				$('input[placeholder]').placeholder();
-			}
+// 			if ( ! Modernizr.placeholder ) {
+// 				$('input[placeholder]').placeholder();
+// 			}
 
-		}
-	},
+// 		}
+// 	},
 
-	// Test if polyfill is needed; this is for Enquire support in older browsers.
-	{
-		test: window.matchMedia,
-		nope: template_path + "js/media.match.min.js"
-	},
+// 	// Test if polyfill is needed; this is for Enquire support in older browsers.
+// 	{
+// 		test: window.matchMedia,
+// 		nope: template_path + "js/media.match.min.js"
+// 	},
 
-	// Touch devices get enhanced touch support.
-	{
-		test: Modernizr.touch,
-		yep: [ template_path + "js/doubletaptogo.min.js", template_path + "js/fastclick.js" ],
-		complete: function() {
+// 	// Touch devices get enhanced touch support.
+// 	{
+// 		test: Modernizr.touch,
+// 		yep: [ template_path + "js/doubletaptogo.min.js", template_path + "js/fastclick.js" ],
+// 		complete: function() {
 
-			//For touch devices
-			if ( Modernizr.touch ) {
-				// Hide top panel on mobile devices.
-				window.scrollTo(0, 1);
+// 			//For touch devices
+// 			if ( Modernizr.touch ) {
+// 				// Hide top panel on mobile devices.
+// 				window.scrollTo(0, 1);
 
-				//Activate double tap to go for dropdown menus
-				$(".nav.navbar-nav li:has(ul)").doubleTapToGo();
+// 				//Activate double tap to go for dropdown menus
+// 				$(".nav.navbar-nav li:has(ul)").doubleTapToGo();
 
-				//Activate fastclick.js (https://github.com/ftlabs/fastclick)
-				FastClick.attach(document.body);
-			}
+// 				//Activate fastclick.js (https://github.com/ftlabs/fastclick)
+// 				FastClick.attach(document.body);
+// 			}
 
-		}
-	},
+// 		}
+// 	},
 
-	// Load Enquire.js
-	{
-		load: template_path + "js/enquire.min.js",
-		complete: function() {
+// 	// Load Enquire.js
+// 	{
+// 		load: template_path + "js/enquire.min.js",
+// 		complete: function() {
 
-			// Set up enquire
+// 			// Set up enquire
 
-		}
-	}
+// 		}
+// 	}
 
-]);
+// ]);
 
 }(jQuery));
