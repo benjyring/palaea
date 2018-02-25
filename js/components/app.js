@@ -48,11 +48,21 @@ $(function() {
 		if (!map.find('.cell').length){
 			// Create grid
 			$.each(cellArray, function(index, i) {
-				map.append('<div class="' + i.className + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
+				var levelClass;
+				if (i.z < 0){
+					levelClass = "belowSeaLevel";
+				} else if (i.z >= 25 ){
+					levelClass = "aboveSnowLevel";
+				} else {
+					levelClass = "normal";
+				}
+				map.append('<div class="' + i.className + ' ' + levelClass + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
 			});
 			// Visualize continents
 			$.each(continentsArray, function(index, i) {
-				$('.cell[data-x=' + i.x + '][data-y=' + i.y + ']').attr('id', 'continent-' + i.continent);
+				$('.cell[data-x=' + i.x + '][data-y=' + i.y + ']').attr('id', 'continent-' + i.continent)
+				.attr('force', i.force)
+				.attr('direction', i.direction);
 			});
 		} else {
 			alert('Map is already generated.');
