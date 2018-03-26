@@ -1,39 +1,44 @@
-@cell-size: 12px;
-
-#map {
+.cell-mixin(@color){
+	background: @color;
+	// border-color: @color;
+}
+.cell-size-mixin(@cell-size){
 	height: @cell-size * 80;
 	width: @cell-size * 130;
 
-	&[data-zoom="-2"] {
-		@cell-size: 4px;
+	.cell {
+		height: @cell-size;
+		width: @cell-size;
 	}
-	&[data-zoom="-1"] {
-		@cell-size: 8px;
-	}
-	&[data-zoom="0"] {
-		@cell-size: 12px;
-	}
-	&[data-zoom="1"] {
-		@cell-size: 16px;
-	}
-	&[data-zoom="2"] {
-		@cell-size: 20px;
-	}
+};
+
+#map {
+		&[data-zoom="0"] {
+			.cell-size-mixin(4px);
+		}
+		&[data-zoom="1"] {
+			.cell-size-mixin(8px);
+		}
+		&[data-zoom="2"] {
+			.cell-size-mixin(12px);
+		}
+		&[data-zoom="3"] {
+			.cell-size-mixin(16px);
+		}
+		&[data-zoom="4"] {
+			.cell-size-mixin(20px);
+		}
 
 	.cell {
-		border: (@cell-size/4) solid;
+		// border: (@cell-size/4) solid;
 		display: block;
-		height: @cell-size;
 		float: left;
-		width: @cell-size;
 
-		&.aboveSnowLevel{
-			background: @white !important;
-			border-color: @white !important;
+		&.aboveSnowLevel {
+			.cell-mixin(@white) !important;
 		}
-		&.belowSeaLevel{
-			background: @blue !important;
-			border-color: @blue !important;
+		&.belowSeaLevel {
+			.cell-mixin(@sea-coast) !important;
 		}
 
 		&#continent {
@@ -41,45 +46,50 @@
 				border-color: red;
 			}
 		}
-		.continent-mixin(@color){
-			background: @color;
-			border-color: @color;
+		&.deciduous-flat {
+			.cell-mixin(@deciduous-flat);
 		}
-		&[data-continent="1"] {
-			.continent-mixin(@deciduous-flat);
+		&.deciduous-hills {
+			.cell-mixin(@deciduous-hills);
 		}
-		&[data-continent="2"] {
-			.continent-mixin(@deciduous-hills);
+		&.deciduous-mountainous {
+			.cell-mixin(@deciduous-mountainous);
 		}
-		&[data-continent="3"] {
-			.continent-mixin(@deciduous-mountainous);
+		&.plains-flat {
+			.cell-mixin(@plains-flat);
 		}
-		&[data-continent="4"] {
-			.continent-mixin(@plains-flat);
+		&.rocky-hills {
+			.cell-mixin(@rocky-hills);
 		}
-		&[data-continent="5"] {
-			.continent-mixin(@rocky-hills);
+		&.rocky2 {
+			.cell-mixin(@rocky2);
 		}
-		&[data-continent="6"] {
-			.continent-mixin(@rocky2);
+		&.rocky3 {
+			.cell-mixin(@rocky3);
 		}
-		&[data-continent="7"] {
-			.continent-mixin(@rocky3);
+		&.rocky4 {
+			.cell-mixin(@rocky4);
 		}
-		&[data-continent="8"] {
-			.continent-mixin(@rocky4);
+		&.rocky5 {
+			.cell-mixin(@rocky5);
 		}
-		&[data-continent="9"] {
-			.continent-mixin(@rocky5);
+		&.waterside-flat {
+			.cell-mixin(@waterside-flat);
 		}
-		&[data-continent="10"] {
-			.continent-mixin(@waterside-flat);
+		&.waterside-hilly {
+			.cell-mixin(@waterside-hilly);
 		}
-		&[data-continent="11"] {
-			.continent-mixin(@waterside-hilly);
+		&.waterside-mountainous {
+			.cell-mixin(@waterside-mountainous);
 		}
-		&[data-continent="12"] {
-			.continent-mixin(@waterside-mountainous);
+		&.sea-coast {
+			.cell-mixin(@sea-coast);
+		}
+		&.sea-reef {
+			.cell-mixin(@sea-reef);
+		}
+		&.sea-deep {
+			.cell-mixin(@sea-deep);
 		}
 	}
 	#splashscreen {

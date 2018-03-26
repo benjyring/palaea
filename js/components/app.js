@@ -39,31 +39,67 @@ $(function() {
 	// ======================
 	// TABLE OF CONTENTS
 	//
-	// 1. Visualize Map
+	// _Visualize Map
+	// _UI
 	// ======================
 	///////////////////////////////
-	var map = $('#map');
-	// 1. Visualize Map
+	var map = $('#map'),
+	zoom = 0;
+	// _Visualize Map
 	$('button#buildMap').click(function(){
 		if (!map.find('.cell').length){
 			// Create grid
 			$.each(cellArray, function(index, i) {
-				var levelClass;
-				if (i.z < 0){
-					levelClass = "belowSeaLevel";
-				} else if (i.z >= 25 ){
-					levelClass = "aboveSnowLevel";
+
+				if (i.z <= 0){
+					i.level = "belowSeaLevel";
+					i.texture = "sea-deep";
+				} else if (i.z > 0 && i.z < 5){
+					i.level = "lowlands";
+					i.texture = "plains-flat";
+				} else if (i.z >= 5 && i.z < 10){
+					i.level = "highlands";
+					i.texture = "deciduous-hills";
+				} else if (i.z >= 10 && i.z <= 15){
+					i.level = "foothills";
+					i.texture = "rocky5";
+				} else if (i.z >= 15 && i.z < 20){
+					i.level = "mountains";
+					i.texture = "rocky2";
+				} else if (i.z >= 20){
+					i.level = "aboveSnowLevel";
+					i.texture = "";
 				} else {
-					levelClass = "normal";
+					i.level = "normal";
 				}
-				map.append('<div class="' + i.className + ' ' + levelClass + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
+
+				if (i.continent < (continentsArray.length / 2)){
+					// // LAND
+					// if (i.border === true){
+					// 	i.texture = "rocky3";
+					// } else {
+					// 	i.texture = "plains-flat";
+					// }
+				} else {
+					// SEA
+					if (i.border === true){
+						i.texture = "sea-coast";
+					} else {
+						i.z = -5;
+						i.level = "belowSeaLevel";
+						i.texture = "sea-coast";
+					}
+				}
+
+				// FOR GAMEPLAY
+				// map.append('<div class="cell ' + i.level + ' ' + i.texture + '"></div>');
+				// FOR DEVELOPMENT/DEBUGGING
+				map.append('<div class="' + i.className + ' ' + i.level + ' ' + i.texture + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
 			});
 			// Visualize continents
-			$.each(continentsArray, function(index, i) {
-				$('.cell[data-x=' + i.x + '][data-y=' + i.y + ']').attr('id', 'continent-' + i.continent)
-				.attr('force', i.force)
-				.attr('direction', i.direction);
-			});
+			// $.each(continentsArray, function(index, i) {
+			// 	$('.cell[data-x=' + i.x + '][data-y=' + i.y + ']').attr('id', 'continent-' + i.continent).attr('force', i.force).attr('direction', i.direction);
+			// });
 		} else {
 			alert('Map is already generated.');
 		}
@@ -72,36 +108,24 @@ $(function() {
 		});
 	});
 
-	// var cell = $('.cell');
 
-	// // _Visualize Sea Level
-	// cell.each(function(){
-	// 	if (parseInt(cell.data('z')) < 1){
-	// 		$(this).addClass('belowSeaLevel');
-	// 	}
-	// });
-
-	// 2. UI
-	// Colors
+	// _UI
+	// __Colors
 	$('#colorPalette').click(function(){
 		$('#colors').toggleClass('visible');
 	});
-	// Zoom
-	var getZoom = function(){
-		parseInt(map.data('zoom'));
-	};
-	var setZoom = function(n){
-		map.attr('data-zoom', n);
-	};
 
+	// __Zoom
 	$('#zoomIn').click(function(){
-		if (getZoom() < 3) {
-			setZoom(getZoom()+1);
+		if (zoom < 4) {
+			zoom = zoom + 1;
+			$('#map').attr('data-zoom', zoom);
 		}
 	});
 	$('#zoomOut').click(function(){
-		if (getZoom() > -3) {
-			setZoom(getZoom()-1);
+		if (zoom > 0) {
+			zoom = zoom - 1;
+			$('#map').attr('data-zoom', zoom);
 		}
 	});
 
