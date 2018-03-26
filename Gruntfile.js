@@ -45,11 +45,8 @@ module.exports = function(grunt){
 			dist: {
 				files: {
 					'js/app.min.js': [
-						'js/components/jquery-3.2.1.min.js',
-						'js/components/bootstrap.min.js',
-						'js/components/scripts-ck.js',
-						'js/components/modernizr.js',
-						'js/components/waypoints.min.js',
+						'js/lib/jquery-3.2.1.min.js',
+						'js/lib/bootstrap.min.js',
 						'js/components/app.js'
 					]
 				}
