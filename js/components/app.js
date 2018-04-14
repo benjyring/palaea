@@ -39,10 +39,14 @@ $(function() {
 	// ======================
 	// TABLE OF CONTENTS
 	//
+	// _Create Map
 	// _Visualize Map
 	// _UI
 	// ======================
 	///////////////////////////////
+
+	mapBorderContinents();
+
 	var map = $('#map'),
 	zoom = 0;
 	// _Visualize Map
@@ -73,16 +77,9 @@ $(function() {
 					i.level = "normal";
 				}
 
-				if (i.continent < (continentsArray.length / 2)){
-					// // LAND
-					// if (i.border === true){
-					// 	i.texture = "rocky3";
-					// } else {
-					// 	i.texture = "plains-flat";
-					// }
-				} else {
+				if (i.continent > (continentsArray.length / 2) || continentsArray[i.continent].mapBorder == true){
 					// SEA
-					if (i.border === true){
+					if (i.continentBorder === true){
 						i.texture = "sea-coast";
 					} else {
 						i.z = -5;
@@ -94,7 +91,7 @@ $(function() {
 				// FOR GAMEPLAY
 				// map.append('<div class="cell ' + i.level + ' ' + i.texture + '"></div>');
 				// FOR DEVELOPMENT/DEBUGGING
-				map.append('<div class="' + i.className + ' ' + i.level + ' ' + i.texture + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
+				map.append('<div class="' + i.className + ' ' + i.mapBorder + ' ' + i.level + ' ' + i.texture + '" data-x="' + i.x + '" data-y="' + i.y + '" data-z="' + i.z + '" data-continent="' + i.continent + '"></div>');
 			});
 			// Visualize continents
 			// $.each(continentsArray, function(index, i) {

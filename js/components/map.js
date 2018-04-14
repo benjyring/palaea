@@ -15,6 +15,10 @@ Array.prototype.min = function() {
 	return Math.min.apply(null, this);
 };
 
+function findOnce(arr1, arr2){
+	return arr1.some(r=> arr2.includes(r));
+}
+
 function zmod(currentCell,raiseBy,degreeOfVariation){
 	var existingZ = currentCell.z,
 	newZ = rand((raiseBy + existingZ), (raiseBy*Math.abs(degreeOfVariation)));
@@ -39,14 +43,15 @@ function modifySurroundingZ(e){
 	}
 }
 
-function mapCell(x,y,z,border,continent,level,texture){
+function mapCell(x,y,z,continentBorder,continent,level,texture,mapBorder){
 	this.x = x;
 	this.y = y;
 	this.z = z;
-	this.border = border;
+	this.continentBorder = continentBorder;
 	this.continent = continent;
 	this.level = level;
 	this.texture = texture;
+	this.mapBorder = mapBorder || false;
 	this.className = "cell";
 }
 
@@ -154,7 +159,7 @@ function plateGeography(){
 						zmod(cellToE,-1,cef+csf);
 					}
 				}
-				currentCell.border = true;
+				currentCell.continentBorder = true;
 			}
 		}
 		if (cellToS != null){
@@ -181,11 +186,12 @@ function plateGeography(){
 						zmod(cellToE,-1,cef+csf);
 					}
 				}
-				currentCell.border = true;
+				currentCell.continentBorder = true;
 			}
 		}
 	}
 }
+
 function landTexture(){
 	for (var i = 0; i < cellArray.length; i++){
 		modifySurroundingZ(cellArray[i]);
@@ -196,11 +202,23 @@ function landTexture(){
 	}
 }
 
+function mapBorderContinents(){
+	var mapBorderCells = cellArray.filter(cell => [1, totalX].indexOf(cell.x) > -1 || [1, totalY].indexOf(cell.y) > -1);
+
+	for (var c = 1; c <= continentsArray.length; ++c){
+		var cellsInThisContinent = cellArray.filter(cell => cell.continent == c);
+
+		if (findOnce(cellsInThisContinent, mapBorderCells)){
+			continentsArray[c].mapBorder = true;
+		}
+	}
+}
+
 // // BUILD THE WORLD
 mapGrid(totalY, totalX);
-createContinents(rand(12, 24));
+createContinents(rand(24, 48));
 pathFinder();
-plateGeography();
+// plateGeography();
 landTexture();
 
 // TO DO
