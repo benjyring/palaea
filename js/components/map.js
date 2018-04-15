@@ -15,6 +15,25 @@ Array.prototype.min = function() {
 	return Math.min.apply(null, this);
 };
 
+function isEmpty(data){
+	if(typeof(data) == 'number' || typeof(data) == 'boolean'){ 
+		return false;
+	}
+	if(typeof(data) == 'undefined' || data === null){
+		return true;
+	}
+	if(typeof(data.length) != 'undefined'){
+		return data.length == 0;
+	}
+	var count = 0;
+	for(var i in data){
+		if(data.hasOwnProperty(i)){
+			count ++;
+		}
+	}
+	return count == 0;
+}
+
 function findOnce(arr1, arr2){
 	return arr1.some(r=> arr2.includes(r));
 }
@@ -23,6 +42,12 @@ function zmod(currentCell,raiseBy,degreeOfVariation){
 	var existingZ = currentCell.z,
 	newZ = rand((raiseBy + existingZ), (raiseBy*Math.abs(degreeOfVariation)));
 	currentCell.z = newZ;
+}
+
+function moistureMod(currentCell,raiseBy,degreeOfVariation){
+	var existingMoisture = currentCell.moisture,
+	newMoisture = rand((raiseBy + existingMoisture), (raiseBy*Math.abs(degreeOfVariation)));
+	currentCell.moisture = newMoisture;
 }
 
 function modifySurroundingZ(e){
@@ -43,28 +68,29 @@ function modifySurroundingZ(e){
 	}
 }
 
-function mapCell(x,y,z,continentBorder,continent,level,texture,mapBorder){
+function mapCell(x,y,z,continentBorder,continent,level,moisture,inland,mapBorder){
 	this.x = x;
 	this.y = y;
 	this.z = z;
 	this.continentBorder = continentBorder;
 	this.continent = continent;
 	this.level = level;
-	this.texture = texture;
+	this.moisture = moisture;
+	this.inland = inland;
 	this.mapBorder = mapBorder || false;
-	this.className = "cell";
 }
 
-function mapGrid(rows, cols){
+function mapGrid(rows, cols, callback){
 	for (var r = 0; r < rows; ++r){
 		for (var c = 0; c < cols; ++c){
 			var newMapCell = new mapCell(c+1, r+1, rand(1,3), false);
 			cellArray.push(newMapCell);
 		}
 	}
+	callback();
 }
 
-function createContinents(numberOfContinents){
+function createContinents(numberOfContinents, callback){
 	for (var i = 0; i < numberOfContinents; i++){
 		var randX = rand(1, totalX),
 		randY = rand(1, totalY),
@@ -77,18 +103,17 @@ function createContinents(numberOfContinents){
 		rXrY.continent = continentNumber;
 		continentsArray.push(rXrY);
 	}
+	callback();
 }
 
-function pathFinder(){
+function pathFinder(callback){
 	for (var i = 0; i < cellArray.length; i++){
-		var currentCellX = cellArray[i].x,
-		currentCellY = cellArray[i].y,
-		paths = [],
+		var paths = [],
 		pathsObj = {};
 
 		for (var c = 0; c < continentsArray.length; c++){
-			var diffX = Math.abs(continentsArray[c].x - currentCellX),
-			diffY = Math.abs(continentsArray[c].y - currentCellY);
+			var diffX = Math.abs(continentsArray[c].x - cellArray[i].x),
+			diffY = Math.abs(continentsArray[c].y - cellArray[i].y);
 
 			paths.push((diffX + diffY) + ':' + continentsArray[c].continent.toString());
 		}
@@ -104,9 +129,10 @@ function pathFinder(){
 
 		cellArray[i].continent = shortest;
 	}
+	callback();
 }
 
-function plateGeography(){
+function plateGeography(callback){
 	for (var c = 0; c < continentsArray.length; c++){
 		continentsArray[c].force = rand(1,10);
 		continentsArray[c].direction = rand(1,4);
@@ -190,9 +216,10 @@ function plateGeography(){
 			}
 		}
 	}
+	callback();
 }
 
-function landTexture(){
+function landTexture(callback){
 	for (var i = 0; i < cellArray.length; i++){
 		modifySurroundingZ(cellArray[i]);
 	}
@@ -200,27 +227,29 @@ function landTexture(){
 		zmod(continentsArray[c], 1, 2);
 		modifySurroundingZ(continentsArray[c]);
 	}
+	callback();
 }
 
-function mapBorderContinents(){
+function mapBorderContinents(callback){
 	var mapBorderCells = cellArray.filter(cell => [1, totalX].indexOf(cell.x) > -1 || [1, totalY].indexOf(cell.y) > -1);
 
-	for (var c = 1; c <= continentsArray.length; ++c){
+	for (var c = 1; c <= continentsArray.length; c++){
 		var cellsInThisContinent = cellArray.filter(cell => cell.continent == c);
 
 		if (findOnce(cellsInThisContinent, mapBorderCells)){
 			continentsArray[c].mapBorder = true;
 		}
 	}
+	callback();
 }
 
-// // BUILD THE WORLD
-mapGrid(totalY, totalX);
-createContinents(rand(24, 48));
-pathFinder();
-// plateGeography();
-landTexture();
-
-// TO DO
-// 1. Randomly decide main-point mapCells WITHIN a margin from map edges (maybe.)
-// 2. On edges of adjacent chunks, create mountain ranges with z
+// BUILD THE WORLD
+mapGrid(totalY, totalX, function(){
+	createContinents(rand(24, 48), function(){
+		pathFinder(function(){
+			plateGeography(function(){
+				landTexture();
+			});
+		});
+	});
+});
