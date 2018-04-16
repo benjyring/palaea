@@ -23,46 +23,13 @@ Acheving *10* VPs is one of the ways to win the game.
 ===============
 Being the leader in any area awards you 2VP. For example:
 
-	- "Longest Road" special → first person to build a continuous *5* roads. 
+	- "Longest Road" special → first person to build a continuous *5* roads.
 	- "Largest Army" special → first person to combine *3* battalions.
 
 Maintaining leadership in any area for 200 in-game years is one of the ways to win the game.
 
 **Structure**
 =============
-
-Generate the outer frame.
-Before generating hexes to create the map, generate frame from pieces.
-Each frame edge has a value where it can possibly connect to hexes.
-Assemble frames together by matching the numbers up.
-
-Place the hexes.
-Put a random terrain hex on the inside of the frame so that its edges are touching the sea frame.
-Keep putting down random terrains in a clockwise fashion until you have reached the center and all of the terrain hexes fill are inside the frame.
-
-	- You may want to place the desert hex on an outside edge, away from any trade ports, to make the game a bit easier.
-	- A variation on this way of laying out the hexes is to place all of the hexes face down. They may only be turned upwards when someone places a road or a settlement on that hex.
-
-Place tokens.
-Each token has a small letter above its number.
-Place the number token with the letter "A" on one of the edge terrain hexes, put the token with the letter "B" to the right of the first placed token, and continue on putting down tokens in alphabetical order in a clockwise fashion until you have reached the center.
-All of the terrain hexes should now have a token on them.
-These numbers determine which roll will grant which player resources to use.
-
-	- Do not place a number on the desert hex.
-	- You may also place tokens at random without paying attention to the letters, but this will make the game more challenging.
-
-Place the robber.
-Place the robber on the desert tile.
-The robber is the small gray piece that resembles a bowling pin.
-The robber starts out on the desert tile, but may be moved whenever someone rolls a seven or plays a Knight card.
-
-Place the cards.
-The resource cards and development cards should be placed near the board where they are easily accessible to all players.
-Keep the resource cards separated by type (sheep, lumber, bricks, rocks, and wheat) and keep the development cards separate from the resource cards.
-Place the resource cards in five separate piles facing up and place the development cards in a separate pile facing down.
-
-	- You should shuffle the development cards, but do not shuffle the resource cards!
 
 Determine the turn order.
 Every player rolls two dice to start.
@@ -106,8 +73,6 @@ Many fans were unhappy with the original Imperial Strategy Card, which they saw 
 
 **Notes**
 =========
-
-Install Markdown Extended to read well
 
 	- Hex map layer
 	- Surface map layer
