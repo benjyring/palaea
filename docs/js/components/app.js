@@ -32,20 +32,30 @@ $(function() {
 						i.z = -5;
 					} else {
 						if (i.z >= 20){
-							i.level = 4;
-							i.moisture = 4;
+							// Island Centers
+							if (i.z < 32) {
+								i.level = Math.ceil(((i.z - 6)/8) * 1);
+								i.moisture = Math.ceil(((i.z - 6)/5) * 1);
+							} else {
+								i.level = 4;
+								i.moisture = 6;
+							}
 						} else {
 							i.level = 0;
 							if (i.z > 5){
+								// Reefs
 								i.moisture = 2;
 								i.z = -3;
 							} else {
+								// This creates texture in reefs,
+								// to break up some long archipelegos
 								i.moisture = 3;
 								i.z = -5;
 							}
 						}
 					}
 				} else {
+					// LAND
 					i.inland = true;
 
 					if (i.z > 0 && i.z < 5){
