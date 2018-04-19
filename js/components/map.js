@@ -16,7 +16,7 @@ Array.prototype.min = function() {
 };
 
 function isEmpty(data){
-	if(typeof(data) == 'number' || typeof(data) == 'boolean'){ 
+	if(typeof(data) == 'number' || typeof(data) == 'boolean'){
 		return false;
 	}
 	if(typeof(data) == 'undefined' || data === null){
