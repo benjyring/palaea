@@ -9,12 +9,19 @@ $(function() {
 	// ======================
 	// TABLE OF CONTENTS
 	//
+	// ON LOAD
+	// _Constants/Variables
+	// _Build Map
+	// _Save Game
+	// ON INTERACTIONS/UI
+	// _Build Map
+	// _Save Game
 	// _Colors
-	// _Visualize Map
-	// _UI
+	// _Zoom
 	// ======================
 	///////////////////////////////
 
+	// _Constants/Variables
 	var colorsArray = {
 		env03 : '#0b0a32',
 		env02 : '#1f3078',
@@ -48,12 +55,15 @@ $(function() {
 		env45 : '#ffffff',
 		env46 : '#ffffff',
 	};
+	var codeArray = {'01': 'a','02': 'b','03': 'c','11': 'd','12': 'e','13': 'f','14': 'g','15': 'h','16': 'i','21': 'j','22': 'k','23': 'l','24': 'm','25': 'n','26': 'o','31': 'p','32': 'q','33': 'r','34': 's','35': 't','36': 'u','41': 'v','42': 'w','43': 'x','44': 'y','45': 'z','46': 'A'};
+	var map = document.getElementById('map');
+	// Should be constants
 
-	var map = document.getElementById('map'),
-	ctx = map.getContext('2d'),
-	zoom = 0,
-	sideLen = 4;
+	var ctx = map.getContext('2d');
+	var zoom = 0;
+	var sideLen = 4;
 
+	// _Build Map
 	mapBorderContinents(function(){
 		$.each(cellArray, function(index, i) {
 			if (i.continent > (continentsArray.length / 2) || continentsArray[i.continent].mapBorder == true){
@@ -129,18 +139,52 @@ $(function() {
 		});
 	}
 
+	// _Save Game
+	function saveGameAsString(){
+		var saveGame = [];
+		var sameCellIndex = 1;
+
+		for (i = 0; i < cellArray.length; i++){
+			var cc = cellArray[i].level + '' + cellArray[i].moisture,
+			cellToPush = codeArray[cc],
+			cp, cellToCheck;
+
+			if (i > 0) {
+				cp = cellArray[i-1].level + '' + cellArray[i-1].moisture;
+				cellToCheck = codeArray[cp];
+
+				if (cellToPush != cellToCheck){
+					if (sameCellIndex != 1){
+						saveGame.push(sameCellIndex);
+						sameCellIndex = 1;
+					}
+					saveGame.push(cellToPush);
+				} else {
+					sameCellIndex++;
+				}
+			} else {
+				saveGame.push(cellToPush);
+			}
+		}
+
+		saveGame = saveGame.join("");
+		return saveGame;
+	}
+
+	// ON INTERACTIONS/UI
+	// _Build Map
 	$('#buildMap').click(function(){
 		mapVis(sideLen);
 	});
-
-
-	// _UI
-	// __Colors
+	// _Save Game
+	$('#saveGame').click(function(){
+		alert(saveGameAsString());
+	});
+	// _Colors
 	$('#colorPalette').click(function(){
 		$('#colors').toggleClass('visible');
 	});
-
-	// __Zoom
+	// _Zoom
 	$('#zoomIn').click(function(){
 		if (zoom < 4) {
 			zoom = zoom + 1;

@@ -237,7 +237,9 @@ function mapBorderContinents(callback){
 		var cellsInThisContinent = cellArray.filter(cell => cell.continent == c);
 
 		if (findOnce(cellsInThisContinent, mapBorderCells)){
-			continentsArray[c].mapBorder = true;
+			if (!isEmpty(continentsArray[c])){
+				continentsArray[c].mapBorder = true;
+			}
 		}
 	}
 	callback();
