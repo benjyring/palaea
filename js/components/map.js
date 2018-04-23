@@ -69,6 +69,7 @@ function modifySurroundingZ(e){
 }
 
 function mapCell(x,y,z,continentBorder,continent,level,moisture,inland,mapBorder){
+	// Change to mapCell(x,y,z,moisture,inland, etc) for rebuilding world
 	this.x = x;
 	this.y = y;
 	this.z = z;

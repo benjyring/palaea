@@ -1,3 +1,45 @@
+// _Constants/Variables
+var colorsArray = {
+	env03 : '#0b0a32',
+	env02 : '#1f3078',
+	env01 : '#5078b3',
+
+	env11 : '#eed19f',
+	env12 : '#6c6d36',
+	env13 : '#2e421d',
+	env14 : '#2e421d',
+	env15 : '#214c25',
+	env16 : '#214c25',
+
+	env21 : '#efb08e',
+	env22 : '#6c6d36',
+	env23 : '#6c6d36',
+	env24 : '#34511d',
+	env25 : '#34511d',
+	env26 : '#3a5419',
+
+	env31 : '#efb08e',
+	env32 : '#efb08e',
+	env33 : '#506b2a',
+	env34 : '#506b2a',
+	env35 : '#557432',
+	env36 : '#557432',
+
+	env41 : '#bb9673',
+	env42 : '#9f6e50',
+	env43 : '#aa622e',
+	env44 : '#ffffff',
+	env45 : '#ffffff',
+	env46 : '#ffffff',
+};
+var codeArray = {'01': 'a','02': 'b','03': 'c','11': 'd','12': 'e','13': 'f','14': 'g','15': 'h','16': 'i','21': 'j','22': 'k','23': 'l','24': 'm','25': 'n','26': 'o','31': 'p','32': 'q','33': 'r','34': 's','35': 't','36': 'u','41': 'v','42': 'w','43': 'x','44': 'y','45': 'z','46': 'A'};
+var map = document.getElementById('map');
+// Should be constants
+
+var ctx = map.getContext('2d');
+var zoom = 1;
+var sideLen = 4;
+
 (function($) {
 
 "use strict";
@@ -20,48 +62,6 @@ $(function() {
 	// _Zoom
 	// ======================
 	///////////////////////////////
-
-	// _Constants/Variables
-	var colorsArray = {
-		env03 : '#0b0a32',
-		env02 : '#1f3078',
-		env01 : '#5078b3',
-
-		env11 : '#eed19f',
-		env12 : '#6c6d36',
-		env13 : '#2e421d',
-		env14 : '#2e421d',
-		env15 : '#214c25',
-		env16 : '#214c25',
-
-		env21 : '#efb08e',
-		env22 : '#6c6d36',
-		env23 : '#6c6d36',
-		env24 : '#34511d',
-		env25 : '#34511d',
-		env26 : '#3a5419',
-
-		env31 : '#efb08e',
-		env32 : '#efb08e',
-		env33 : '#506b2a',
-		env34 : '#506b2a',
-		env35 : '#557432',
-		env36 : '#557432',
-
-		env41 : '#bb9673',
-		env42 : '#9f6e50',
-		env43 : '#aa622e',
-		env44 : '#ffffff',
-		env45 : '#ffffff',
-		env46 : '#ffffff',
-	};
-	var codeArray = {'01': 'a','02': 'b','03': 'c','11': 'd','12': 'e','13': 'f','14': 'g','15': 'h','16': 'i','21': 'j','22': 'k','23': 'l','24': 'm','25': 'n','26': 'o','31': 'p','32': 'q','33': 'r','34': 's','35': 't','36': 'u','41': 'v','42': 'w','43': 'x','44': 'y','45': 'z','46': 'A'};
-	var map = document.getElementById('map');
-	// Should be constants
-
-	var ctx = map.getContext('2d');
-	var zoom = 0;
-	var sideLen = 4;
 
 	// _Build Map
 	mapBorderContinents(function(){
@@ -134,7 +134,7 @@ $(function() {
 		map.height = totalY*d;
 			// Create grid
 		$.each(cellArray, function(index, i) {
-			ctx.fillStyle = colorsArray['env' + i.level + i.moisture];
+			ctx.fillStyle = colorsArray['env' + i.level + '' + i.moisture];
 			ctx.fillRect(((d*i.x)-d), ((d*i.y)-d), d, d);
 		});
 	}
@@ -171,10 +171,27 @@ $(function() {
 		return saveGame;
 	}
 
+	function rebuildGameFromSave(){
+		var savedGame = ['long', 'array', 'here'];
+		var sameCellIndex = 1;
+
+		for (i = 0; i < savedGame.length; i++){
+			for (var r = 0; r < totalX; ++r){
+				for (var c = 0; c < totalY; ++c){
+					var newMapCell = new mapCell(c+1,r+1,level, moisture);
+					cellArray.push(newMapCell);
+				}
+			}
+		}
+		return savedGame;
+	}
+
 	// ON INTERACTIONS/UI
 	// _Build Map
 	$('#buildMap').click(function(){
 		mapVis(sideLen);
+		$('#sidebar').removeClass('pregame');
+		$(this).remove();
 	});
 	// _Save Game
 	$('#saveGame').click(function(){
@@ -188,15 +205,13 @@ $(function() {
 	$('#zoomIn').click(function(){
 		if (zoom < 4) {
 			zoom = zoom + 1;
-			sideLen = sideLen*zoom;
-			mapVis(sideLen);
+			mapVis(sideLen*zoom);
 		}
 	});
 	$('#zoomOut').click(function(){
-		if (zoom > 0) {
+		if (zoom > 1) {
 			zoom = zoom - 1;
-			sideLen = sideLen*zoom;
-			mapVis(sideLen);
+			mapVis(sideLen*zoom);
 		}
 	});
 

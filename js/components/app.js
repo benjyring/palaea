@@ -171,10 +171,27 @@ $(function() {
 		return saveGame;
 	}
 
+	function rebuildGameFromSave(){
+		var savedGame = ['long', 'array', 'here'];
+		var sameCellIndex = 1;
+
+		for (i = 0; i < savedGame.length; i++){
+			for (var r = 0; r < totalX; ++r){
+				for (var c = 0; c < totalY; ++c){
+					var newMapCell = new mapCell(c+1,r+1,level, moisture);
+					cellArray.push(newMapCell);
+				}
+			}
+		}
+		return savedGame;
+	}
+
 	// ON INTERACTIONS/UI
 	// _Build Map
 	$('#buildMap').click(function(){
 		mapVis(sideLen);
+		$('#sidebar').removeClass('pregame');
+		$(this).remove();
 	});
 	// _Save Game
 	$('#saveGame').click(function(){

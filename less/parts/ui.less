@@ -9,6 +9,21 @@ aside {
 	top: @grid-gutter-width;
 	z-index: 2;
 
+	&.pregame {
+		right: 50vw;
+		top: 25vh;
+		transform: translateX(50%);
+
+		button {
+			display: none;
+
+			&#buildMap,
+			&#reBuildMap {
+				display: inline-block;
+			}
+		}
+	}
+
 	button {
 		margin-bottom: 15px;
 	}
