@@ -193,6 +193,14 @@ $(function() {
 		$('#sidebar').removeClass('pregame');
 		$(this).remove();
 	});
+
+	$('#loadRebuildMap').click(function(){
+		if ($(this).text() == 'Cancel'){
+			$(this).text('Load Saved Game');
+		} else {
+			$(this).text('Cancel');
+		}
+	});
 	// _Save Game
 	$('#saveGame').click(function(){
 		alert(saveGameAsString());
@@ -203,7 +211,7 @@ $(function() {
 	});
 	// _Zoom
 	$('#zoomIn').click(function(){
-		if (zoom < 4) {
+		if (zoom < 8) {
 			zoom = zoom + 1;
 			mapVis(sideLen*zoom);
 		}
@@ -212,6 +220,14 @@ $(function() {
 		if (zoom > 1) {
 			zoom = zoom - 1;
 			mapVis(sideLen*zoom);
+		}
+	});
+	$(document).bind('keypress', function(e) {
+		if(e.charCode==61){
+			$('#zoomIn').click();
+		}
+		if(e.charCode==45){
+			$('#zoomOut').click();
 		}
 	});
 
