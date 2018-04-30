@@ -7,12 +7,6 @@
 	<title>Game</title>
 	<!-- <link href="https://fonts.googleapis.com/css?family=Raleway:400,400i,800,800i" rel="stylesheet"> -->
 	<link href="css/app.min.css" rel="stylesheet">
-	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-	<![endif]-->
 	<script type="text/javascript" src="js/components/map.js"></script>
 </head>
 
@@ -25,29 +19,48 @@
 	</div>
 
 	<aside class="pregame" id="sidebar">
-		<button class="btn btn-default" id="zoomIn">+</button>
-		<button class="btn btn-default" id="zoomOut">-</button>
-		<h3>Build the World</h3>
-		<button class="btn btn-default" id="buildMap">New Map</button>
-		<button class="btn btn-default" id="saveGame">Save Game</button>
-		<br>
-		<button class="btn btn-default" id="colorPalette">Colors</button>
-		<ul id="colors">
-			<li class="color-palette cp1">belowWaterLevel</li>
-			<li class="color-palette cp2">subTropicalDesert</li>
-			<li class="color-palette cp3">grassland</li>
-			<li class="color-palette cp4">tropicalSeasonalForest</li>
-			<li class="color-palette cp5">tropicalRainForest</li>
-			<li class="color-palette cp6">temperateDesert</li>
-			<li class="color-palette cp7">temperateDeciduousForest</li>
-			<li class="color-palette cp8">temperateRainForest</li>
-			<li class="color-palette cp9">shrubLand</li>
-			<li class="color-palette cp10">taiga</li>
-			<li class="color-palette cp11">scorched</li>
-			<li class="color-palette cp12">bare</li>
-			<li class="color-palette cp13">tundra</li>
-			<li class="color-palette cp14">snow</li>
-		</ul>
+
+		<div class="ingame-ui">
+			<button class="btn btn-default" id="zoomIn">+</button>
+			<button class="btn btn-default" id="zoomOut">-</button>
+		</div>
+
+		<h3 class="text-center">Build the World</h3>
+
+		<div class="pregame-ui">
+			<button class="btn btn-default btn-block mb-2" id="buildMap">New Game</button>
+			<button class="btn btn-default btn-block" id="loadRebuildMap" data-toggle="collapse" data-target="#loadSavedGame" aria-expanded="false" aria-controls="loadSavedGame">Load Saved Game</button>
+			<div id="loadSavedGame" class="collapse">
+				<div class="input-group mt-2">
+					<input type="text" class="form-control" placeholder="Paste Saved Game" aria-label="Paste Saved Game" aria-describedby="rebuildMap">
+					<span class="input-group-btn">
+						<button id="rebuildMap" class="btn btn-primary" type="button">Load</button>
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="ingame-ui">
+			<button class="btn btn-default" id="saveGame" >Save Game</button>
+			<br>
+			<button class="btn btn-default" id="colorPalette">Colors</button>
+			<ul id="colors">
+				<li class="color-palette cp1">belowWaterLevel</li>
+				<li class="color-palette cp2">subTropicalDesert</li>
+				<li class="color-palette cp3">grassland</li>
+				<li class="color-palette cp4">tropicalSeasonalForest</li>
+				<li class="color-palette cp5">tropicalRainForest</li>
+				<li class="color-palette cp6">temperateDesert</li>
+				<li class="color-palette cp7">temperateDeciduousForest</li>
+				<li class="color-palette cp8">temperateRainForest</li>
+				<li class="color-palette cp9">shrubLand</li>
+				<li class="color-palette cp10">taiga</li>
+				<li class="color-palette cp11">scorched</li>
+				<li class="color-palette cp12">bare</li>
+				<li class="color-palette cp13">tundra</li>
+				<li class="color-palette cp14">snow</li>
+			</ul>
+		</div>
 	</aside>
 
 
