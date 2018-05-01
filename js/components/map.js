@@ -68,14 +68,13 @@ function modifySurroundingZ(e){
 	}
 }
 
-function mapCell(x,y,z,continentBorder,continent,level,moisture,inland,mapBorder){
+function mapCell(x,y,z,continentBorder,continent,moisture,inland,mapBorder){
 	// Change to mapCell(x,y,z,moisture,inland, etc) for rebuilding world
 	this.x = x;
 	this.y = y;
 	this.z = z;
 	this.continentBorder = continentBorder;
 	this.continent = continent;
-	this.level = level;
 	this.moisture = moisture;
 	this.inland = inland;
 	this.mapBorder = mapBorder || false;
@@ -84,22 +83,20 @@ function mapCell(x,y,z,continentBorder,continent,level,moisture,inland,mapBorder
 function mapGrid(rows, cols, callback){
 	for (var r = 0; r < rows; ++r){
 		for (var c = 0; c < cols; ++c){
-			var newMapCell = new mapCell(c+1, r+1, rand(1,3), false);
-			cellArray.push(newMapCell);
+			cellArray.push(
+				new mapCell(c+1, r+1, rand(1,3), false)
+			);
 		}
 	}
 	callback();
 }
 
 function createContinents(numberOfContinents, callback){
-	for (var i = 0; i < numberOfContinents; i++){
+	for (var c = 0; c < numberOfContinents; c++){
 		var randX = rand(1, totalX),
 		randY = rand(1, totalY),
-		continentNumber = (i+1),
-		rXrYArray = cellArray.filter(function(cell){
-			return cell.x === randX && cell.y === randY;
-		}),
-		rXrY = rXrYArray[0];
+		continentNumber = (c+1),
+		rXrY = cellArray.filter(cell => cell.x === randX && cell.y === randY)[0];
 
 		rXrY.continent = continentNumber;
 		continentsArray.push(rXrY);

@@ -71,30 +71,28 @@ $(function() {
 				i.inland = false;
 
 				if (i.continentBorder != true){
-					i.level = 0;
+					i.z = 0;
 					i.moisture = 3;
-					i.z = -5;
 				} else {
 					if (i.z >= 20){
 						// Island Centers
 						if (i.z < 32) {
-							i.level = Math.ceil(((i.z - 6)/8) * 1);
+							i.z = Math.ceil(((i.z - 6)/8) * 1);
 							i.moisture = Math.ceil(((i.z - 6)/5) * 1);
 						} else {
-							i.level = 4;
+							i.z = 4;
 							i.moisture = 6;
 						}
 					} else {
-						i.level = 0;
 						if (i.z > 5){
 							// Reefs
 							i.moisture = 2;
-							i.z = -3;
+							i.z = 0;
 						} else {
 							// This creates texture in reefs,
 							// to break up some long archipelegos
 							i.moisture = 3;
-							i.z = -5;
+							i.z = 0;
 						}
 					}
 				}
@@ -103,25 +101,25 @@ $(function() {
 				i.inland = true;
 
 				if (i.z > 0 && i.z < 5){
-					i.level = 1;
+					i.z = 1;
 					// Random moisture is temporary for proof of concept.
 					// Eventually, moisture will be determined by an average of
 					// distance from water and distance from mountain (z<20)
 					i.moisture = rand(1, 6);
 				} else if (i.z >= 5 && i.z < 10){
-					i.level = 2;
+					i.z = 2;
 					i.moisture = rand(1, 6);
 				} else if (i.z >= 10 && i.z <= 15){
-					i.level = 3;
+					i.z = 3;
 					i.moisture = rand(1, 6);
 				} else if (i.z >= 15 && i.z < 20){
-					i.level = 4;
+					i.z = 4;
 					i.moisture = rand(1, 3);
 				} else if (i.z >= 20){
-					i.level = 4;
+					i.z = 4;
 					i.moisture = rand(4, 6);
 				} else {
-					i.level = 0;
+					i.z = 0;
 					i.moisture = 1;
 				}
 			}
@@ -134,7 +132,7 @@ $(function() {
 		map.height = totalY*d;
 			// Create grid
 		$.each(cellArray, function(index, i) {
-			ctx.fillStyle = colorsArray['env' + i.level + '' + i.moisture];
+			ctx.fillStyle = colorsArray['env' + i.z + '' + i.moisture];
 			ctx.fillRect(((d*i.x)-d), ((d*i.y)-d), d, d);
 		});
 	}
@@ -145,12 +143,12 @@ $(function() {
 		var sameCellIndex = 1;
 
 		for (i = 0; i < cellArray.length; i++){
-			var cc = cellArray[i].level + '' + cellArray[i].moisture,
+			var cc = cellArray[i].z + '' + cellArray[i].moisture,
 			cellToPush = codeArray[cc],
 			cp, cellToCheck;
 
 			if (i > 0) {
-				cp = cellArray[i-1].level + '' + cellArray[i-1].moisture;
+				cp = cellArray[i-1].z + '' + cellArray[i-1].moisture;
 				cellToCheck = codeArray[cp];
 
 				if (cellToPush != cellToCheck){
@@ -178,7 +176,7 @@ $(function() {
 		for (i = 0; i < savedGame.length; i++){
 			for (var r = 0; r < totalX; ++r){
 				for (var c = 0; c < totalY; ++c){
-					var newMapCell = new mapCell(c+1,r+1,level, moisture);
+					var newMapCell = new mapCell(c+1,r+1,z, moisture);
 					cellArray.push(newMapCell);
 				}
 			}
