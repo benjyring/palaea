@@ -44,13 +44,13 @@ function zmod(currentCell,raiseBy,degreeOfVariation){
 	currentCell.z = newZ;
 }
 
-function moistureMod(currentCell,raiseBy,degreeOfVariation){
-	var existingMoisture = currentCell.moisture,
-	newMoisture = rand((raiseBy + existingMoisture), (raiseBy*Math.abs(degreeOfVariation)));
-	currentCell.moisture = newMoisture;
+function mMod(currentCell,raiseBy,degreeOfVariation){
+	var existingm = currentCell.m,
+	newm = rand((raiseBy + existingm), (raiseBy*Math.abs(degreeOfVariation)));
+	currentCell.m = newm;
 }
 
-function modifySurroundingZ(e){
+function modifySurroundingZ(el){
 	var cellTo1N = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y - 1))[0],
 	cellTo1E = cellArray.filter(cell => cell.x == (e.x + 1) && cell.y == e.y)[0],
 	cellTo1S = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y + 1))[0],
@@ -63,20 +63,19 @@ function modifySurroundingZ(e){
 	cellAway2 = [cellto2N, cellto2E, cellto2S, cellto2W];
 
 	for (i=0; i < cellAway1.length; i++){
-		var difference = e.z - cellAway2[i].z;
+		var difference = el.z - cellAway2[i].z;
 		zmod(cellAway1[i], 2, difference);
 	}
 }
 
-function mapCell(x,y,z,continentBorder,continent,moisture,inland,mapBorder){
-	// Change to mapCell(x,y,z,moisture,inland, etc) for rebuilding world
+function mapCell(x,y,z,m,inland,continent,continentBorder,mapBorder){
 	this.x = x;
 	this.y = y;
 	this.z = z;
-	this.continentBorder = continentBorder;
+	this.m = m;
+	this.inland = inland || false;
 	this.continent = continent;
-	this.moisture = moisture;
-	this.inland = inland;
+	this.continentBorder = continentBorder || false;
 	this.mapBorder = mapBorder || false;
 }
 
@@ -84,7 +83,7 @@ function mapGrid(rows, cols, callback){
 	for (var r = 0; r < rows; ++r){
 		for (var c = 0; c < cols; ++c){
 			cellArray.push(
-				new mapCell(c+1, r+1, rand(1,3), false)
+				new mapCell(c+1, r+1, rand(1,3))
 			);
 		}
 	}
