@@ -124,6 +124,11 @@ $(function() {
 				}
 			}
 		});
+
+		// Define islands
+		makeIslands(function(){
+			console.log("Islands are generated!");
+		});
 	});
 
 	function mapVis(d){

@@ -38,6 +38,16 @@ function findOnce(arr1, arr2){
 	return arr1.some(r=> arr2.includes(r));
 }
 
+function getCellByXY(elX, elY){
+	return cellArray.filter(cell => cell.x == elX && cell.y == elY)[0];
+}
+
+function checkPlus(el){
+	// Returns an array of the "plus" shape of cells surrounding the passed cell.
+	// Ordered North, East, South, West
+	return [getCellByXY(el.x, el.y - 1), getCellByXY(el.x + 1, el.y), getCellByXY(el.x, el.y + 1), getCellByXY(el.x - 1, el.y)];
+}
+
 function zmod(currentCell,raiseBy,degreeOfVariation){
 	var existingZ = currentCell.z,
 	newZ = rand((raiseBy + existingZ), (raiseBy*Math.abs(degreeOfVariation)));
@@ -51,18 +61,18 @@ function mMod(currentCell,raiseBy,degreeOfVariation){
 }
 
 function modifySurroundingZ(el){
-	var cellTo1N = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y - 1))[0],
-	cellTo1E = cellArray.filter(cell => cell.x == (e.x + 1) && cell.y == e.y)[0],
-	cellTo1S = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y + 1))[0],
-	cellTo1W = cellArray.filter(cell => cell.x == (e.x - 1) && cell.y == e.y)[0],
-	cellTo2N = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y - 2))[0],
-	cellTo2E = cellArray.filter(cell => cell.x == (e.x + 2) && cell.y == e.y)[0],
-	cellTo2S = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y + 2))[0],
-	cellTo2W = cellArray.filter(cell => cell.x == (e.x - 2) && cell.y == e.y)[0],
+	var cellTo1N = getCellByXY(el.x, (el.y - 1)),
+	cellTo1E = getCellByXY((el.x + 1), el.y),
+	cellTo1S = getCellByXY(el.x, (el.y + 1)),
+	cellTo1W = getCellByXY((el.x - 1), el.y),
+	cellTo2N = getCellByXY(el.x, (el.y - 2)),
+	cellTo2E = getCellByXY((el.x + 2), el.y),
+	cellTo2S = getCellByXY(el.x, (el.y + 2)),
+	cellTo2W = getCellByXY((el.x - 2), el.y),
 	cellAway1 = [cellto1N, cellto1E, cellto1S, cellto1W],
 	cellAway2 = [cellto2N, cellto2E, cellto2S, cellto2W];
 
-	for (i=0; i < cellAway1.length; i++){
+	for (i = 0; i < cellAway1.length; i++){
 		var difference = el.z - cellAway2[i].z;
 		zmod(cellAway1[i], 2, difference);
 	}
@@ -95,7 +105,7 @@ function createContinents(numberOfContinents, callback){
 		var randX = rand(1, totalX),
 		randY = rand(1, totalY),
 		continentNumber = (c+1),
-		rXrY = cellArray.filter(cell => cell.x === randX && cell.y === randY)[0];
+		rXrY = getCellByXY(randX, randY);
 
 		rXrY.continent = continentNumber;
 		continentsArray.push(rXrY);
@@ -144,15 +154,15 @@ function plateGeography(callback){
 		cellToE, contNextE, ced, cef,
 		cellToS, contNextS, csd, csf;
 
-		if (cellArray.filter(cell => cell.x == currentCellX+1 && cell.y == currentCellY)[0]){
-			var cellToE = cellArray.filter(cell => cell.x == currentCellX+1 && cell.y == currentCellY)[0],
+		if (getCellByXY(currentCellX+1, currentCellY)){
+			var cellToE = getCellByXY(currentCellX+1, currentCellY),
 			contNextE = continentsArray[parseInt(cellToE.continent) - 1],
 			ced = contNextE.direction,
 			cef = contNextE.force;
 		}
 
-		if (cellArray.filter(cell => cell.x == currentCellX && cell.y == currentCellY+1)){
-			var cellToS = cellArray.filter(cell => cell.x == currentCellX && cell.y == currentCellY+1)[0],
+		if (getCellByXY(currentCellX+1, currentCellY)){
+			var cellToS = getCellByXY(currentCellX+1, currentCellY),
 			contNextS = continentsArray[parseInt(cellToS.continent) - 1],
 			csd = contNextS.direction,
 			csf = contNextS.force;
@@ -241,6 +251,24 @@ function mapBorderContinents(callback){
 	}
 	callback();
 }
+
+function makeIslands(callback){
+	var islands = cellArray.filter(cell => cell.inland == false && cell.m > 3);
+
+	for (n = 0; n < islands.length; n++) {
+		var island = checkPlus(islands[n]);
+
+		for (i = 0; i < island.length; i++){
+			if (island[i].z < 4){
+				island[i].z=1;
+			}
+		}
+		islands[n].z = 3;
+	}
+
+	callback();
+}
+
 
 // BUILD THE WORLD
 mapGrid(totalY, totalX, function(){
