@@ -226,13 +226,6 @@ function plateGeography(callback){
 	callback();
 }
 
-function landTexture(callback){
-	for (var i = 0; i < cellArray.length; i++){
-		modifySurroundingZ(cellArray[i]);
-	}
-	for (var c = 0; c < continentsArray.length; c++){
-		zmod(continentsArray[c], 1, 2);
-		modifySurroundingZ(continentsArray[c]);
 	}
 	callback();
 }
@@ -246,6 +239,60 @@ function mapBorderContinents(callback){
 		if (findOnce(cellsInThisContinent, mapBorderCells)){
 			if (!isEmpty(continentsArray[c])){
 				continentsArray[c].mapBorder = true;
+function landTexture(callback){
+	for (n = 0; n < cellArray.length; n++){
+		let i = cellArray[n];
+
+		if (i.plate > (platesArray.length / 2) || platesArray[i.plate].mapBorder == true){
+			// SEA
+			i.inland = false;
+
+			if (i.plateBorder != true){
+				i.z = 0;
+				i.m = 3;
+			} else {
+				if (i.z >= 20){
+					// Island Centers
+					if (i.z < 32) {
+						i.z = Math.ceil(((i.z - 6)/8) * 1);
+						i.m = Math.ceil(((i.z - 6)/5) * 1);
+					} else {
+						i.z = 4;
+						i.m = 6;
+					}
+				} else {
+					if (i.z > 5){
+						// Reefs
+						i.m = 2;
+						i.z = 0;
+					} else {
+						// This creates texture in reefs,
+						// to break up some long archipelegos
+						i.m = 3;
+						i.z = 0;
+					}
+				}
+			}
+		} else {
+			// LAND
+			i.inland = true;
+			i.m = 1;
+
+			if (i.z > 0 && i.z < 5){
+				i.z = 1;
+				// moisture will be determined by an average of distance from water and distance from mountain (z<20)
+			} else if (i.z >= 5 && i.z < 10){
+				i.z = 2;
+			} else if (i.z >= 10 && i.z <= 15){
+				i.z = 3;
+			} else if (i.z >= 15 && i.z < 20){
+				i.z = 4;
+				i.m = rand(1, 3);
+			} else if (i.z >= 20){
+				i.z = 4;
+				i.m = rand(4, 6);
+			} else {
+				i.z = 0;
 			}
 		}
 	}
@@ -275,7 +322,11 @@ mapGrid(totalY, totalX, function(){
 	createContinents(rand(24, 48), function(){
 		pathFinder(function(){
 			plateGeography(function(){
-				landTexture();
+				// _Build Map
+				mapBorderPlates(function(){
+					landTexture(function(){});
+					makeIslands(function(){});
+				});
 			});
 		});
 	});
