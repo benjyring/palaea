@@ -1,7 +1,8 @@
-var totalX = 130,
-totalY = 80,
-cellArray = [],
-continentsArray = [];
+const totalX = 130,
+totalY = 80;
+
+var cellArray = [],
+platesArray = [];
 
 function isOdd(num) {
 	return num % 2;
@@ -39,6 +40,7 @@ function findOnce(arr1, arr2){
 }
 
 function getCellByXY(elX, elY){
+	// Returns a single cell by inputting X and Y coordinates
 	return cellArray.filter(cell => cell.x == elX && cell.y == elY)[0];
 }
 
@@ -48,16 +50,16 @@ function checkPlus(el){
 	return [getCellByXY(el.x, el.y - 1), getCellByXY(el.x + 1, el.y), getCellByXY(el.x, el.y + 1), getCellByXY(el.x - 1, el.y)];
 }
 
-function zmod(currentCell,raiseBy,degreeOfVariation){
-	var existingZ = currentCell.z,
+function zmod(cc,raiseBy,degreeOfVariation){
+	var existingZ = cc.z,
 	newZ = rand((raiseBy + existingZ), (raiseBy*Math.abs(degreeOfVariation)));
-	currentCell.z = newZ;
+	cc.z = newZ;
 }
 
-function mMod(currentCell,raiseBy,degreeOfVariation){
-	var existingm = currentCell.m,
+function mMod(cc,raiseBy,degreeOfVariation){
+	var existingm = cc.m,
 	newm = rand((raiseBy + existingm), (raiseBy*Math.abs(degreeOfVariation)));
-	currentCell.m = newm;
+	cc.m = newm;
 }
 
 function modifySurroundingZ(el){
@@ -78,14 +80,14 @@ function modifySurroundingZ(el){
 	}
 }
 
-function mapCell(x,y,z,m,inland,continent,continentBorder,mapBorder){
+function mapCell(x,y,z,m,inland,plate,plateBorder,mapBorder){
 	this.x = x;
 	this.y = y;
 	this.z = z;
 	this.m = m;
 	this.inland = inland || false;
-	this.continent = continent;
-	this.continentBorder = continentBorder || false;
+	this.plate = plate;
+	this.plateBorder = plateBorder || false;
 	this.mapBorder = mapBorder || false;
 }
 
@@ -93,22 +95,22 @@ function mapGrid(rows, cols, callback){
 	for (var r = 0; r < rows; ++r){
 		for (var c = 0; c < cols; ++c){
 			cellArray.push(
-				new mapCell(c+1, r+1, rand(1,3))
+				new mapCell(c+1, r+1, 1)
 			);
 		}
 	}
 	callback();
 }
 
-function createContinents(numberOfContinents, callback){
-	for (var c = 0; c < numberOfContinents; c++){
+function createPlates(numberOfPlates, callback){
+	for (var c = 0; c < numberOfPlates; c++){
 		var randX = rand(1, totalX),
 		randY = rand(1, totalY),
-		continentNumber = (c+1),
+		plateNumber = (c+1),
 		rXrY = getCellByXY(randX, randY);
 
-		rXrY.continent = continentNumber;
-		continentsArray.push(rXrY);
+		rXrY.plate = plateNumber;
+		platesArray.push(rXrY);
 	}
 	callback();
 }
@@ -118,11 +120,11 @@ function pathFinder(callback){
 		var paths = [],
 		pathsObj = {};
 
-		for (var c = 0; c < continentsArray.length; c++){
-			var diffX = Math.abs(continentsArray[c].x - cellArray[i].x),
-			diffY = Math.abs(continentsArray[c].y - cellArray[i].y);
+		for (var c = 0; c < platesArray.length; c++){
+			var diffX = Math.abs(platesArray[c].x - cellArray[i].x),
+			diffY = Math.abs(platesArray[c].y - cellArray[i].y);
 
-			paths.push((diffX + diffY) + ':' + continentsArray[c].continent.toString());
+			paths.push((diffX + diffY) + ':' + platesArray[c].plate.toString());
 		}
 
 		for (var d = 0; d < paths.length; d++) {
@@ -134,111 +136,111 @@ function pathFinder(callback){
 		var min = Object.keys(pathsObj).min(),
 		shortest = pathsObj[min];
 
-		cellArray[i].continent = shortest;
+		cellArray[i].plate = shortest;
 	}
 	callback();
 }
 
 function plateGeography(callback){
-	for (var c = 0; c < continentsArray.length; c++){
-		continentsArray[c].force = rand(1,10);
-		continentsArray[c].direction = rand(1,4);
+	for (var c = 0; c < platesArray.length; c++){
+		platesArray[c].force = rand(1,10);
+		platesArray[c].direction = rand(1,4);
 	}
 
 	for (var i = 0; i < cellArray.length; i++){
-		var currentCellX = cellArray[i].x,
-		currentCellY = cellArray[i].y,
-		currentCell = cellArray[i],
-		contCurrent = continentsArray[parseInt(currentCell.continent) - 1],
-		ccd = contCurrent.direction,
-		cellToE, contNextE, ced, cef,
-		cellToS, contNextS, csd, csf;
+		var cc = cellArray[i],
+		cp = platesArray[parseInt(cc.plate) - 1],
+		cpd = cp.direction,
+		ce, pe, ped, pef,
+		cs, ps, psd, psf;
 
-		if (getCellByXY(currentCellX+1, currentCellY)){
-			var cellToE = getCellByXY(currentCellX+1, currentCellY),
-			contNextE = continentsArray[parseInt(cellToE.continent) - 1],
-			ced = contNextE.direction,
-			cef = contNextE.force;
+		if (getCellByXY(cc.x+1, cc.y)){
+			var ce = getCellByXY(cc.x+1, cc.y),
+			pe = platesArray[parseInt(ce.plate) - 1],
+			ped = pe.direction,
+			pef = pe.force;
 		}
 
-		if (getCellByXY(currentCellX+1, currentCellY)){
-			var cellToS = getCellByXY(currentCellX+1, currentCellY),
-			contNextS = continentsArray[parseInt(cellToS.continent) - 1],
-			csd = contNextS.direction,
-			csf = contNextS.force;
+		if (getCellByXY(cc.x+1, cc.y)){
+			var cs = getCellByXY(cc.x+1, cc.y),
+			ps = platesArray[parseInt(cs.plate) - 1],
+			psd = ps.direction,
+			psf = ps.force;
 		}
 
-		if (cellToE != null){
-			if (ccd != ced){
+		if (ce != null){
+			if (cpd != ped){
 				// Checking only the cell to the east
-				if (!isOdd(ccd) && !isOdd(ced)){
-					if (ccd < ced){
+				if (!isOdd(cpd) && !isOdd(ped)){
+					if (cpd < ped){
 						// Mountain
-						zmod(currentCell,2,cef+csf);
-						zmod(cellToE,2,cef+csf);
+						zmod(cc,2,pef+psf);
+						zmod(ce,2,pef+psf);
 					} else {
 						// Canyon
-						zmod(currentCell,-2,cef+csf);
-						zmod(cellToE,-2,cef+csf);
+						zmod(cc,-2,pef+psf);
+						zmod(ce,-2,pef+psf);
 					}
-				} else if ((!isOdd(ccd) && isOdd(ced)) || (isOdd(ccd) && !isOdd(ced)) ) {
-					if (ccd < ced){
+				} else if ((!isOdd(cpd) && isOdd(ped)) || (isOdd(cpd) && !isOdd(ped)) ) {
+					if (cpd < ped){
 						// Hill
-						zmod(currentCell,1,cef+csf);
-						zmod(cellToE,1,cef+csf);
+						zmod(cc,1,pef+psf);
+						zmod(ce,1,pef+psf);
 					} else {
 						// Valley
-						zmod(currentCell,-1,cef+csf);
-						zmod(cellToE,-1,cef+csf);
+						zmod(cc,-1,pef+psf);
+						zmod(ce,-1,pef+psf);
 					}
 				}
-				currentCell.continentBorder = true;
+				cc.plateBorder = true;
 			}
 		}
-		if (cellToS != null){
-			if (ccd != csd){
+		if (cs != null){
+			if (cpd != psd){
 				// Checking only the cell to the south
-				if (isOdd(ccd) && isOdd(csd)){
-					if (ccd > csd){
+				if (isOdd(cpd) && isOdd(psd)){
+					if (cpd > psd){
 						// Mountain
-						zmod(currentCell,2,cef+csf);
-						zmod(cellToE,2,cef+csf);
+						zmod(cc,2,pef+psf);
+						zmod(ce,2,pef+psf);
 					} else {
 						// Canyon
-						zmod(currentCell,-2,cef+csf);
-						zmod(cellToE,-2,cef+csf);
+						zmod(cc,-2,pef+psf);
+						zmod(ce,-2,pef+psf);
 					}
-				} else if ((!isOdd(ccd) && isOdd(csd)) || (isOdd(ccd) && !isOdd(csd)) ) {
-					if (ccd > csd){
+				} else if ((!isOdd(cpd) && isOdd(psd)) || (isOdd(cpd) && !isOdd(psd)) ) {
+					if (cpd > psd){
 						// Hill
-						zmod(currentCell,1,cef+csf);
-						zmod(cellToE,1,cef+csf);
+						zmod(cc,1,pef+psf);
+						zmod(ce,1,pef+psf);
 					} else {
 						// Valley
-						zmod(currentCell,-1,cef+csf);
-						zmod(cellToE,-1,cef+csf);
+						zmod(cc,-1,pef+psf);
+						zmod(ce,-1,pef+psf);
 					}
 				}
-				currentCell.continentBorder = true;
+				cc.plateBorder = true;
 			}
 		}
 	}
 	callback();
 }
 
-	}
-	callback();
-}
-
-function mapBorderContinents(callback){
+function mapBorderPlates(callback){
 	var mapBorderCells = cellArray.filter(cell => [1, totalX].indexOf(cell.x) > -1 || [1, totalY].indexOf(cell.y) > -1);
 
-	for (var c = 1; c <= continentsArray.length; c++){
-		var cellsInThisContinent = cellArray.filter(cell => cell.continent == c);
+	for (var c = 1; c <= platesArray.length; c++){
+		var cellsInThisPlate = cellArray.filter(cell => cell.plate == c);
 
-		if (findOnce(cellsInThisContinent, mapBorderCells)){
-			if (!isEmpty(continentsArray[c])){
-				continentsArray[c].mapBorder = true;
+		if (findOnce(cellsInThisPlate, mapBorderCells)){
+			if (!isEmpty(platesArray[c])){
+				platesArray[c].mapBorder = true;
+			}
+		}
+	}
+	callback();
+}
+
 function landTexture(callback){
 	for (n = 0; n < cellArray.length; n++){
 		let i = cellArray[n];
@@ -296,13 +298,14 @@ function landTexture(callback){
 			}
 		}
 	}
+
 	callback();
 }
 
 function makeIslands(callback){
 	var islands = cellArray.filter(cell => cell.inland == false && cell.m > 3);
 
-	for (n = 0; n < islands.length; n++) {
+	for (n = 0; n < islands.length; n++){
 		var island = checkPlus(islands[n]);
 
 		for (i = 0; i < island.length; i++){
@@ -319,7 +322,7 @@ function makeIslands(callback){
 
 // BUILD THE WORLD
 mapGrid(totalY, totalX, function(){
-	createContinents(rand(24, 48), function(){
+	createPlates(rand(24, 48), function(){
 		pathFinder(function(){
 			plateGeography(function(){
 				// _Build Map
