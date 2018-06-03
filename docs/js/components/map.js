@@ -1,7 +1,8 @@
-var totalX = 130,
-totalY = 80,
-cellArray = [],
-continentsArray = [];
+const totalX = 130,
+totalY = 80;
+
+var cellArray = [],
+platesArray = [];
 
 function isOdd(num) {
 	return num % 2;
@@ -38,44 +39,55 @@ function findOnce(arr1, arr2){
 	return arr1.some(r=> arr2.includes(r));
 }
 
-function zmod(currentCell,raiseBy,degreeOfVariation){
-	var existingZ = currentCell.z,
-	newZ = rand((raiseBy + existingZ), (raiseBy*Math.abs(degreeOfVariation)));
-	currentCell.z = newZ;
+function getCellByXY(elX, elY){
+	// Returns a single cell by inputting X and Y coordinates
+	return cellArray.filter(cell => cell.x == elX && cell.y == elY)[0];
 }
 
-function mMod(currentCell,raiseBy,degreeOfVariation){
-	var existingm = currentCell.m,
+function checkPlus(el){
+	// Returns an array of the "plus" shape of cells surrounding the passed cell.
+	// Ordered North, East, South, West
+	return [getCellByXY(el.x, el.y - 1), getCellByXY(el.x + 1, el.y), getCellByXY(el.x, el.y + 1), getCellByXY(el.x - 1, el.y)];
+}
+
+function zmod(cc,raiseBy,degreeOfVariation){
+	var existingZ = cc.z,
+	newZ = rand((raiseBy + existingZ), (raiseBy*Math.abs(degreeOfVariation)));
+	cc.z = newZ;
+}
+
+function mMod(cc,raiseBy,degreeOfVariation){
+	var existingm = cc.m,
 	newm = rand((raiseBy + existingm), (raiseBy*Math.abs(degreeOfVariation)));
-	currentCell.m = newm;
+	cc.m = newm;
 }
 
 function modifySurroundingZ(el){
-	var cellTo1N = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y - 1))[0],
-	cellTo1E = cellArray.filter(cell => cell.x == (e.x + 1) && cell.y == e.y)[0],
-	cellTo1S = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y + 1))[0],
-	cellTo1W = cellArray.filter(cell => cell.x == (e.x - 1) && cell.y == e.y)[0],
-	cellTo2N = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y - 2))[0],
-	cellTo2E = cellArray.filter(cell => cell.x == (e.x + 2) && cell.y == e.y)[0],
-	cellTo2S = cellArray.filter(cell => cell.x == e.x && cell.y == (e.y + 2))[0],
-	cellTo2W = cellArray.filter(cell => cell.x == (e.x - 2) && cell.y == e.y)[0],
+	var cellTo1N = getCellByXY(el.x, (el.y - 1)),
+	cellTo1E = getCellByXY((el.x + 1), el.y),
+	cellTo1S = getCellByXY(el.x, (el.y + 1)),
+	cellTo1W = getCellByXY((el.x - 1), el.y),
+	cellTo2N = getCellByXY(el.x, (el.y - 2)),
+	cellTo2E = getCellByXY((el.x + 2), el.y),
+	cellTo2S = getCellByXY(el.x, (el.y + 2)),
+	cellTo2W = getCellByXY((el.x - 2), el.y),
 	cellAway1 = [cellto1N, cellto1E, cellto1S, cellto1W],
 	cellAway2 = [cellto2N, cellto2E, cellto2S, cellto2W];
 
-	for (i=0; i < cellAway1.length; i++){
+	for (i = 0; i < cellAway1.length; i++){
 		var difference = el.z - cellAway2[i].z;
 		zmod(cellAway1[i], 2, difference);
 	}
 }
 
-function mapCell(x,y,z,m,inland,continent,continentBorder,mapBorder){
+function mapCell(x,y,z,m,inland,plate,plateBorder,mapBorder){
 	this.x = x;
 	this.y = y;
 	this.z = z;
 	this.m = m;
 	this.inland = inland || false;
-	this.continent = continent;
-	this.continentBorder = continentBorder || false;
+	this.plate = plate;
+	this.plateBorder = plateBorder || false;
 	this.mapBorder = mapBorder || false;
 }
 
@@ -83,22 +95,22 @@ function mapGrid(rows, cols, callback){
 	for (var r = 0; r < rows; ++r){
 		for (var c = 0; c < cols; ++c){
 			cellArray.push(
-				new mapCell(c+1, r+1, rand(1,3))
+				new mapCell(c+1, r+1, 1)
 			);
 		}
 	}
 	callback();
 }
 
-function createContinents(numberOfContinents, callback){
-	for (var c = 0; c < numberOfContinents; c++){
+function createPlates(numberOfPlates, callback){
+	for (var c = 0; c < numberOfPlates; c++){
 		var randX = rand(1, totalX),
 		randY = rand(1, totalY),
-		continentNumber = (c+1),
-		rXrY = cellArray.filter(cell => cell.x === randX && cell.y === randY)[0];
+		plateNumber = (c+1),
+		rXrY = getCellByXY(randX, randY);
 
-		rXrY.continent = continentNumber;
-		continentsArray.push(rXrY);
+		rXrY.plate = plateNumber;
+		platesArray.push(rXrY);
 	}
 	callback();
 }
@@ -108,11 +120,11 @@ function pathFinder(callback){
 		var paths = [],
 		pathsObj = {};
 
-		for (var c = 0; c < continentsArray.length; c++){
-			var diffX = Math.abs(continentsArray[c].x - cellArray[i].x),
-			diffY = Math.abs(continentsArray[c].y - cellArray[i].y);
+		for (var c = 0; c < platesArray.length; c++){
+			var diffX = Math.abs(platesArray[c].x - cellArray[i].x),
+			diffY = Math.abs(platesArray[c].y - cellArray[i].y);
 
-			paths.push((diffX + diffY) + ':' + continentsArray[c].continent.toString());
+			paths.push((diffX + diffY) + ':' + platesArray[c].plate.toString());
 		}
 
 		for (var d = 0; d < paths.length; d++) {
@@ -124,92 +136,105 @@ function pathFinder(callback){
 		var min = Object.keys(pathsObj).min(),
 		shortest = pathsObj[min];
 
-		cellArray[i].continent = shortest;
+		cellArray[i].plate = shortest;
 	}
 	callback();
 }
 
 function plateGeography(callback){
-	for (var c = 0; c < continentsArray.length; c++){
-		continentsArray[c].force = rand(1,10);
-		continentsArray[c].direction = rand(1,4);
+	for (var c = 0; c < platesArray.length; c++){
+		platesArray[c].force = rand(1,10);
+		platesArray[c].direction = rand(1,4);
 	}
 
 	for (var i = 0; i < cellArray.length; i++){
-		var currentCellX = cellArray[i].x,
-		currentCellY = cellArray[i].y,
-		currentCell = cellArray[i],
-		contCurrent = continentsArray[parseInt(currentCell.continent) - 1],
-		ccd = contCurrent.direction,
-		cellToE, contNextE, ced, cef,
-		cellToS, contNextS, csd, csf;
+		var cc = cellArray[i],
+		cp = platesArray[parseInt(cc.plate) - 1],
+		cpd = cp.direction,
+		ce, pe, ped, pef,
+		cs, ps, psd, psf;
 
-		if (cellArray.filter(cell => cell.x == currentCellX+1 && cell.y == currentCellY)[0]){
-			var cellToE = cellArray.filter(cell => cell.x == currentCellX+1 && cell.y == currentCellY)[0],
-			contNextE = continentsArray[parseInt(cellToE.continent) - 1],
-			ced = contNextE.direction,
-			cef = contNextE.force;
+		if (getCellByXY(cc.x+1, cc.y)){
+			var ce = getCellByXY(cc.x+1, cc.y),
+			pe = platesArray[parseInt(ce.plate) - 1],
+			ped = pe.direction,
+			pef = pe.force;
 		}
 
-		if (cellArray.filter(cell => cell.x == currentCellX && cell.y == currentCellY+1)){
-			var cellToS = cellArray.filter(cell => cell.x == currentCellX && cell.y == currentCellY+1)[0],
-			contNextS = continentsArray[parseInt(cellToS.continent) - 1],
-			csd = contNextS.direction,
-			csf = contNextS.force;
+		if (getCellByXY(cc.x+1, cc.y)){
+			var cs = getCellByXY(cc.x+1, cc.y),
+			ps = platesArray[parseInt(cs.plate) - 1],
+			psd = ps.direction,
+			psf = ps.force;
 		}
 
-		if (cellToE != null){
-			if (ccd != ced){
+		if (ce != null){
+			if (cpd != ped){
 				// Checking only the cell to the east
-				if (!isOdd(ccd) && !isOdd(ced)){
-					if (ccd < ced){
+				if (!isOdd(cpd) && !isOdd(ped)){
+					if (cpd < ped){
 						// Mountain
-						zmod(currentCell,2,cef+csf);
-						zmod(cellToE,2,cef+csf);
+						zmod(cc,2,pef+psf);
+						zmod(ce,2,pef+psf);
 					} else {
 						// Canyon
-						zmod(currentCell,-2,cef+csf);
-						zmod(cellToE,-2,cef+csf);
+						zmod(cc,-2,pef+psf);
+						zmod(ce,-2,pef+psf);
 					}
-				} else if ((!isOdd(ccd) && isOdd(ced)) || (isOdd(ccd) && !isOdd(ced)) ) {
-					if (ccd < ced){
+				} else if ((!isOdd(cpd) && isOdd(ped)) || (isOdd(cpd) && !isOdd(ped)) ) {
+					if (cpd < ped){
 						// Hill
-						zmod(currentCell,1,cef+csf);
-						zmod(cellToE,1,cef+csf);
+						zmod(cc,1,pef+psf);
+						zmod(ce,1,pef+psf);
 					} else {
 						// Valley
-						zmod(currentCell,-1,cef+csf);
-						zmod(cellToE,-1,cef+csf);
+						zmod(cc,-1,pef+psf);
+						zmod(ce,-1,pef+psf);
 					}
 				}
-				currentCell.continentBorder = true;
+				cc.plateBorder = true;
 			}
 		}
-		if (cellToS != null){
-			if (ccd != csd){
+		if (cs != null){
+			if (cpd != psd){
 				// Checking only the cell to the south
-				if (isOdd(ccd) && isOdd(csd)){
-					if (ccd > csd){
+				if (isOdd(cpd) && isOdd(psd)){
+					if (cpd > psd){
 						// Mountain
-						zmod(currentCell,2,cef+csf);
-						zmod(cellToE,2,cef+csf);
+						zmod(cc,2,pef+psf);
+						zmod(ce,2,pef+psf);
 					} else {
 						// Canyon
-						zmod(currentCell,-2,cef+csf);
-						zmod(cellToE,-2,cef+csf);
+						zmod(cc,-2,pef+psf);
+						zmod(ce,-2,pef+psf);
 					}
-				} else if ((!isOdd(ccd) && isOdd(csd)) || (isOdd(ccd) && !isOdd(csd)) ) {
-					if (ccd > csd){
+				} else if ((!isOdd(cpd) && isOdd(psd)) || (isOdd(cpd) && !isOdd(psd)) ) {
+					if (cpd > psd){
 						// Hill
-						zmod(currentCell,1,cef+csf);
-						zmod(cellToE,1,cef+csf);
+						zmod(cc,1,pef+psf);
+						zmod(ce,1,pef+psf);
 					} else {
 						// Valley
-						zmod(currentCell,-1,cef+csf);
-						zmod(cellToE,-1,cef+csf);
+						zmod(cc,-1,pef+psf);
+						zmod(ce,-1,pef+psf);
 					}
 				}
-				currentCell.continentBorder = true;
+				cc.plateBorder = true;
+			}
+		}
+	}
+	callback();
+}
+
+function mapBorderPlates(callback){
+	var mapBorderCells = cellArray.filter(cell => [1, totalX].indexOf(cell.x) > -1 || [1, totalY].indexOf(cell.y) > -1);
+
+	for (var c = 1; c <= platesArray.length; c++){
+		var cellsInThisPlate = cellArray.filter(cell => cell.plate == c);
+
+		if (findOnce(cellsInThisPlate, mapBorderCells)){
+			if (!isEmpty(platesArray[c])){
+				platesArray[c].mapBorder = true;
 			}
 		}
 	}
@@ -217,37 +242,94 @@ function plateGeography(callback){
 }
 
 function landTexture(callback){
-	for (var i = 0; i < cellArray.length; i++){
-		modifySurroundingZ(cellArray[i]);
-	}
-	for (var c = 0; c < continentsArray.length; c++){
-		zmod(continentsArray[c], 1, 2);
-		modifySurroundingZ(continentsArray[c]);
-	}
-	callback();
-}
+	for (n = 0; n < cellArray.length; n++){
+		let i = cellArray[n];
 
-function mapBorderContinents(callback){
-	var mapBorderCells = cellArray.filter(cell => [1, totalX].indexOf(cell.x) > -1 || [1, totalY].indexOf(cell.y) > -1);
+		if (i.plate > (platesArray.length / 2) || platesArray[i.plate].mapBorder == true){
+			// SEA
+			i.inland = false;
 
-	for (var c = 1; c <= continentsArray.length; c++){
-		var cellsInThisContinent = cellArray.filter(cell => cell.continent == c);
+			if (i.plateBorder != true){
+				i.z = 0;
+				i.m = 3;
+			} else {
+				if (i.z >= 20){
+					// Island Centers
+					if (i.z < 32) {
+						i.z = Math.ceil(((i.z - 6)/8) * 1);
+						i.m = Math.ceil(((i.z - 6)/5) * 1);
+					} else {
+						i.z = 4;
+						i.m = 6;
+					}
+				} else {
+					if (i.z > 5){
+						// Reefs
+						i.m = 2;
+						i.z = 0;
+					} else {
+						// This creates texture in reefs,
+						// to break up some long archipelegos
+						i.m = 3;
+						i.z = 0;
+					}
+				}
+			}
+		} else {
+			// LAND
+			i.inland = true;
+			i.m = 1;
 
-		if (findOnce(cellsInThisContinent, mapBorderCells)){
-			if (!isEmpty(continentsArray[c])){
-				continentsArray[c].mapBorder = true;
+			if (i.z > 0 && i.z < 5){
+				i.z = 1;
+				// moisture will be determined by an average of distance from water and distance from mountain (z<20)
+			} else if (i.z >= 5 && i.z < 10){
+				i.z = 2;
+			} else if (i.z >= 10 && i.z <= 15){
+				i.z = 3;
+			} else if (i.z >= 15 && i.z < 20){
+				i.z = 4;
+				i.m = rand(1, 3);
+			} else if (i.z >= 20){
+				i.z = 4;
+				i.m = rand(4, 6);
+			} else {
+				i.z = 0;
 			}
 		}
 	}
+
 	callback();
 }
 
+function makeIslands(callback){
+	var islands = cellArray.filter(cell => cell.inland == false && cell.m > 3);
+
+	for (n = 0; n < islands.length; n++){
+		var island = checkPlus(islands[n]);
+
+		for (i = 0; i < island.length; i++){
+			if (island[i].z < 4){
+				island[i].z=1;
+			}
+		}
+		islands[n].z = 3;
+	}
+
+	callback();
+}
+
+
 // BUILD THE WORLD
 mapGrid(totalY, totalX, function(){
-	createContinents(rand(24, 48), function(){
+	createPlates(rand(24, 48), function(){
 		pathFinder(function(){
 			plateGeography(function(){
-				landTexture();
+				// _Build Map
+				mapBorderPlates(function(){
+					landTexture(function(){});
+					makeIslands(function(){});
+				});
 			});
 		});
 	});
