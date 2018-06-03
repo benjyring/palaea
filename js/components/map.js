@@ -276,9 +276,9 @@ function landTexture(callback){
 				}
 			}
 		} else {
-			// LAND
+			// INLAND
 			i.inland = true;
-			i.m = 1;
+			i.m = 2;
 
 			if (i.z > 0 && i.z < 5){
 				i.z = 1;
@@ -295,6 +295,41 @@ function landTexture(callback){
 				i.m = rand(4, 6);
 			} else {
 				i.z = 0;
+			}
+		}
+	}
+
+	var inlandCells = cellArray.filter(cell => cell.inland === true);
+
+	for (n = 0; n < inlandCells.length; n++){
+		var tc = inlandCells[n],
+		tPlus = checkPlus(tc);
+
+		// Create Shores
+		for (i = 0; i < tPlus.length; i++){
+			if (tPlus[i].inland === false){
+				tPlus[i].m = 2;
+			}
+		}
+
+		// Create Inland Textures
+		if (findOnce(cellArray.filter(cell => cell.inland === false), tPlus)){
+			// Beaches
+			tc.m = 1;
+
+			if (tc.z === 0){
+				// Shrubland
+				tc.m = 3;
+				tc.z = 3;
+			}
+		} else {
+			if (findOnce(cellArray.filter(cell => cell.inland === true && cell.z < 1), tPlus)){
+				for (i = 0; i < tPlus.length; i++){
+					if (tPlus[i].z >= 1){
+						tPlus[i].m = rand(4,6);
+						tPlus[i].z = rand(1,2);
+					}
+				}
 			}
 		}
 	}
