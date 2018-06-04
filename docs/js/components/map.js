@@ -324,10 +324,65 @@ function landTexture(callback){
 			}
 		} else {
 			if (findOnce(cellArray.filter(cell => cell.inland === true && cell.z < 1), tPlus)){
+				// RIVER BASINS
+				// ===============
+				//
+				// Generate trees spreading from freshwater sources
 				for (i = 0; i < tPlus.length; i++){
-					if (tPlus[i].z >= 1){
+					if (tPlus[i].inland === true && tPlus[i].z >= 1){
 						tPlus[i].m = rand(4,6);
 						tPlus[i].z = rand(1,2);
+
+						// Generate lighter forests further from the water
+						var tPlusX = checkPlus(tPlus[i]);
+
+						for (c = 0; c < tPlusX.length; c++){
+							if (tPlus[i].inland === true && tPlus[i].z >= 1){
+								tPlusX[c].m = rand(3,5);
+								tPlusX[c].z = rand(1,3);
+
+								// Generate brushy patches
+								var tPlusXX = checkPlus(tPlusX[i]);
+
+								for (l = 0; l < tPlusXX.length; l++){
+									if (tPlus[i].inland === true && tPlus[i].z >= 1){
+										tPlusXX[l].m = rand(2,4);
+										tPlusXX[l].z = rand(1,2);
+									}
+								}
+							}
+						}
+					}
+				}
+			} else if (findOnce(cellArray.filter(cell => cell.inland === true && cell.z >= 4), tPlus)){
+				// MOUNTAIN RANGES
+				// ===============
+				//
+				// Generate smaller peaks in a radius
+				for (i = 0; i < tPlus.length; i++){
+					if (tPlus[i].z <= 3){
+						tPlus[i].m = rand(1,3);
+						tPlus[i].z = rand(2,3);
+
+						// Generate foothills and forests at the bases of the ranges
+						var tPlusX = checkPlus(tPlus[i]);
+
+						for (c = 0; c < tPlusX.length; c++){
+							if (tPlus[i].inland === true && tPlusX[c].z <= 2 && tPlusX[c].m > 1){
+								tPlusX[c].m = rand(3,5);
+								tPlusX[c].z = rand(1,3);
+
+								// Generate spotty forests at the bases of foothills
+								var tPlusXX = checkPlus(tPlusX[i]);
+
+								for (l = 0; l < tPlusXX.length; l++){
+									if (tPlus[i].inland === true && tPlusXX[l].z <= 2 && tPlusXX[l].m > 1){
+										tPlusXX[l].m = rand(2,4);
+										tPlusXX[l].z = rand(1,2);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
