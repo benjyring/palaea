@@ -329,7 +329,7 @@ function landTexture(callback){
 				//
 				// Generate trees spreading from freshwater sources
 				for (i = 0; i < tPlus.length; i++){
-					if (tPlus[i].inland === true && tPlus[i].z >= 1){
+					if (!isEmpty(tPlus[i]) && tPlus[i].inland === true && tPlus[i].z >= 1){
 						tPlus[i].m = rand(4,6);
 						tPlus[i].z = rand(1,2);
 
@@ -337,15 +337,15 @@ function landTexture(callback){
 						var tPlusX = checkPlus(tPlus[i]);
 
 						for (c = 0; c < tPlusX.length; c++){
-							if (tPlus[i].inland === true && tPlus[i].z >= 1){
+							if (!isEmpty(tPlusX[c]) && tPlusX[c].inland === true && tPlusX[c].z >= 1){
 								tPlusX[c].m = rand(3,5);
 								tPlusX[c].z = rand(1,3);
 
 								// Generate brushy patches
-								var tPlusXX = checkPlus(tPlusX[i]);
+								var tPlusXX = checkPlus(tPlusX[c]);
 
 								for (l = 0; l < tPlusXX.length; l++){
-									if (tPlus[i].inland === true && tPlus[i].z >= 1){
+									if (!isEmpty(tPlusXX[l]) && tPlusXX[l].inland === true && tPlusXX[l].z >= 1){
 										tPlusXX[l].m = rand(2,4);
 										tPlusXX[l].z = rand(1,2);
 									}
@@ -368,15 +368,15 @@ function landTexture(callback){
 						var tPlusX = checkPlus(tPlus[i]);
 
 						for (c = 0; c < tPlusX.length; c++){
-							if (tPlus[i].inland === true && tPlusX[c].z <= 2 && tPlusX[c].m > 1){
+							if (!isEmpty(tPlusX[c]) && tPlusX[c].inland === true && tPlusX[c].z <= 2 && tPlusX[c].m > 1){
 								tPlusX[c].m = rand(3,5);
 								tPlusX[c].z = rand(1,3);
 
 								// Generate spotty forests at the bases of foothills
-								var tPlusXX = checkPlus(tPlusX[i]);
+								var tPlusXX = checkPlus(tPlusX[c]);
 
 								for (l = 0; l < tPlusXX.length; l++){
-									if (tPlus[i].inland === true && tPlusXX[l].z <= 2 && tPlusXX[l].m > 1){
+									if (!isEmpty(tPlusXX[l]) && tPlusXX[l].inland === true && tPlusXX[l].z <= 2 && tPlusXX[l].m > 1){
 										tPlusXX[l].m = rand(2,4);
 										tPlusXX[l].z = rand(1,2);
 									}
@@ -399,7 +399,7 @@ function makeIslands(callback){
 		var island = checkPlus(islands[n]);
 
 		for (i = 0; i < island.length; i++){
-			if (island[i].z < 4){
+			if (!isEmpty(island[i]) && island[i].z < 4){
 				island[i].z=1;
 			}
 		}
@@ -412,7 +412,7 @@ function makeIslands(callback){
 
 // BUILD THE WORLD
 mapGrid(totalY, totalX, function(){
-	createPlates(rand(24, 48), function(){
+	createPlates(rand(36, 48), function(){
 		pathFinder(function(){
 			plateGeography(function(){
 				// _Build Map
