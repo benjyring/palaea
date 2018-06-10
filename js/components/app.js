@@ -124,8 +124,19 @@ $(function() {
 	// _Build Map
 	$('#buildMap').click(function(){
 		mapVis(sideLen);
-		$('#sidebar').removeClass('pregame');
-		$(this).remove();
+		$('#pregame').remove();
+		$('#ui-header, #ui-sidebar').removeClass('hidden');
+		$('#map').css('margin-top', $('#ui-header').height() + 'px');
+
+		$('.counter-population').text(myPop.population);
+		$('.counter-supplies').text(myPop.supplies);
+		$('.counter-health').text(myPop.health);
+		$('.counter-water').text(myPop.water);
+		$('.counter-food').text(myPop.food);
+		$('.counter-morale').text(myPop.morale);
+
+		$('.counter-ap').text(4);
+		$('.counter-turn').text(1);
 	});
 
 	$('#loadRebuildMap').click(function(){
@@ -146,25 +157,33 @@ $(function() {
 	$('#colorPalette').click(function(){
 		$('#colors').toggleClass('visible');
 	});
+
 	// _Zoom
-	$('#zoomIn').click(function(){
+	function zoomIn(){
 		if (zoom < 8) {
 			zoom = zoom + 1;
 			mapVis(sideLen*zoom);
 		}
-	});
-	$('#zoomOut').click(function(){
+	}
+	function zoomOut(){
 		if (zoom > 1) {
 			zoom = zoom - 1;
 			mapVis(sideLen*zoom);
 		}
+	}
+	$('#zoomIn').click(function(){
+		zoomIn();
+	});
+	$('#zoomOut').click(function(){
+		zoomOut();
+	});
 	});
 	$(document).bind('keypress', function(e) {
 		if(e.charCode==61){
-			$('#zoomIn').click();
+			zoomIn();
 		}
 		if(e.charCode==45){
-			$('#zoomOut').click();
+			zoomOut();
 		}
 	});
 
