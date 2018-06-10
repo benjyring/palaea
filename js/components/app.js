@@ -177,6 +177,16 @@ $(function() {
 	$('#zoomOut').click(function(){
 		zoomOut();
 	});
+	$('#map').on('wheel', function(e) {
+		var oEvent = e.originalEvent,
+		delta  = oEvent.deltaY || oEvent.wheelDelta;
+		// deltaY for wheel event
+		// wheelData for mousewheel event
+		if (delta < 0) {
+			zoomIn();
+		} else {
+			zoomOut();
+		}
 	});
 	$(document).bind('keypress', function(e) {
 		if(e.charCode==61){
