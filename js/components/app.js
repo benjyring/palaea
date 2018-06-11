@@ -31,6 +31,8 @@ var colorsArray = {
 	env44 : '#ffffff',
 	env45 : '#ffffff',
 	env46 : '#ffffff',
+
+	env77 : '#f46919'
 };
 var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'};
 var map = document.getElementById('map');
@@ -62,10 +64,30 @@ $(function() {
 		// Visualize map
 		map.width = totalX*d;
 		map.height = totalY*d;
-			// Create grid
-		$.each(cellArray, function(index, i) {
-			ctx.fillStyle = colorsArray['env' + i.z + '' + i.m];
-			ctx.fillRect(((d*i.x)-d), ((d*i.y)-d), d, d);
+
+		// // Add event listener for `click` events.
+		// map.addEventListener('click', function(e) {
+		// 	var x = e.pageX - map.offsetLeft,
+		// 	y = e.pageY - map.offsetTop;
+
+		// 	// Collision detection between clicked offset and element.
+		// 	cellArray.forEach(function(el) {
+		// 		if (y > ((d*el.y)-d) && y < ((d*el.y)-d) + d && x > ((d*el.x)-d) && x < ((d*el.x)-d) + d) {
+		// 			console.log('clicked cell X-' + el.x + ' Y-' + el.y);
+		// 		}
+		// 	});
+
+		// }, false);
+
+		// Create grid
+		$.each(cellArray, function(i, el) {
+			ctx.fillStyle = colorsArray['env' + el.z + '' + el.m];
+			ctx.fillRect(
+				((d*el.x)-d),
+				((d*el.y)-d),
+				d,
+				d
+			);
 		});
 	}
 
@@ -139,6 +161,16 @@ $(function() {
 		$('.counter-turn').text(1);
 	});
 
+	$('#main-menu-opener').click(function(){
+		$('#ui-sidebar').toggleClass('open');
+
+		if ($(this).text() === 'X'){
+			$(this).text('MENU');
+		} else {
+			$(this).text('X');
+		}
+	});
+
 	$('#loadRebuildMap').click(function(){
 		if ($(this).text() == 'Cancel'){
 			$(this).text('Load Saved Game');
@@ -178,11 +210,8 @@ $(function() {
 		zoomOut();
 	});
 	$('#map').on('wheel', function(e) {
-		var oEvent = e.originalEvent,
-		delta  = oEvent.deltaY || oEvent.wheelDelta;
-		// deltaY for wheel event
-		// wheelData for mousewheel event
-		if (delta < 0) {
+		// Does not work in old versions of IE and Safari
+		if (e.originalEvent.deltaY < 0) {
 			zoomIn();
 		} else {
 			zoomOut();
