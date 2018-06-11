@@ -31,7 +31,7 @@
 				<li><a class="icon icon-turn">TURN<span class="badge counter-turn">0</span></a></li>
 				<li><button class="btn btn-default navbar-btn" id="zoomIn">+</button></li>
 				<li><button class="btn btn-default navbar-btn" id="zoomOut">-</button></li>
-				<li><a id="main-menu">MENU</a></li>
+				<li><a id="main-menu-opener">MENU</a></li>
 			</ul>
 
 		</div>
@@ -60,8 +60,12 @@
 	</div>
 
 
-	<aside id="ui-sidebar" class="hidden navbar navbar-inverse navbar-fixed-bottom">
-		<ul class="nav navbar-nav nav-stacked">
+	<aside id="ui-sidebar" class="hidden navbar navbar-inverse">
+		<div class="drawer-header">
+			<h2>MENU</h2>
+		</div>
+
+		<ul class="nav navbar-nav">
 			<li><a id="saveGame" class="text-right">Save Game</a></li>
 			<li><a id="minimap-display" class="text-right">Show/Hide Minimap</a></li>
 		</ul>
