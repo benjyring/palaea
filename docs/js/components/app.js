@@ -31,8 +31,6 @@ var colorsArray = {
 	env44 : '#ffffff',
 	env45 : '#ffffff',
 	env46 : '#ffffff',
-
-	env77 : '#f46919'
 };
 var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'};
 var map = document.getElementById('map');
@@ -42,12 +40,12 @@ var ctx = map.getContext('2d');
 var zoom = 1;
 var sideLen = 4;
 
-(function($) {
+(function($){
 
 "use strict";
 
 // Custom code goes here.
-$(function() {
+$(function(){
 
 	///////////////////////////////
 	// ======================
@@ -66,13 +64,13 @@ $(function() {
 		map.height = totalY*d;
 
 		// // Add event listener for `click` events.
-		// map.addEventListener('click', function(e) {
+		// map.addEventListener('click', function(e){
 		// 	var x = e.pageX - map.offsetLeft,
 		// 	y = e.pageY - map.offsetTop;
 
 		// 	// Collision detection between clicked offset and element.
-		// 	cellArray.forEach(function(el) {
-		// 		if (y > ((d*el.y)-d) && y < ((d*el.y)-d) + d && x > ((d*el.x)-d) && x < ((d*el.x)-d) + d) {
+		// 	cellArray.forEach(function(el){
+		// 		if (y > ((d*el.y)-d) && y < ((d*el.y)-d) + d && x > ((d*el.x)-d) && x < ((d*el.x)-d) + d){
 		// 			console.log('clicked cell X-' + el.x + ' Y-' + el.y);
 		// 		}
 		// 	});
@@ -80,13 +78,31 @@ $(function() {
 		// }, false);
 
 		// Create grid
-		$.each(cellArray, function(i, el) {
+		$.each(cellArray, function(i, el){
 			ctx.fillStyle = colorsArray['env' + el.z + '' + el.m];
 			ctx.fillRect(
 				((d*el.x)-d),
 				((d*el.y)-d),
 				d,
 				d
+			);
+		});
+
+		$.each(popArray, function(i, el){
+			var img;
+
+			if (containsObject(el.occupying[0], myPop.occupying)){
+				img = document.getElementById("human");
+			} else {
+				img = document.getElementById("mammoth");
+			}
+
+			ctx.drawImage(
+				img,
+				(d*el.occupying[0].x)-d,
+				(d*el.occupying[0].y)-d,
+				img.width,
+				img.height
 			);
 		});
 	}
@@ -102,7 +118,7 @@ $(function() {
 			cp,
 			cellToCheck;
 
-			if (i > 0) {
+			if (i > 0){
 				cp = cellArray[i-1].z + '' + cellArray[i-1].m;
 				cellToCheck = codeArray[cp];
 
@@ -192,13 +208,13 @@ $(function() {
 
 	// _Zoom
 	function zoomIn(){
-		if (zoom < 8) {
+		if (zoom < 17){
 			zoom = zoom + 1;
 			mapVis(sideLen*zoom);
 		}
 	}
 	function zoomOut(){
-		if (zoom > 1) {
+		if (zoom > 1){
 			zoom = zoom - 1;
 			mapVis(sideLen*zoom);
 		}
@@ -209,15 +225,15 @@ $(function() {
 	$('#zoomOut').click(function(){
 		zoomOut();
 	});
-	$('#map').on('wheel', function(e) {
+	$('#map').on('wheel', function(e){
 		// Does not work in old versions of IE and Safari
-		if (e.originalEvent.deltaY < 0) {
+		if (e.originalEvent.deltaY < 0){
 			zoomIn();
 		} else {
 			zoomOut();
 		}
 	});
-	$(document).bind('keypress', function(e) {
+	$(document).bind('keypress', function(e){
 		if(e.charCode==61){
 			zoomIn();
 		}

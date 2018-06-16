@@ -29,6 +29,17 @@ function isEmpty(data){
 	return count == 0;
 }
 
+function containsObject(obj, list){
+	var i;
+	for (i = 0; i < list.length; i++) {
+		if (list[i] === obj) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function findOnce(arr1, arr2){
 	return arr1.some(r=> arr2.includes(r));
 }

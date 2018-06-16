@@ -1,4 +1,6 @@
 var myPop,
+wherePops = [],
+popTerritories = [],
 popCount = platesArray.filter(plate => plate.inland === true && plate.z > 0 && plate.z < 4 && plate.m > 1).length;
 
 function Pop(population,supplies,health,water,food,morale,occupying,territory,friendlyPops,hostilePops){
@@ -37,10 +39,25 @@ function generatePops(numberOfPops, callback){
 	callback();
 }
 
+function addToWherePops(callback){
+	for (i = 0; i < popArray.length; i++){
+		for (n = 0; n < popArray[i].occupying.length; n++){
+			wherePops.push(popArray[i].occupying[n]);
+		}
+	}
+
+	callback();
+}
+
 // =============================
 // Create Populations on the map
 // =============================
 
 generatePops(popCount, function(){
-	myPop = popArray[rand(0, popArray.length)];
+	addToWherePops(function(){
+		// Temporarily set myPop to random among pops
+		// Eventually, will create new pop for each joined player,
+		// and remove a pop from the earlier array
+		myPop = popArray[rand(0, popArray.length)];
+	});
 });
