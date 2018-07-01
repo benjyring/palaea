@@ -43,3 +43,11 @@ function containsObject(obj, list){
 function findOnce(arr1, arr2){
 	return arr1.some(r=> arr2.includes(r));
 }
+
+function fireOnCompletion(completion, functionToRun){
+	if (completion === true){
+		functionToRun();
+	} else {
+		fireOnCompletion(completion, functionToRun);
+	}
+}

@@ -58,6 +58,7 @@ function mapGrid(rows, cols, callback){
 			);
 		}
 	}
+	mapGridCompleted = true;
 	callback();
 }
 
@@ -71,6 +72,7 @@ function createPlates(numberOfPlates, callback){
 		rXrY.plate = plateNumber;
 		platesArray.push(rXrY);
 	}
+	createPlatesCompleted = true;
 	callback();
 }
 
@@ -97,6 +99,7 @@ function pathFinder(callback){
 
 		cellArray[i].plate = shortest;
 	}
+	pathFinderCompleted = true;
 	callback();
 }
 
@@ -182,6 +185,7 @@ function plateGeography(callback){
 			}
 		}
 	}
+	plateGeographyCompleted = true;
 	callback();
 }
 
@@ -197,6 +201,7 @@ function mapBorderPlates(callback){
 			}
 		}
 	}
+	mapBorderPlates = true;
 	callback();
 }
 
@@ -215,8 +220,12 @@ function landTexture(callback){
 				if (i.z >= 20){
 					// Island Centers
 					if (i.z < 32) {
-						i.z = Math.ceil(((i.z - 6)/8) * 1);
-						i.m = Math.ceil(((i.z - 6)/5) * 1);
+						i.z = Math.abs(Math.ceil((i.z - 6)/8));
+						i.m = Math.abs(Math.ceil((i.z - 6)/5));
+
+						if (i.m === 0){
+							i.m = 1;
+						}
 					} else {
 						i.z = 4;
 						i.m = 6;
@@ -347,7 +356,7 @@ function landTexture(callback){
 			}
 		}
 	}
-
+	landTextureCompleted = true;
 	callback();
 }
 
@@ -364,7 +373,7 @@ function makeIslands(callback){
 		}
 		islands[n].z = 3;
 	}
-
+	makeIslandsCompleted = true;
 	callback();
 }
 

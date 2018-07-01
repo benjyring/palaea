@@ -1,3 +1,16 @@
+// ===========
+// COMPLETIONS
+// ===========
+var mapGridCompleted = false,
+	createPlatesCompleted = false,
+	pathFinderCompleted = false,
+	plateGeographyCompleted = false,
+	mapBorderPlatesCompleted = false,
+	landTextureCompleted = false,
+	makeIslandsCompleted = false
+	displayGridCompleted = false,
+	displayPopsCompleted = false;
+
 // =====
 // WORLD
 // =====
