@@ -1,44 +1,158 @@
 // _Constants/Variables
 var colorsArray = {
-	env03 : '#0b0a32',
-	env02 : '#1f3078',
-	env01 : '#5078b3',
+	env03: {
+		color: '#0b0a32',
+		type: 'ocean'
+	},
+	env02: {
+		color: '#1f3078',
+		type: 'sea'
+	},
+	env01: {
+		color: '#5078b3',
+		type: 'placeholder'
+	},
+	env11: {
+		color: '#eed19f',
+		type: 'beach'
+	},
+	env12: {
+		color: '#6c6d36',
+		type: 'prairie'
+	},
+	env13: {
+		color: '#2e421d',
+		type: 'thickforest'
+	},
+	env14: {
+		color: '#2e421d',
+		type: 'thickforest'
+	},
+	env15: {
+		color: '#214c25',
+		type: 'evergreenforest'
+	},
+	env16: {
+		color: '#214c25',
+		type: 'evergreenforest'
+	},
+	env21: {
+		color: '#efb08e',
+		type: 'shrubland'
+	},
+	env22: {
+		color: '#6c6d36',
+		type: 'prairie'
+	},
+	env23: {
+		color: '#6c6d36',
+		type: 'prairie'
+	},
+	env24: {
+		color: '#34511d',
+		type: 'deciduousforest'
+	},
+	env25: {
+		color: '#34511d',
+		type: 'deciduousforest'
+	},
+	env26: {
+		color: '#3a5419',
+		type: 'placeholder'
+	},
+	env31: {
+		color: '#efb08e',
+		type: 'shrubland'
+	},
+	env32: {
+		color: '#efb08e',
+		type: 'shrubland'
+	},
+	env33: {
+		color: '#506b2a',
+		type: 'lightforest'
+	},
+	env34: {
+		color: '#506b2a',
+		type: 'lightforest'
+	},
+	env35: {
+		color: '#557432',
+		type: 'rockyforest'
+	},
+	env36: {
+		color: '#557432',
+		type: 'rockyforest'
+	},
+	env41: {
+		color: '#bb9673',
+		type: 'rocky'
+	},
+	env42: {
+		color: '#9f6e50',
+		type: 'placeholder'
+	},
+	env43: {
+		color: '#aa622e',
+		type: 'placeholder'
+	},
+	env44: {
+		color: '#ffffff',
+		type: 'snow'
+	},
+	env45: {
+		color: '#ffffff',
+		type: 'snow'
+	},
+	env46: {
+		color: '#ffffff',
+		type: 'snow'
+	}
+},
+	codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'},
+	map = document.getElementById('map'),
+	ctx = map.getContext('2d'),
+	zoom = 1,
+	sideLen = 4;
 
-	env11 : '#eed19f',
-	env12 : '#6c6d36',
-	env13 : '#2e421d',
-	env14 : '#2e421d',
-	env15 : '#214c25',
-	env16 : '#214c25',
+function displayGrid(d){
+	displayGridCompleted = false;
 
-	env21 : '#efb08e',
-	env22 : '#6c6d36',
-	env23 : '#6c6d36',
-	env24 : '#34511d',
-	env25 : '#34511d',
-	env26 : '#3a5419',
+	$.each(cellArray, function(i, el){
+		var env = colorsArray['env' + el.z.toString() + el.m.toString()];
 
-	env31 : '#efb08e',
-	env32 : '#efb08e',
-	env33 : '#506b2a',
-	env34 : '#506b2a',
-	env35 : '#557432',
-	env36 : '#557432',
+		if (env.type != 'placeholder'){
+			ctx.drawImage( document.getElementById(env.type), ((d*el.x)-d), ((d*el.y)-d), d, d );
+		} else {
+			ctx.fillStyle = env.color;
+			ctx.fillRect( ((d*el.x)-d), ((d*el.y)-d), d, d );
+		}
 
-	env41 : '#bb9673',
-	env42 : '#9f6e50',
-	env43 : '#aa622e',
-	env44 : '#ffffff',
-	env45 : '#ffffff',
-	env46 : '#ffffff',
-};
-var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'};
-var map = document.getElementById('map');
-// Should be constants
+		if (i === cellArray.length - 1){
+			displayGridCompleted = true;
+		}
+	});
+}
 
-var ctx = map.getContext('2d');
-var zoom = 1;
-var sideLen = 4;
+function displayPops(d){
+	displayPopsCompleted = false;
+
+	$.each(popArray, function(i, el){
+		var img;
+
+		if (containsObject(el.occupying[0], myPop.occupying)){
+			img = document.getElementById('human');
+		} else {
+			img = document.getElementById('mammoth');
+		}
+
+		ctx.drawImage( img, (d*el.occupying[0].x)-d, (d*el.occupying[0].y)-d, img.width, img.height );
+
+		if (i === popArray.length - 1){
+			displayPopsCompleted = true;
+		}
+	});
+}
 
 (function($){
 
@@ -63,47 +177,10 @@ $(function(){
 		map.width = totalX*d;
 		map.height = totalY*d;
 
-		// // Add event listener for `click` events.
-		// map.addEventListener('click', function(e){
-		// 	var x = e.pageX - map.offsetLeft,
-		// 	y = e.pageY - map.offsetTop;
+		displayGrid(d);
 
-		// 	// Collision detection between clicked offset and element.
-		// 	cellArray.forEach(function(el){
-		// 		if (y > ((d*el.y)-d) && y < ((d*el.y)-d) + d && x > ((d*el.x)-d) && x < ((d*el.x)-d) + d){
-		// 			console.log('clicked cell X-' + el.x + ' Y-' + el.y);
-		// 		}
-		// 	});
-
-		// }, false);
-
-		// Create grid
-		$.each(cellArray, function(i, el){
-			ctx.fillStyle = colorsArray['env' + el.z + '' + el.m];
-			ctx.fillRect(
-				((d*el.x)-d),
-				((d*el.y)-d),
-				d,
-				d
-			);
-		});
-
-		$.each(popArray, function(i, el){
-			var img;
-
-			if (containsObject(el.occupying[0], myPop.occupying)){
-				img = document.getElementById("human");
-			} else {
-				img = document.getElementById("mammoth");
-			}
-
-			ctx.drawImage(
-				img,
-				(d*el.occupying[0].x)-d,
-				(d*el.occupying[0].y)-d,
-				img.width,
-				img.height
-			);
+		fireOnCompletion(displayGridCompleted, function(){
+			displayPops(d);
 		});
 	}
 
@@ -161,7 +238,6 @@ $(function(){
 	// ON INTERACTIONS/UI
 	// _Build Map
 	$('#buildMap').click(function(){
-		mapVis(sideLen);
 		$('#pregame').remove();
 		$('#ui-header, #ui-sidebar').removeClass('hidden');
 		$('#map').css('margin-top', $('#ui-header').height() + 'px');
@@ -175,6 +251,7 @@ $(function(){
 
 		$('.counter-ap').text(4);
 		$('.counter-turn').text(1);
+		mapVis(sideLen);
 	});
 
 	$('#main-menu-opener').click(function(){
@@ -208,7 +285,7 @@ $(function(){
 
 	// _Zoom
 	function zoomIn(){
-		if (zoom < 17){
+		if (zoom < 16){
 			zoom = zoom + 1;
 			mapVis(sideLen*zoom);
 		}
