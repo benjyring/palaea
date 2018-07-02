@@ -1,19 +1,41 @@
 var myPop,
 wherePops = [],
-popTerritories = [],
-popCount = platesArray.filter(plate => plate.inland === true && plate.z > 0 && plate.z < 4 && plate.m > 1).length;
+popCount = (platesArray.filter(plate => plate.inland === true && plate.z > 0 && plate.z < 4 && plate.m > 1).length) * 4,
+max = 10;
 
-function Pop(population,supplies,health,water,food,morale,occupying,territory,friendlyPops,hostilePops){
+function Pop(population,supplies,strength,location,territory,friendlyPops,hostilePops){
 	this.population = population;
 	this.supplies = supplies;
-	this.health = health;
-	this.water = water;
-	this.food = food;
-	this.morale = morale;
-	this.occupying = occupying;
+	this.strength = strength;
+	this.location = location;
 	this.territory = territory;
 	this.friendlyPops = friendlyPops;
 	this.hostilePops = hostilePops;
+}
+
+function stock(key, amount){
+	key = amount;
+}
+
+function whereTo(pop, modX, modY){
+	return getCellByXY((pop.location.x + (modX)), (pop.location.y + (modY)));
+}
+
+function move(pop, endCell){
+	var dx = diffXY(pop.location, endCell).x,
+		dy = diffXY(pop.location, endCell).y;
+
+	if ((dx + dy) > max){
+		alert('Can\'t move ' + (dx + dy) + ' cells in one turn.');
+	} else {
+		if (inaccessible.includes(endCell.env.type)){
+			alert('Can\'t rest on a ' + endCell.env.type + 'cell');
+		} else {
+			pop.location = endCell;
+		}
+	}
+
+	mapVis(zoom*sideLen);
 }
 
 function generatePops(numberOfPops, callback){
@@ -23,12 +45,15 @@ function generatePops(numberOfPops, callback){
 		popArray.push(
 			new Pop(
 				rand(paleolithic.minGroupSize, paleolithic.maxGroupSize),
-				10,
-				10,
-				10,
-				10,
-				4,
-				[inhabitableCells[rand(1, inhabitableCells.length)]],
+				{
+					water: max,
+					food: max
+				},
+				{
+					health: max,
+					morale: max
+				},
+				inhabitableCells[rand(1, inhabitableCells.length)],
 				[],
 				[],
 				[]
@@ -41,8 +66,8 @@ function generatePops(numberOfPops, callback){
 
 function addToWherePops(callback){
 	for (i = 0; i < popArray.length; i++){
-		for (n = 0; n < popArray[i].occupying.length; n++){
-			wherePops.push(popArray[i].occupying[n]);
+		for (n = 0; n < popArray[i].location.length; n++){
+			wherePops.push(popArray[i].location[n]);
 		}
 	}
 
@@ -54,10 +79,11 @@ function addToWherePops(callback){
 // =============================
 
 generatePops(popCount, function(){
-	addToWherePops(function(){
+	// addToWherePops(function(){
 		// Temporarily set myPop to random among pops
 		// Eventually, will create new pop for each joined player,
 		// and remove a pop from the earlier array
 		myPop = popArray[rand(0, popArray.length)];
-	});
+		myPop.myPop = true;
+	// });
 });

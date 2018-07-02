@@ -82,10 +82,10 @@ function pathFinder(callback){
 		pathsObj = {};
 
 		for (var c = 0; c < platesArray.length; c++){
-			var diffX = Math.abs(platesArray[c].x - cellArray[i].x),
-			diffY = Math.abs(platesArray[c].y - cellArray[i].y);
-
-			paths.push((diffX + diffY) + ':' + platesArray[c].plate.toString());
+			paths.push(
+				(diffXY(cellArray[i], platesArray[c]).diffX + diffXY(cellArray[i], platesArray[c]).diffY) +
+				':' + platesArray[c].plate.toString()
+			);
 		}
 
 		for (var d = 0; d < paths.length; d++) {
@@ -291,7 +291,12 @@ function landTexture(callback){
 				tc.z = 3;
 			}
 		} else {
-			if (findOnce(cellArray.filter(cell => cell.inland === true && cell.z < 1), tPlus)){
+			if (findOnce(cellArray.filter(cell => cell.inland === true && cell.z === 0), tPlus)){
+				var freshwater = cellArray.filter(cell => cell.inland === true && cell.z === 0);
+
+				for (i = 0; i < freshwater.length; i++){
+					freshwater[i].m = 1;
+				}
 				// RIVER BASINS
 				// ===============
 				//
@@ -377,6 +382,11 @@ function makeIslands(callback){
 	callback();
 }
 
+function minimizeCellData(){
+	cellArray.forEach(function(cell){
+		cell.env = environmentArray['env' + cell.z.toString() + cell.m.toString()];
+	});
+}
 
 // BUILD THE WORLD
 mapGrid(totalY, totalX, function(){
@@ -386,7 +396,9 @@ mapGrid(totalY, totalX, function(){
 				// _Build Map
 				mapBorderPlates(function(){
 					landTexture(function(){});
-					makeIslands(function(){});
+					makeIslands(function(){
+						minimizeCellData();
+					});
 				});
 			});
 		});
