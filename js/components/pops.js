@@ -13,6 +13,9 @@ function Pop(population,supplies,strength,location,territory,friendlyPops,hostil
 	this.hostilePops = hostilePops;
 }
 
+//
+// Movement
+//
 function stock(key, amount){
 	key = amount;
 }
@@ -38,6 +41,33 @@ function move(pop, endCell){
 	mapVis(zoom*sideLen);
 }
 
+//
+// AI
+//
+function nearestOfEnv(currentCell, envType){
+	var desiredCells = cellArray.filter(cell => cell.env.type === envType);
+
+	var distances = desiredCells.map(dCell => {
+		var dx = diffXY(myPop.location, dCell).diffY,
+			dy = diffXY(myPop.location, dCell).diffY,
+			distance = dx + dy,
+			cellI = (dCell.y-1)*totalX + (dCell.x-1);
+
+		return {
+			cellI: cellI,
+			distance: distance
+		};
+	});
+
+	var shortest = Math.min(...distances.map(function(i){return i.distance})),
+		closest = distances.filter(d => d.distance === shortest);
+
+	return closest[rand(0, closest.length-1)];
+}
+
+//
+// Generation
+//
 function generatePops(numberOfPops, callback){
 	var inhabitableCells = cellArray.filter(cell => cell.inland === true && cell.z > 0 && cell.z < 4 && cell.m > 1);
 
