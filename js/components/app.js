@@ -2,8 +2,11 @@
 var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'},
 	map = document.getElementById('map'),
 	ctx = map.getContext('2d'),
+	game,
 	zoom = 1,
-	sideLen = 4;
+	sideLen = 4,
+	twoWeeks = 14,
+	maxTurns = 365;
 
 function displayGrid(d){
 	displayGridCompleted = false;
@@ -112,6 +115,27 @@ $(function(){
 		return savedGame;
 	}
 
+	// _GAME
+	function Game(turn, nextMajorEvent, suddenDeath, endGameTurn){
+		this.turn = turn;
+		this.nextMajorEvent = nextMajorEvent;
+		this.suddenDeath = suddenDeath;
+		this.endGameTurn = endGameTurn;
+	}
+
+	// _Update UI
+	window.updateUI = function(player){
+		$('.counter-population').text(player.population);
+		$('.counter-supplies').text(player.supplies);
+		$('.counter-health').text(player.health);
+		$('.counter-water').text(player.water);
+		$('.counter-food').text(player.food);
+		$('.counter-morale').text(player.morale);
+
+		$('.counter-ap').text(player.ap);
+		$('.counter-turn').text(player.turn);
+	};
+
 	// ON INTERACTIONS/UI
 	// _Build Map
 	$('#buildMap').click(function(){
@@ -119,15 +143,9 @@ $(function(){
 		$('#ui-header, #ui-sidebar').removeClass('hidden');
 		$('#map').css('margin-top', $('#ui-header').height() + 'px');
 
-		$('.counter-population').text(myPop.population);
-		$('.counter-supplies').text(myPop.supplies);
-		$('.counter-health').text(myPop.health);
-		$('.counter-water').text(myPop.water);
-		$('.counter-food').text(myPop.food);
-		$('.counter-morale').text(myPop.morale);
+		game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
 
-		$('.counter-ap').text(max);
-		$('.counter-turn').text(1);
+		updateUI(myPop);
 		mapVis(sideLen);
 	});
 
