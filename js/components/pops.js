@@ -48,7 +48,7 @@ function nearestOfEnv(currentCell, envType){
 	var desiredCells = cellArray.filter(cell => cell.env.type === envType);
 
 	var distances = desiredCells.map(dCell => {
-		var dx = diffXY(myPop.location, dCell).diffY,
+		var dx = diffXY(myPop.location, dCell).diffX,
 			dy = diffXY(myPop.location, dCell).diffY,
 			distance = dx + dy,
 			cellI = (dCell.y-1)*totalX + (dCell.x-1);
