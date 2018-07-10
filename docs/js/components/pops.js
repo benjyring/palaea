@@ -3,16 +3,21 @@ wherePops = [],
 popCount = (platesArray.filter(plate => plate.inland === true && plate.z > 0 && plate.z < 4 && plate.m > 1).length) * 4,
 max = 10;
 
-function Pop(population,supplies,strength,location,territory,friendlyPops,hostilePops){
+function Pop(population,supplies,strength,location,territory,ap,turn,friendlyPops,hostilePops){
 	this.population = population;
 	this.supplies = supplies;
 	this.strength = strength;
 	this.location = location;
 	this.territory = territory;
+	this.ap = ap || max;
+	this.turn = turn;
 	this.friendlyPops = friendlyPops;
 	this.hostilePops = hostilePops;
 }
 
+//
+// Movement
+//
 function stock(key, amount){
 	key = amount;
 }
@@ -22,22 +27,67 @@ function whereTo(pop, modX, modY){
 }
 
 function move(pop, endCell){
-	var dx = diffXY(pop.location, endCell).x,
-		dy = diffXY(pop.location, endCell).y;
+	var playerAlert;
 
-	if ((dx + dy) > max){
-		alert('Can\'t move ' + (dx + dy) + ' cells in one turn.');
-	} else {
-		if (inaccessible.includes(endCell.env.type)){
-			alert('Can\'t rest on a ' + endCell.env.type + 'cell');
+	if (pop.ap > 0){
+		var dx = diffXY(pop.location, endCell).x,
+			dy = diffXY(pop.location, endCell).y;
+
+		if ((dx + dy) > max){
+			playerAlert = 'Can\'t move ' + (dx + dy) + ' cells in one turn.';
 		} else {
-			pop.location = endCell;
+			if (inaccessible.includes(endCell.env.type)){
+				playerAlert = 'Can\'t rest on a ' + endCell.env.type + ' cell.';
+			} else {
+				pop.location = endCell;
+				pop.ap = pop.ap - 1;
+			}
+		}
+	} else {
+		playerAlert = 'Turn complete.';
+		pop.turn = pop.turn + 1;
+		game.turn = game.turn + 1;
+		pop.ap = max;
+	}
+
+	if (pop === myPop){
+		updateUI(pop);
+
+		if (!isEmpty(playerAlert)){
+			alert(playerAlert);
 		}
 	}
 
 	mapVis(zoom*sideLen);
 }
 
+//
+// AI
+//
+function nearestOfEnv(currentCell, envType){
+	var desiredCells = cellArray.filter(cell => cell.env.type === envType);
+
+	var distances = desiredCells.map(dCell => {
+		var dx = diffXY(myPop.location, dCell).diffX,
+			dy = diffXY(myPop.location, dCell).diffY,
+			distance = dx + dy,
+			cellI = (dCell.y-1)*totalX + (dCell.x-1);
+
+		return {
+			cellI: cellI,
+			distance: distance
+		};
+	});
+
+	var shortest = Math.min(...distances.map(function(i){return i.distance})),
+		closest = distances.filter(d => d.distance === shortest);
+
+	return closest[rand(0, closest.length-1)];
+}
+
+//
+// Generation
+//
 function generatePops(numberOfPops, callback){
 	var inhabitableCells = cellArray.filter(cell => cell.inland === true && cell.z > 0 && cell.z < 4 && cell.m > 1);
 
@@ -55,6 +105,8 @@ function generatePops(numberOfPops, callback){
 				},
 				inhabitableCells[rand(1, inhabitableCells.length)],
 				[],
+				max,
+				1,
 				[],
 				[]
 			)
