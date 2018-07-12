@@ -18,37 +18,34 @@ function Pop(population,supplies,strength,location,territory,ap,turn,friendlyPop
 //
 // Movement
 //
-function stock(key, amount){
-	key = amount;
-}
-
 function whereTo(pop, modX, modY){
 	return getCellByXY((pop.location.x + (modX)), (pop.location.y + (modY)));
 }
 
 function move(pop, endCell){
-	var playerAlert;
+	var playerAlert,
+		dx = diffXY(pop.location, endCell).x,
+		dy = diffXY(pop.location, endCell).y;;
 
-	if (pop.ap > 0){
-		var dx = diffXY(pop.location, endCell).x,
-			dy = diffXY(pop.location, endCell).y;
-
-		if ((dx + dy) > max){
-			playerAlert = 'Can\'t move ' + (dx + dy) + ' cells in one turn.';
+	if ((dx + dy) > pop.ap){
+		playerAlert = 'Not enough AP to move ' + (dx + dy) + ' cells.';
+	} else {
+		if (inaccessible.includes(endCell.env.type)){
+			playerAlert = 'Can\'t rest on a ' + endCell.env.type + ' cell.';
 		} else {
-			if (inaccessible.includes(endCell.env.type)){
-				playerAlert = 'Can\'t rest on a ' + endCell.env.type + ' cell.';
-			} else {
-				pop.location = endCell;
-				pop.ap = pop.ap - 1;
+			pop.location = endCell;
+			pop.ap = pop.ap - 1;
+
+			if (pop.ap === 0){
+				playerAlert = 'Turn complete.';
+				pop.turn = pop.turn + 1;
+				game.turn = game.turn + 1;
+				pop.ap = max;
 			}
 		}
-	} else {
-		playerAlert = 'Turn complete.';
-		pop.turn = pop.turn + 1;
-		game.turn = game.turn + 1;
-		pop.ap = max;
 	}
+
+	mapVis(zoom*sideLen);
 
 	if (pop === myPop){
 		updateUI(pop);
@@ -57,8 +54,6 @@ function move(pop, endCell){
 			alert(playerAlert);
 		}
 	}
-
-	mapVis(zoom*sideLen);
 }
 
 //

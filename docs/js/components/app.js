@@ -126,11 +126,10 @@ $(function(){
 	// _Update UI
 	window.updateUI = function(player){
 		$('.counter-population').text(player.population);
-		$('.counter-supplies').text(player.supplies);
 		$('.counter-health').text(player.health);
+		$('.counter-morale').text(player.morale);
 		$('.counter-water').text(player.water);
 		$('.counter-food').text(player.food);
-		$('.counter-morale').text(player.morale);
 
 		$('.counter-ap').text(player.ap);
 		$('.counter-turn').text(player.turn);
