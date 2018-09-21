@@ -12,12 +12,13 @@ function displayGrid(d){
 	displayGridCompleted = false;
 
 	$.each(cellArray, function(i, el){
-		if (el.env.type != 'placeholder'){
+		if ( el.env.type != 'placeholder' && (el.x - 1) < Math.ceil(w/d) && (el.y - 1) < Math.ceil(h/d) ){
 			ctx.drawImage( document.getElementById(el.env.type), ((d*el.x)-d), ((d*el.y)-d), d, d );
-		} else {
-			ctx.fillStyle = el.env.color;
-			ctx.fillRect( ((d*el.x)-d), ((d*el.y)-d), d, d );
 		}
+		// else {
+		// 	ctx.fillStyle = el.env.color;
+		// 	ctx.fillRect( ((d*el.x)-d), ((d*el.y)-d), d, d );
+		// }
 
 		if (i === cellArray.length - 1){
 			displayGridCompleted = true;
@@ -37,7 +38,9 @@ function displayPops(d){
 			img = document.getElementById('mammoth');
 		}
 
-		ctx.drawImage( img, (d*el.location.x)-d, (d*el.location.y)-d, img.width, img.height );
+		if (el.location.x < Math.ceil(w/d) && el.location.y < Math.ceil(h/d)){
+			ctx.drawImage( img, (d*el.location.x)-d, (d*el.location.y)-d, img.width, img.height );
+		}
 
 		if (i === popArray.length - 1){
 			displayPopsCompleted = true;
@@ -54,8 +57,10 @@ $(function(){
 
 	window.mapVis = function(d){
 		// Visualize map
-		map.width = totalX*d;
-		map.height = totalY*d;
+		// map.width = totalX*d;
+		// map.height = totalY*d;
+		map.width = w;
+		map.height = h;
 
 		displayGrid(d);
 
