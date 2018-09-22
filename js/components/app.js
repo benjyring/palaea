@@ -1,24 +1,25 @@
 // _Constants/Variables
 var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'},
+	vph = Game.viewport.h,
+	vpw = Game.viewport.w,
 	map = document.getElementById('map'),
 	ctx = map.getContext('2d'),
 	game,
+	maxZoom = 16,
 	zoom = 1,
 	sideLen = 4,
 	twoWeeks = 14,
 	maxTurns = 365;
 
+var minZoom = Math.max(Math.ceil( vpw / (totalX * sideLen) ), Math.ceil( vph / (totalY * sideLen) ));
+
 function displayGrid(d){
 	displayGridCompleted = false;
 
 	$.each(cellArray, function(i, el){
-		if ( el.env.type != 'placeholder' && (el.x - 1) < Math.ceil(w/d) && (el.y - 1) < Math.ceil(h/d) ){
+		if ( el.env.type != 'placeholder' && (el.x - 1) < Math.ceil(vpw/d) && (el.y - 1) < Math.ceil(vph/d) ){
 			ctx.drawImage( document.getElementById(el.env.type), ((d*el.x)-d), ((d*el.y)-d), d, d );
 		}
-		// else {
-		// 	ctx.fillStyle = el.env.color;
-		// 	ctx.fillRect( ((d*el.x)-d), ((d*el.y)-d), d, d );
-		// }
 
 		if (i === cellArray.length - 1){
 			displayGridCompleted = true;
@@ -38,7 +39,7 @@ function displayPops(d){
 			img = document.getElementById('mammoth');
 		}
 
-		if (el.location.x < Math.ceil(w/d) && el.location.y < Math.ceil(h/d)){
+		if (el.location.x < Math.ceil(vpw/d) && el.location.y < Math.ceil(vph/d)){
 			ctx.drawImage( img, (d*el.location.x)-d, (d*el.location.y)-d, img.width, img.height );
 		}
 
@@ -57,10 +58,8 @@ $(function(){
 
 	window.mapVis = function(d){
 		// Visualize map
-		// map.width = totalX*d;
-		// map.height = totalY*d;
-		map.width = w;
-		map.height = h;
+		map.width = vpw;
+		map.height = vph;
 
 		displayGrid(d);
 
@@ -142,15 +141,15 @@ $(function(){
 
 	// ON INTERACTIONS/UI
 	// _Build Map
-	$('#buildMap').click(function(){
-		$('#pregame').remove();
-		$('#ui-header, #ui-sidebar').removeClass('hidden');
-		$('#map').css('margin-top', $('#ui-header').height() + 'px');
+	$('document').ready(function(){
+		setTimeout(function(){
+			$('#map').css('margin-top', $('#ui-header').height() + 'px');
 
-		game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
+			game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
 
-		updateUI(myPop);
-		mapVis(sideLen);
+			updateUI(myPop);
+			mapVis(sideLen*minZoom);
+		}, 1000);
 	});
 
 	$('#main-menu-opener').click(function(){
@@ -184,13 +183,13 @@ $(function(){
 
 	// _Zoom
 	function zoomIn(){
-		if (zoom < 16){
+		if (zoom < maxZoom){
 			zoom = zoom + 1;
 			mapVis(sideLen*zoom);
 		}
 	}
 	function zoomOut(){
-		if (zoom > 1){
+		if (zoom > minZoom){
 			zoom = zoom - 1;
 			mapVis(sideLen*zoom);
 		}

@@ -1,3 +1,5 @@
+var Game = new Object;
+
 // ===========
 // COMPLETIONS
 // ===========
@@ -9,7 +11,8 @@ var mapGridCompleted = false,
 	landTextureCompleted = false,
 	makeIslandsCompleted = false
 	displayGridCompleted = false,
-	displayPopsCompleted = false;
+	displayPopsCompleted = false,
+	minimizeCellDataCompleted = false;
 
 // =====
 // WORLD
