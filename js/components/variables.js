@@ -1,4 +1,4 @@
-var Game = new Object;
+var app = new Object;
 
 // ===========
 // COMPLETIONS

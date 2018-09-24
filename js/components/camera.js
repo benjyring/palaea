@@ -1,18 +1,18 @@
-Game.viewport = new Object;
-Game.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-Game.viewport.h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+app.viewport = new Object;
+app.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+app.viewport.h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
-Game.viewport._offset = new Object;
-Game.viewport._offset.x = 0;
-Game.viewport._offset.y = 0;
-Game.viewport._offset.startX = Game.viewport._offset.x;
-Game.viewport._offset.startY = Game.viewport._offset.y;
-Game.mouse = new Object;
+app.viewport._offset = new Object;
+app.viewport._offset.x = 0;
+app.viewport._offset.y = 0;
+app.viewport._offset.startX = app.viewport._offset.x;
+app.viewport._offset.startY = app.viewport._offset.y;
+app.mouse = new Object;
 
 
 addEvent(window, 'resize', function(){
-	Game.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-	Game.viewport.h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+	app.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+	app.viewport.h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 });
 
 
@@ -38,59 +38,60 @@ addEvent(document, 'mousemove', function(e){
 		e.pageY = e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0 );
 	}
 
-	Game.mouse.x = e.pageX;
-	Game.mouse.y = e.pageY;
+	app.mouse.x = e.pageX;
+	app.mouse.y = e.pageY;
 
-	//Do stuff with Game.mouse from here on
-	// console.clear();
-	// console.log(Game.mouse.x + ' X and ' + Game.mouse.y + ' Y');
+	//Do stuff with app.mouse from here on
+	if (app.mouse.down === true){
+		var endMouseX = app.mouse.x,
+			endMouseY = app.mouse.y,
+			tempOffsetX = app.viewport._offset.startX - endMouseX,
+			tempOffsetY = app.viewport._offset.startY - endMouseY,
+			potentialOffsetX = app.viewport._offset.x + tempOffsetX,
+			potentialOffsetY = app.viewport._offset.y + tempOffsetY,
+			availableOffsetX = (totalX * sideLen * zoom) - app.viewport.w,
+			availableOffsetY = (totalY * sideLen * zoom) - app.viewport.h;
+
+		if (potentialOffsetX >= 0){
+			if (potentialOffsetX >= availableOffsetX){
+				app.viewport._offset.x = availableOffsetX;
+			} else {
+				app.viewport._offset.x = potentialOffsetX;
+			}
+		} else {
+			app.viewport._offset.x = 0;
+		}
+
+		if (potentialOffsetY >= 0){
+			if (potentialOffsetY >= availableOffsetY){
+				app.viewport._offset.y = availableOffsetY;
+			} else {
+				app.viewport._offset.y = potentialOffsetY;
+			}
+		} else {
+			app.viewport._offset.y = 0;
+		}
+
+		// console.log('^^^^^^^^^^^^');
+		// console.log('potentialOffsetX: ' + potentialOffsetX);
+		// console.log('potentialOffsetY: ' + potentialOffsetY);
+		// console.log('tempOffsetX: ' + tempOffsetX);
+		// console.log('tempOffsetY: ' + tempOffsetY);
+		// console.log('app.viewport._offset.x: ' + app.viewport._offset.x);
+		// console.log('app.viewport._offset.y: ' + app.viewport._offset.y);
+		// console.log('___________________________');
+
+		mapVis(zoom);
+	}
 });
 
 addEvent(document, 'mousedown', function(e){
-	Game.viewport._offset.startX = Game.mouse.x;
-	Game.viewport._offset.startY = Game.mouse.y;
+	app.viewport._offset.startX = app.mouse.x;
+	app.viewport._offset.startY = app.mouse.y;
 
-	console.log('vvvvvvvvvvvv');
-	console.log('Game.viewport._offset.x: ' + Game.viewport._offset.x);
-	console.log('Game.viewport._offset.y: ' + Game.viewport._offset.y);
+	app.mouse.down = true;
 });
 
 addEvent(document, 'mouseup', function(e){
-	var endMouseX = Game.mouse.x,
-		endMouseY = Game.mouse.y,
-		tempOffsetX = Game.viewport._offset.startX - endMouseX,
-		tempOffsetY = Game.viewport._offset.startY - endMouseY,
-		potentialOffsetX = Game.viewport._offset.x + tempOffsetX,
-		potentialOffsetY = Game.viewport._offset.y + tempOffsetY,
-		availableOffsetX = (totalX * sideLen * zoom) - Game.viewport.w,
-		availableOffsetY = (totalY * sideLen * zoom) - Game.viewport.h;
-
-	if (potentialOffsetX >= 0){
-		if (potentialOffsetX >= availableOffsetX){
-			Game.viewport._offset.x = availableOffsetX;
-		} else {
-			Game.viewport._offset.x = potentialOffsetX;
-		}
-	} else {
-		Game.viewport._offset.x = 0;
-	}
-
-	if (potentialOffsetY >= 0){
-		if (potentialOffsetY >= availableOffsetY){
-			Game.viewport._offset.y = availableOffsetY;
-		} else {
-			Game.viewport._offset.y = potentialOffsetY;
-		}
-	} else {
-		Game.viewport._offset.y = 0;
-	}
-
-	console.log('^^^^^^^^^^^^');
-	console.log('potentialOffsetX: ' + potentialOffsetX);
-	console.log('potentialOffsetY: ' + potentialOffsetY);
-	console.log('tempOffsetX: ' + tempOffsetX);
-	console.log('tempOffsetY: ' + tempOffsetY);
-	console.log('Game.viewport._offset.x: ' + Game.viewport._offset.x);
-	console.log('Game.viewport._offset.y: ' + Game.viewport._offset.y);
-	console.log('___________________________');
+	app.mouse.down = false;
 });

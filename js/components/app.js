@@ -1,7 +1,7 @@
 // _Constants/Variables
 var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'},
-	vph = Game.viewport.h,
-	vpw = Game.viewport.w,
+	vph = app.viewport.h,
+	vpw = app.viewport.w,
 	map = document.getElementById('map'),
 	ctx = map.getContext('2d'),
 	game,
@@ -11,17 +11,59 @@ var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g',
 	twoWeeks = 14,
 	maxTurns = 365;
 
-var minZoom = Math.max(Math.ceil( vpw / (totalX * sideLen) ), Math.ceil( vph / (totalY * sideLen) ));
+var minZoom = Math.max(Math.ceil(vpw/(totalX*sideLen)), Math.ceil(vph/(totalY*sideLen)));
+
+//
+// +++++++++++++++++++++++++++++++++++++++++++
+//
+
+function cellOffset(d){
+	return ({
+		x: Math.round(app.viewport._offset.x/d),
+		y: Math.round(app.viewport._offset.y/d)
+	});
+}
+
+function drawAvailable(elX, elY, d, callback){
+	// Limits the portion of the map drawn to only what's
+	// within the viewport. Greatly improves performance.
+	// var _elx = elX;
+	// var _ely = elY;
+	var _elx = elX - cellOffset(d).x;
+	var _ely = elY - cellOffset(d).y;
+
+	if ((_elx-1) < Math.ceil(vpw/d) && (_ely-1) < Math.ceil(vph/d) ){
+		callback();
+	}
+}
+
+function drawOffset(elX, elY, d, callback){
+	if ((elX) > cellOffset(d).x){
+		if ((elY) > cellOffset(d).y){
+			callback();
+		}
+	}
+}
 
 function displayGrid(d){
 	displayGridCompleted = false;
 
 	$.each(cellArray, function(i, el){
-		if ( el.env.type != 'placeholder' && (el.x - 1) < Math.ceil(vpw/d) && (el.y - 1) < Math.ceil(vph/d) ){
-			ctx.drawImage( document.getElementById(el.env.type), ((d*el.x)-d), ((d*el.y)-d), d, d );
-		}
+		drawOffset(el.x, el.y, d, function(){
+			drawAvailable(el.x, el.y, d, function(){
+				if (el.env.type != 'placeholder'){
+					ctx.drawImage(
+						document.getElementById(el.env.type),
+						(d*((el.x - cellOffset(d).x)-1)),
+						(d*((el.y - cellOffset(d).y)-1)),
+						d,
+						d
+					);
+				}
+			});
+		});
 
-		if (i === cellArray.length - 1){
+		if (i === cellArray.length-1){
 			displayGridCompleted = true;
 		}
 	});
@@ -33,21 +75,31 @@ function displayPops(d){
 	$.each(popArray, function(i, el){
 		var img;
 
+		// Determine which icon to draw
 		if (el.myPop === true){
 			img = document.getElementById('human');
 		} else {
 			img = document.getElementById('mammoth');
 		}
 
-		if (el.location.x < Math.ceil(vpw/d) && el.location.y < Math.ceil(vph/d)){
-			ctx.drawImage( img, (d*el.location.x)-d, (d*el.location.y)-d, img.width, img.height );
-		}
+		drawOffset(el.location.x, el.location.y, d, function(){
+			drawAvailable(el.location.x, el.location.y, d, function(){
+				ctx.drawImage(
+					img,
+					(d*((el.location.x - cellOffset(d).x)-1)),
+					(d*((el.location.y - cellOffset(d).y)-1)),
+					img.width,
+					img.height
+				);
+			});
+		});
 
-		if (i === popArray.length - 1){
+		if (i === popArray.length-1){
 			displayPopsCompleted = true;
 		}
 	});
 }
+
 
 (function($){
 
@@ -61,10 +113,10 @@ $(function(){
 		map.width = vpw;
 		map.height = vph;
 
-		displayGrid(d);
+		displayGrid(sideLen*d);
 
 		fireOnCompletion(displayGridCompleted, function(){
-			displayPops(d);
+			displayPops(sideLen*d);
 		});
 	};
 
@@ -148,8 +200,9 @@ $(function(){
 			game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
 
 			updateUI(myPop);
-			mapVis(sideLen*minZoom);
+			mapVis(minZoom);
 		}, 1000);
+		zoom = minZoom;
 	});
 
 	$('#main-menu-opener').click(function(){
@@ -184,14 +237,14 @@ $(function(){
 	// _Zoom
 	function zoomIn(){
 		if (zoom < maxZoom){
-			zoom = zoom + 1;
-			mapVis(sideLen*zoom);
+			zoom = zoom+1;
+			mapVis(zoom);
 		}
 	}
 	function zoomOut(){
 		if (zoom > minZoom){
-			zoom = zoom - 1;
-			mapVis(sideLen*zoom);
+			zoom = zoom-1;
+			mapVis(zoom);
 		}
 	}
 	$('#zoomIn').click(function(){

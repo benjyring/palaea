@@ -45,7 +45,7 @@ function move(pop, endCell){
 		}
 	}
 
-	mapVis(zoom*sideLen);
+	mapVis(zoom);
 
 	if (pop === myPop){
 		updateUI(pop);
