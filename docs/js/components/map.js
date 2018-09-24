@@ -386,7 +386,10 @@ function minimizeCellData(){
 	cellArray.forEach(function(cell){
 		cell.env = environmentArray['env' + cell.z.toString() + cell.m.toString()];
 	});
+
+	minimizeCellDataCompleted = true;
 }
+
 
 // BUILD THE WORLD
 mapGrid(totalY, totalX, function(){

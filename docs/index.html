@@ -11,11 +11,12 @@
 	<script type="text/javascript" src="js/components/utils.js"></script>
 	<script type="text/javascript" src="js/components/map.js"></script>
 	<script type="text/javascript" src="js/components/pops.js"></script>
+	<script type="text/javascript" src="js/components/camera.js"></script>
 </head>
 
 <body>
 
-	<header id="ui-header" class="hidden navbar navbar-inverse navbar-fixed-top">
+	<header id="ui-header" class="navbar navbar-inverse navbar-fixed-top">
 		<ul class="nav navbar-nav pull-left pop-info">
 			<li><a class="icon icon-population">Population<span class="badge counter-population">0</span></a></li>
 			<li><a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Strength <span class="caret"></span></a>
@@ -45,29 +46,12 @@
 	</header>
 
 
-	<aside id="pregame">
-		<h1 class="text-center">PALAEA</h1>
-
-		<button class="btn btn-default btn-block mb-2" id="buildMap">New Game</button>
-		<button class="btn btn-default btn-block" id="loadRebuildMap" data-toggle="collapse" data-target="#loadSavedGame" aria-expanded="false" aria-controls="loadSavedGame">Load Saved Game</button>
-
-		<div id="loadSavedGame" class="collapse">
-			<div class="input-group mt-2">
-				<input type="text" class="form-control" placeholder="Paste Saved Game" aria-label="Paste Saved Game" aria-describedby="rebuildMap">
-				<span class="input-group-btn">
-					<button id="rebuildMap" class="btn btn-primary" type="button">Load</button>
-				</span>
-			</div>
-		</div>
-	</aside>
-
-
 	<div class="wrap dragscroll">
 		<canvas id="map"></canvas>
 	</div>
 
 
-	<aside id="ui-sidebar" class="hidden navbar navbar-inverse">
+	<aside id="ui-sidebar" class="navbar navbar-inverse">
 		<div class="drawer-header">
 			<h2 class="text-right">MENU</h2>
 		</div>

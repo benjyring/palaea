@@ -47,7 +47,7 @@ module.exports = function(grunt){
 					'js/app.min.js': [
 						'js/lib/jquery-3.2.1.min.js',
 						'js/lib/bootstrap.min.js',
-						'js/lib/dragscroll.js',
+						// 'js/lib/dragscroll.js',
 						'js/components/app.js'
 					]
 				}
