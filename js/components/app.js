@@ -236,13 +236,13 @@ $(function(){
 
 	// _Zoom
 	function zoomIn(){
-		if (zoom < maxZoom){
+		if (zoom < maxZoom && app.mouse.down === false){
 			zoom = zoom+1;
 			mapVis(zoom);
 		}
 	}
 	function zoomOut(){
-		if (zoom > minZoom){
+		if (zoom > minZoom && app.mouse.down === false){
 			zoom = zoom-1;
 			mapVis(zoom);
 		}
