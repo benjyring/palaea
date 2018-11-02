@@ -3,7 +3,9 @@ wherePops = [],
 popCount = (platesArray.filter(plate => plate.inland === true && plate.z > 0 && plate.z < 4 && plate.m > 1).length) * 4,
 max = 10;
 
-function Pop(population,supplies,strength,location,territory,ap,turn,friendlyPops,hostilePops){
+function Pop(type,species,population,supplies,strength,location,territory,ap,turn){
+	this.type = type;
+	this.species = species;
 	this.population = population;
 	this.supplies = supplies;
 	this.strength = strength;
@@ -11,8 +13,6 @@ function Pop(population,supplies,strength,location,territory,ap,turn,friendlyPop
 	this.territory = territory;
 	this.ap = ap || max;
 	this.turn = turn;
-	this.friendlyPops = friendlyPops;
-	this.hostilePops = hostilePops;
 }
 
 //
@@ -30,7 +30,7 @@ function move(pop, endCell){
 	if ((dx + dy) > pop.ap){
 		playerAlert = 'Not enough AP to move ' + (dx + dy) + ' cells.';
 	} else {
-		if (inaccessible.includes(endCell.env.type)){
+		if (app.inaccessible.includes(endCell.env.type)){
 			playerAlert = 'Can\'t rest on a ' + endCell.env.type + ' cell.';
 		} else {
 			pop.location = endCell;
@@ -66,7 +66,7 @@ function nearestOfEnv(currentCell, envType){
 		var dx = diffXY(myPop.location, dCell).diffX,
 			dy = diffXY(myPop.location, dCell).diffY,
 			distance = dx + dy,
-			cellI = (dCell.y-1)*totalX + (dCell.x-1);
+			cellI = (dCell.y-1)*app.totalX + (dCell.x-1);
 
 		return {
 			cellI: cellI,
@@ -87,8 +87,17 @@ function generatePops(numberOfPops, callback){
 	var inhabitableCells = cellArray.filter(cell => cell.inland === true && cell.z > 0 && cell.z < 4 && cell.m > 1);
 
 	for (var i = 0; i < numberOfPops; i++){
+		var type;
+
+		if ((i != 0) && (i % 7 === 0)){
+			type = 'carnivore';
+		} else {
+			type = 'herbivore';
+		}
 		popArray.push(
 			new Pop(
+				type,
+				undefined,
 				rand(paleolithic.minGroupSize, paleolithic.maxGroupSize),
 				{
 					water: max,
@@ -101,9 +110,7 @@ function generatePops(numberOfPops, callback){
 				inhabitableCells[rand(1, inhabitableCells.length)],
 				[],
 				max,
-				1,
-				[],
-				[]
+				1
 			)
 		);
 	}
@@ -132,5 +139,6 @@ generatePops(popCount, function(){
 		// and remove a pop from the earlier array
 		myPop = popArray[rand(0, popArray.length)];
 		myPop.myPop = true;
+		myPop.species = 'human';
 	// });
 });

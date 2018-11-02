@@ -58,21 +58,21 @@ function mapGrid(rows, cols, callback){
 			);
 		}
 	}
-	mapGridCompleted = true;
+	app.mapGridCompleted = true;
 	callback();
 }
 
 function createPlates(numberOfPlates, callback){
 	for (var c = 0; c < numberOfPlates; c++){
-		var randX = rand(1, totalX),
-		randY = rand(1, totalY),
+		var randX = rand(1, app.totalX),
+		randY = rand(1, app.totalY),
 		plateNumber = (c+1),
 		rXrY = getCellByXY(randX, randY);
 
 		rXrY.plate = plateNumber;
 		platesArray.push(rXrY);
 	}
-	createPlatesCompleted = true;
+	app.createPlatesCompleted = true;
 	callback();
 }
 
@@ -99,7 +99,7 @@ function pathFinder(callback){
 
 		cellArray[i].plate = shortest;
 	}
-	pathFinderCompleted = true;
+	app.pathFinderCompleted = true;
 	callback();
 }
 
@@ -185,12 +185,12 @@ function plateGeography(callback){
 			}
 		}
 	}
-	plateGeographyCompleted = true;
+	app.plateGeographyCompleted = true;
 	callback();
 }
 
 function mapBorderPlates(callback){
-	var mapBorderCells = cellArray.filter(cell => [1, totalX].indexOf(cell.x) > -1 || [1, totalY].indexOf(cell.y) > -1);
+	var mapBorderCells = cellArray.filter(cell => [1, app.totalX].indexOf(cell.x) > -1 || [1, app.totalY].indexOf(cell.y) > -1);
 
 	for (var c = 1; c <= platesArray.length; c++){
 		var cellsInThisPlate = cellArray.filter(cell => cell.plate == c);
@@ -361,7 +361,7 @@ function landTexture(callback){
 			}
 		}
 	}
-	landTextureCompleted = true;
+	app.landTextureCompleted = true;
 	callback();
 }
 
@@ -378,21 +378,21 @@ function makeIslands(callback){
 		}
 		islands[n].z = 3;
 	}
-	makeIslandsCompleted = true;
+	app.makeIslandsCompleted = true;
 	callback();
 }
 
 function minimizeCellData(){
 	cellArray.forEach(function(cell){
-		cell.env = environmentArray['env' + cell.z.toString() + cell.m.toString()];
+		cell.env = app.environmentArray['env' + cell.z.toString() + cell.m.toString()];
 	});
 
-	minimizeCellDataCompleted = true;
+	app.minimizeCellDataCompleted = true;
 }
 
 
 // BUILD THE WORLD
-mapGrid(totalY, totalX, function(){
+mapGrid(app.totalY, app.totalX, function(){
 	createPlates(rand(36, 48), function(){
 		pathFinder(function(){
 			plateGeography(function(){

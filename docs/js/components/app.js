@@ -11,7 +11,7 @@ var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g',
 	twoWeeks = 14,
 	maxTurns = 365;
 
-var minZoom = Math.max(Math.ceil(vpw/(totalX*sideLen)), Math.ceil(vph/(totalY*sideLen)));
+var minZoom = Math.max(Math.ceil(vpw/(app.totalX*sideLen)), Math.ceil(vph/(app.totalY*sideLen)));
 
 //
 // +++++++++++++++++++++++++++++++++++++++++++
@@ -22,6 +22,18 @@ function cellOffset(d){
 		x: Math.round(app.viewport._offset.x/d),
 		y: Math.round(app.viewport._offset.y/d)
 	});
+}
+
+function drawAnimalByEnv(el, env, carnivore, herbivore){
+	if (el.location.env.type === env){
+		if (el.type === 'carnivore'){
+			el.species = carnivore;
+			img = document.getElementById(carnivore);
+		} else {
+			el.species = herbivore;
+			img = document.getElementById(herbivore);
+		}
+	}
 }
 
 function drawAvailable(elX, elY, d, callback){
@@ -45,57 +57,78 @@ function drawOffset(elX, elY, d, callback){
 	}
 }
 
+function drawCurrentWithOffset(context, id, location, d, width, height){
+	context.drawImage(
+		document.getElementById(id),
+		(d*((location.x - cellOffset(d).x)-1)),
+		(d*((location.y - cellOffset(d).y)-1)),
+		width,
+		height
+	);
+}
+
+// function ifInPreviousArray(iteration, el){
+// 	var iteration = 0;
+
+// 	if (el.env.type === previousArray[i].)
+// }
+
 function displayGrid(d){
-	displayGridCompleted = false;
+	app.displayGrids = false;
 
 	$.each(cellArray, function(i, el){
 		drawOffset(el.x, el.y, d, function(){
 			drawAvailable(el.x, el.y, d, function(){
 				if (el.env.type != 'placeholder'){
-					ctx.drawImage(
-						document.getElementById(el.env.type),
-						(d*((el.x - cellOffset(d).x)-1)),
-						(d*((el.y - cellOffset(d).y)-1)),
-						d,
-						d
-					);
+					drawCurrentWithOffset(ctx,el.env.type,el,d,d,d);
 				}
 			});
 		});
 
 		if (i === cellArray.length-1){
-			displayGridCompleted = true;
+			app.displayGridCompleted = true;
 		}
 	});
 }
 
 function displayPops(d){
-	displayPopsCompleted = false;
+	app.displayPopsCompleted = false;
 
 	$.each(popArray, function(i, el){
 		var img;
 
 		// Determine which icon to draw
-		if (el.myPop === true){
+		if (el.myPop === true || el.species === 'human'){
 			img = document.getElementById('human');
 		} else {
-			img = document.getElementById('mammoth');
+			if (el.species === undefined){
+
+				if (el.location.env.type === 'water'){
+					// TEMPORARY - will remove when all environment types
+					// are accounted for
+				} else {
+					drawAnimalByEnv(el, 'river', 'fish', 'fish');
+					drawAnimalByEnv(el, 'prairie', 'sabretooth', 'mammoth');
+					drawAnimalByEnv(el, 'beach', 'seal', 'seal');
+					drawAnimalByEnv(el, 'lightforest', 'wolf', 'elk');
+					drawAnimalByEnv(el, 'thickforest', 'wolf', 'elk');
+					drawAnimalByEnv(el, 'evergreenforest', 'wolf', 'elk');
+					drawAnimalByEnv(el, 'deciduousforest', 'wolf', 'elk');
+				}
+
+			} else {
+				img = document.getElementById(el.species);
+			}
 		}
 
 		drawOffset(el.location.x, el.location.y, d, function(){
 			drawAvailable(el.location.x, el.location.y, d, function(){
-				ctx.drawImage(
-					img,
-					(d*((el.location.x - cellOffset(d).x)-1)),
-					(d*((el.location.y - cellOffset(d).y)-1)),
-					img.width,
-					img.height
-				);
+				drawCurrentWithOffset(ctx, img.id, el.location, d, img.width, img.height);
 			});
 		});
 
 		if (i === popArray.length-1){
-			displayPopsCompleted = true;
+			app.displayPopsCompleted = true;
 		}
 	});
 }
@@ -115,7 +148,7 @@ $(function(){
 
 		displayGrid(sideLen*d);
 
-		fireOnCompletion(displayGridCompleted, function(){
+		fireOnCompletion(app.displayGridCompleted, function(){
 			displayPops(sideLen*d);
 		});
 	};
@@ -161,8 +194,8 @@ $(function(){
 
 		// // THESE NOTES ARE A START, BUT INCOMPLETE
 		// for (i = 0; i < savedGame.length; i++){
-		// 	for (var r = 0; r < totalX; ++r){
-		// 		for (var c = 0; c < totalY; ++c){
+		// 	for (var r = 0; r < app.totalX; ++r){
+		// 		for (var c = 0; c < app.totalY; ++c){
 		// 			var newMapCell = new mapCell(c+1,r+1,z,m);
 		// 			cellArray.push(newMapCell);
 		// 		}
@@ -236,13 +269,13 @@ $(function(){
 
 	// _Zoom
 	function zoomIn(){
-		if (zoom < maxZoom){
+		if (zoom < maxZoom && app.mouse.down === false){
 			zoom = zoom+1;
 			mapVis(zoom);
 		}
 	}
 	function zoomOut(){
-		if (zoom > minZoom){
+		if (zoom > minZoom && app.mouse.down === false){
 			zoom = zoom-1;
 			mapVis(zoom);
 		}

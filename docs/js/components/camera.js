@@ -8,6 +8,7 @@ app.viewport._offset.y = 0;
 app.viewport._offset.startX = app.viewport._offset.x;
 app.viewport._offset.startY = app.viewport._offset.y;
 app.mouse = new Object;
+app.mouse.down = false;
 
 
 addEvent(window, 'resize', function(){
@@ -43,14 +44,14 @@ addEvent(document, 'mousemove', function(e){
 
 	//Do stuff with app.mouse from here on
 	if (app.mouse.down === true){
-		var endMouseX = app.mouse.x,
-			endMouseY = app.mouse.y,
+		var endMouseX = app.mouse.x/zoom,
+			endMouseY = app.mouse.y/zoom,
 			tempOffsetX = app.viewport._offset.startX - endMouseX,
 			tempOffsetY = app.viewport._offset.startY - endMouseY,
 			potentialOffsetX = app.viewport._offset.x + tempOffsetX,
 			potentialOffsetY = app.viewport._offset.y + tempOffsetY,
-			availableOffsetX = (totalX * sideLen * zoom) - app.viewport.w,
-			availableOffsetY = (totalY * sideLen * zoom) - app.viewport.h;
+			availableOffsetX = (app.totalX * sideLen * zoom) - app.viewport.w,
+			availableOffsetY = (app.totalY * sideLen * zoom) - app.viewport.h;
 
 		if (potentialOffsetX >= 0){
 			if (potentialOffsetX >= availableOffsetX){
@@ -72,22 +73,13 @@ addEvent(document, 'mousemove', function(e){
 			app.viewport._offset.y = 0;
 		}
 
-		// console.log('^^^^^^^^^^^^');
-		// console.log('potentialOffsetX: ' + potentialOffsetX);
-		// console.log('potentialOffsetY: ' + potentialOffsetY);
-		// console.log('tempOffsetX: ' + tempOffsetX);
-		// console.log('tempOffsetY: ' + tempOffsetY);
-		// console.log('app.viewport._offset.x: ' + app.viewport._offset.x);
-		// console.log('app.viewport._offset.y: ' + app.viewport._offset.y);
-		// console.log('___________________________');
-
 		mapVis(zoom);
 	}
 });
 
 addEvent(document, 'mousedown', function(e){
-	app.viewport._offset.startX = app.mouse.x;
-	app.viewport._offset.startY = app.mouse.y;
+	app.viewport._offset.startX = app.mouse.x/zoom;
+	app.viewport._offset.startY = app.mouse.y/zoom;
 
 	app.mouse.down = true;
 });

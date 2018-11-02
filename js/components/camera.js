@@ -50,8 +50,8 @@ addEvent(document, 'mousemove', function(e){
 			tempOffsetY = app.viewport._offset.startY - endMouseY,
 			potentialOffsetX = app.viewport._offset.x + tempOffsetX,
 			potentialOffsetY = app.viewport._offset.y + tempOffsetY,
-			availableOffsetX = (totalX * sideLen * zoom) - app.viewport.w,
-			availableOffsetY = (totalY * sideLen * zoom) - app.viewport.h;
+			availableOffsetX = (app.totalX * sideLen * zoom) - app.viewport.w,
+			availableOffsetY = (app.totalY * sideLen * zoom) - app.viewport.h;
 
 		if (potentialOffsetX >= 0){
 			if (potentialOffsetX >= availableOffsetX){
