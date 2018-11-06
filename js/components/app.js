@@ -3,13 +3,7 @@ var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g',
 	vph = app.viewport.h,
 	vpw = app.viewport.w,
 	map = document.getElementById('map'),
-	ctx = map.getContext('2d'),
-	game,
-	maxZoom = 16,
-	zoom = 1,
-	sideLen = 4,
-	twoWeeks = 14,
-	maxTurns = 365;
+	ctx = map.getContext('2d');
 
 var minZoom = Math.max(Math.ceil(vpw/(app.totalX*sideLen)), Math.ceil(vph/(app.totalY*sideLen)));
 
@@ -24,14 +18,12 @@ function cellOffset(d){
 	});
 }
 
-function drawAnimalByEnv(el, env, carnivore, herbivore){
+function setAnimalSpecies(el, env, carnivore, herbivore){
 	if (el.location.env.type === env){
 		if (el.type === 'carnivore'){
 			el.species = carnivore;
-			img = document.getElementById(carnivore);
 		} else {
 			el.species = herbivore;
-			img = document.getElementById(herbivore);
 		}
 	}
 }
@@ -107,13 +99,18 @@ function displayPops(d){
 					// TEMPORARY - will remove when all environment types
 					// are accounted for
 				} else {
-					drawAnimalByEnv(el, 'river', 'fish', 'fish');
-					drawAnimalByEnv(el, 'prairie', 'sabretooth', 'mammoth');
-					drawAnimalByEnv(el, 'beach', 'seal', 'seal');
-					drawAnimalByEnv(el, 'lightforest', 'wolf', 'elk');
-					drawAnimalByEnv(el, 'thickforest', 'wolf', 'elk');
-					drawAnimalByEnv(el, 'evergreenforest', 'wolf', 'elk');
-					drawAnimalByEnv(el, 'deciduousforest', 'wolf', 'elk');
+					// TEMPORARY: this section needs some debugging work
+					setAnimalSpecies(el, 'river', 'fish', 'fish');
+					setAnimalSpecies(el, 'prairie', 'sabretooth', 'mammoth');
+					setAnimalSpecies(el, 'beach', 'seal', 'seal');
+					setAnimalSpecies(el, 'lightforest', 'wolf', 'elk');
+					setAnimalSpecies(el, 'thickforest', 'wolf', 'elk');
+					setAnimalSpecies(el, 'evergreenforest', 'wolf', 'elk');
+					setAnimalSpecies(el, 'deciduousforest', 'bear', 'elk');
+					setAnimalSpecies(el, 'shrubland', 'grouse', 'grouse');
+					setAnimalSpecies(el, 'rockyforest', 'bear', 'bighorn');
+
+					img = document.getElementById(el.species);
 				}
 
 			} else {

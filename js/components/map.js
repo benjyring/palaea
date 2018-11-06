@@ -385,6 +385,11 @@ function makeIslands(callback){
 function minimizeCellData(){
 	cellArray.forEach(function(cell){
 		cell.env = app.environmentArray['env' + cell.z.toString() + cell.m.toString()];
+
+		delete cell.inland;
+		delete cell.mapBorder;
+		delete cell.plate;
+		delete cell.plateBorder;
 	});
 
 	app.minimizeCellDataCompleted = true;

@@ -1,7 +1,7 @@
 var myPop,
-wherePops = [],
-popCount = (platesArray.filter(plate => plate.inland === true && plate.z > 0 && plate.z < 4 && plate.m > 1).length) * 4,
-max = 10;
+	wherePops = [],
+	popCount = (platesArray.filter(plate => !app.inaccessible.includes(plate.env.type)).length) * 4,
+	max = 10;
 
 function Pop(type,species,population,supplies,strength,location,territory,ap,turn){
 	this.type = type;
@@ -84,7 +84,7 @@ function nearestOfEnv(currentCell, envType){
 // Generation
 //
 function generatePops(numberOfPops, callback){
-	var inhabitableCells = cellArray.filter(cell => cell.inland === true && cell.z > 0 && cell.z < 4 && cell.m > 1);
+	var inhabitableCells = cellArray.filter(cell => !app.inaccessible.includes(cell.env.type));
 
 	for (var i = 0; i < numberOfPops; i++){
 		var type;

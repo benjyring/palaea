@@ -1,4 +1,10 @@
-var app = new Object;
+var app = new Object,
+game,
+maxZoom = 16,
+zoom = 1,
+sideLen = 4,
+twoWeeks = 14,
+maxTurns = 365;
 
 // ===========
 // COMPLETIONS

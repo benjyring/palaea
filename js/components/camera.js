@@ -10,6 +10,8 @@ app.viewport._offset.startY = app.viewport._offset.y;
 app.mouse = new Object;
 app.mouse.down = false;
 
+var lastMove = 0;
+var eventThrottle = 16;
 
 addEvent(window, 'resize', function(){
 	app.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -23,57 +25,67 @@ addEvent(document, 'mousemove', function(e){
 		doc,
 		body,
 		pageX,
-		pageY;
+		pageY,
+		now = Date.now();
 
 	e = e || window.event; // IE-ism
 
-	// If pageX/Y aren't available and clientX/Y are,
-	// calculate pageX/Y - logic taken from jQuery.
-	// (This is to support old IE)
-	if (e.pageX == null && e.clientX != null) {
-		eventDoc = (e.target && e.target.ownerDocument) || document;
-		doc = eventDoc.documentElement;
-		body = eventDoc.body;
+	e.preventDefault();
 
-		e.pageX = e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0);
-		e.pageY = e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0 );
-	}
+	if (now > lastMove + eventThrottle) {
+		lastMove = now;
+		// This limits the sheer quantity of events thrown by mousemove
+		// Everything in this statement is thrown less often than it might be
 
-	app.mouse.x = e.pageX;
-	app.mouse.y = e.pageY;
 
-	//Do stuff with app.mouse from here on
-	if (app.mouse.down === true){
-		var endMouseX = app.mouse.x/zoom,
-			endMouseY = app.mouse.y/zoom,
-			tempOffsetX = app.viewport._offset.startX - endMouseX,
-			tempOffsetY = app.viewport._offset.startY - endMouseY,
-			potentialOffsetX = app.viewport._offset.x + tempOffsetX,
-			potentialOffsetY = app.viewport._offset.y + tempOffsetY,
-			availableOffsetX = (app.totalX * sideLen * zoom) - app.viewport.w,
-			availableOffsetY = (app.totalY * sideLen * zoom) - app.viewport.h;
+		// If pageX/Y aren't available and clientX/Y are,
+		// calculate pageX/Y - logic taken from jQuery.
+		// (This is to support old IE)
+		if (e.pageX == null && e.clientX != null) {
+			eventDoc = (e.target && e.target.ownerDocument) || document;
+			doc = eventDoc.documentElement;
+			body = eventDoc.body;
 
-		if (potentialOffsetX >= 0){
-			if (potentialOffsetX >= availableOffsetX){
-				app.viewport._offset.x = availableOffsetX;
-			} else {
-				app.viewport._offset.x = potentialOffsetX;
-			}
-		} else {
-			app.viewport._offset.x = 0;
+			e.pageX = e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0);
+			e.pageY = e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0 );
 		}
 
-		if (potentialOffsetY >= 0){
-			if (potentialOffsetY >= availableOffsetY){
-				app.viewport._offset.y = availableOffsetY;
-			} else {
-				app.viewport._offset.y = potentialOffsetY;
-			}
-		} else {
-			app.viewport._offset.y = 0;
-		}
+		app.mouse.x = e.pageX;
+		app.mouse.y = e.pageY;
 
-		mapVis(zoom);
+		//Do stuff with app.mouse from here on
+		if (app.mouse.down === true){
+			var endMouseX = app.mouse.x/zoom,
+				endMouseY = app.mouse.y/zoom,
+				tempOffsetX = app.viewport._offset.startX - endMouseX,
+				tempOffsetY = app.viewport._offset.startY - endMouseY,
+				potentialOffsetX = app.viewport._offset.x + tempOffsetX,
+				potentialOffsetY = app.viewport._offset.y + tempOffsetY,
+				availableOffsetX = (app.totalX * sideLen * zoom) - app.viewport.w,
+				availableOffsetY = (app.totalY * sideLen * zoom) - app.viewport.h;
+
+			if (potentialOffsetX >= 0){
+				if (potentialOffsetX >= availableOffsetX){
+					app.viewport._offset.x = availableOffsetX;
+				} else {
+					app.viewport._offset.x = potentialOffsetX;
+				}
+			} else {
+				app.viewport._offset.x = 0;
+			}
+
+			if (potentialOffsetY >= 0){
+				if (potentialOffsetY >= availableOffsetY){
+					app.viewport._offset.y = availableOffsetY;
+				} else {
+					app.viewport._offset.y = potentialOffsetY;
+				}
+			} else {
+				app.viewport._offset.y = 0;
+			}
+
+			mapVis(zoom);
+		}
 	}
 });
 
