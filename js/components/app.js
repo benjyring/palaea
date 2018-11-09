@@ -225,8 +225,6 @@ $(function(){
 	// _Build Map
 	$('document').ready(function(){
 		setTimeout(function(){
-			$('#map').css('margin-top', $('#ui-header').height() + 'px');
-
 			game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
 
 			updateUI(myPop);
@@ -243,6 +241,10 @@ $(function(){
 		} else {
 			$(this).text('X');
 		}
+	});
+
+	$('a.icon-inventory').click(function(){
+		$('#inventory-modal').toggleClass('hidden');
 	});
 
 	$('#loadRebuildMap').click(function(){

@@ -1,0 +1,102 @@
+#inventory-modal {
+	background-color: rgba(0, 0, 0, 0.7);
+	color: @white;
+	position: absolute;
+	min-height: 100vh;
+	overflow-y: scroll;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1035;
+
+	&.hidden {
+		display: none;
+		z-index: -1;
+	}
+
+	.container {
+		background: grey;
+		padding: 25px 50px;
+		margin-bottom: 25px;
+		margin-top: 25px;
+	}
+
+	h1 {
+		clear: both;
+	}
+
+	p {
+		max-width: 300px;
+	}
+
+	.arrow {
+		float: left;
+		padding: 20px;
+		vertical-align: top;
+		font-size: 64px;
+	}
+
+	#crafting-table {
+		margin-top: 10px;
+	}
+
+	#grid {
+		float: left;
+		margin-bottom: 16px;
+
+		.gridCell:nth-child(3n+1){
+			clear: left;
+		}
+	}
+
+	.gridCell {
+		background-color: @bg-color;
+		border-top: thick double @border-color;
+		border-left: thick double @border-color;
+		border-right: double @white;
+		border-bottom: double @white;
+		width: 36px;
+		height: 36px;
+		float: left;
+
+		img {
+		 padding: 2px;
+		}
+	}
+
+	#inventory {
+		.gridCell:nth-child(9n+1){
+			clear: left;
+		}
+	}
+
+	#recipes {
+		img {
+			float: left;
+			clear: both;
+		}
+
+		p {
+			display: block;
+			font-weight: bold;
+			clear: both;
+			padding-top: 12px;
+			margin-bottom: 0;
+		}
+	}
+
+	#result {
+		float: left;
+		text-align: center;
+		padding-top: 8px;
+		box-sizing: border-box;
+		background-color: @bg-color;
+		border-top: thick double @border-color;
+		border-left: thick double @border-color;
+		border-right: double @white;
+		border-bottom: double @white;
+		width: 132px;
+		height: 132px;
+	}
+}
