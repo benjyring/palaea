@@ -49,11 +49,13 @@ function drawOffset(elX, elY, d, callback){
 	}
 }
 
-function drawCurrentWithOffset(context, id, location, d, width, height){
+function drawCurrentWithOffset(context, id, locationX, locationY, d, width, height){
+	context.imageSmoothingEnabled = false;
+
 	context.drawImage(
 		document.getElementById(id),
-		(d*((location.x - cellOffset(d).x)-1)),
-		(d*((location.y - cellOffset(d).y)-1)),
+		Math.round(d*((locationX - cellOffset(d).x)-1)),
+		Math.round(d*((locationY - cellOffset(d).y)-1)),
 		width,
 		height
 	);
@@ -71,9 +73,27 @@ function displayGrid(d){
 	$.each(cellArray, function(i, el){
 		drawOffset(el.x, el.y, d, function(){
 			drawAvailable(el.x, el.y, d, function(){
-				if (el.env.type != 'placeholder'){
-					drawCurrentWithOffset(ctx,el.env.type,el,d,d,d);
+
+				var tPlus = checkPlus(el);
+
+				drawCurrentWithOffset(ctx,el.env.type,el.x,el.y,d,d,d);
+
+				if (!isEmpty(tPlus[3]) && tPlus[3].env.type != el.env.type){
+					var blendLeft = '1-' + tPlus[3].env.type  + '-' + el.env.type;
+
+					if (document.getElementById(blendLeft)){
+						drawCurrentWithOffset(ctx,blendLeft,(el.x-0.5),el.y,d,d,d);
+					}
 				}
+
+				if (!isEmpty(tPlus[0]) && tPlus[0].env.type != el.env.type){
+					var blendTop = '2-' + tPlus[0].env.type  + '-' + el.env.type;
+
+					if (document.getElementById(blendTop)){
+						drawCurrentWithOffset(ctx,blendTop,el.x,(el.y-0.5),d,d,d);
+					}
+				}
+
 			});
 		});
 
@@ -120,7 +140,7 @@ function displayPops(d){
 
 		drawOffset(el.location.x, el.location.y, d, function(){
 			drawAvailable(el.location.x, el.location.y, d, function(){
-				drawCurrentWithOffset(ctx, img.id, el.location, d, img.width, img.height);
+				drawCurrentWithOffset(ctx, img.id, el.location.x, el.location.y, d, img.width, img.height);
 			});
 		});
 

@@ -2,7 +2,7 @@ var app = new Object,
 game,
 maxZoom = 16,
 zoom = 1,
-sideLen = 4,
+sideLen = 8,
 twoWeeks = 14,
 maxTurns = 365;
 
