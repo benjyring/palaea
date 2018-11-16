@@ -1,6 +1,5 @@
 // _Constants/Variables
-var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'},
-	vph = app.viewport.h,
+var vph = app.viewport.h,
 	vpw = app.viewport.w,
 	map = document.getElementById('map'),
 	ctx = map.getContext('2d');
@@ -169,57 +168,6 @@ $(function(){
 			displayPops(sideLen*d);
 		});
 	};
-
-	// _Save Game
-	function saveGameAsString(){
-		var saveGame = [];
-		var sameCellIndex = 1;
-
-		for (i = 0; i < cellArray.length; i++){
-			var cc = cellArray[i].z + '' + cellArray[i].m,
-			cellToPush = codeArray[cc],
-			cp,
-			cellToCheck;
-
-			if (i > 0){
-				cp = cellArray[i-1].z + '' + cellArray[i-1].m;
-				cellToCheck = codeArray[cp];
-
-				if (cellToPush != cellToCheck){
-					if (sameCellIndex != 1){
-						saveGame.push(sameCellIndex);
-						sameCellIndex = 1;
-					}
-					saveGame.push(cellToPush);
-				} else {
-					sameCellIndex++;
-				}
-			} else {
-				saveGame.push(cellToPush);
-			}
-		}
-
-		saveGame = saveGame.join("");
-		return saveGame;
-	}
-
-	function rebuildGameFromSave(){
-		var savedGame = $('#loadSavedGame input').val();
-		var sameCellIndex = 1;
-
-		// cellArray = [];
-
-		// // THESE NOTES ARE A START, BUT INCOMPLETE
-		// for (i = 0; i < savedGame.length; i++){
-		// 	for (var r = 0; r < app.totalX; ++r){
-		// 		for (var c = 0; c < app.totalY; ++c){
-		// 			var newMapCell = new mapCell(c+1,r+1,z,m);
-		// 			cellArray.push(newMapCell);
-		// 		}
-		// 	}
-		// }
-		return savedGame;
-	}
 
 	// _GAME
 	function Game(turn, nextMajorEvent, suddenDeath, endGameTurn){
