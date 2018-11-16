@@ -105,7 +105,7 @@ function fireOnCompletion(completion, functionToRun){
 
 function diffXY(cell1, cell2){
 	return {
-		diffX: Math.abs(cell2.x - cell1.x),
-		diffY: Math.abs(cell2.y - cell1.y)
+		x: Math.abs(cell2.x - cell1.x),
+		y: Math.abs(cell2.y - cell1.y)
 	}
 }

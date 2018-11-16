@@ -4,7 +4,7 @@ var vph = app.viewport.h,
 	map = document.getElementById('map'),
 	ctx = map.getContext('2d');
 
-var minZoom = Math.max(Math.ceil(vpw/(app.totalX*sideLen)), Math.ceil(vph/(app.totalY*sideLen)));
+app.viewport.minZoom = Math.max(Math.ceil(vpw/(app.totalX*app.sideLen)), Math.ceil(vph/(app.totalY*app.sideLen)));
 
 //
 // +++++++++++++++++++++++++++++++++++++++++++
@@ -18,7 +18,7 @@ function cellOffset(d){
 }
 
 function setAnimalSpecies(el, env, carnivore, herbivore){
-	if (el.location.env.type === env){
+	if (el.cell.env.type === env){
 		if (el.type === 'carnivore'){
 			el.species = carnivore;
 		} else {
@@ -30,8 +30,6 @@ function setAnimalSpecies(el, env, carnivore, herbivore){
 function drawAvailable(elX, elY, d, callback){
 	// Limits the portion of the map drawn to only what's
 	// within the viewport. Greatly improves performance.
-	// var _elx = elX;
-	// var _ely = elY;
 	var _elx = elX - cellOffset(d).x;
 	var _ely = elY - cellOffset(d).y;
 
@@ -69,7 +67,7 @@ function drawCurrentWithOffset(context, id, locationX, locationY, d, width, heig
 function displayGrid(d){
 	app.displayGrids = false;
 
-	$.each(cellArray, function(i, el){
+	$.each(app.cellArray, function(i, el){
 		drawOffset(el.x, el.y, d, function(){
 			drawAvailable(el.x, el.y, d, function(){
 
@@ -96,25 +94,25 @@ function displayGrid(d){
 			});
 		});
 
-		if (i === cellArray.length-1){
-			app.displayGridCompleted = true;
+		if (i === app.cellArray.length-1){
+			app.completed.displayGrid = true;
 		}
 	});
 }
 
 function displayPops(d){
-	app.displayPopsCompleted = false;
+	app.completed.displayPops = false;
 
-	$.each(popArray, function(i, el){
+	$.each(app.popArray, function(i, el){
 		var img;
 
 		// Determine which icon to draw
-		if (el.myPop === true || el.species === 'human'){
+		if (el === myPop || el.species === 'human'){
 			img = document.getElementById('human');
 		} else {
 			if (el.species === undefined){
 
-				if (el.location.env.type === 'water'){
+				if (el.cell.env.type === 'water'){
 					// TEMPORARY - will remove when all environment types
 					// are accounted for
 				} else {
@@ -137,14 +135,14 @@ function displayPops(d){
 			}
 		}
 
-		drawOffset(el.location.x, el.location.y, d, function(){
-			drawAvailable(el.location.x, el.location.y, d, function(){
-				drawCurrentWithOffset(ctx, img.id, el.location.x, el.location.y, d, img.width, img.height);
+		drawOffset(el.cell.x, el.cell.y, d, function(){
+			drawAvailable(el.cell.x, el.cell.y, d, function(){
+				drawCurrentWithOffset(ctx, img.id, el.cell.x, el.cell.y, d, img.width, img.height);
 			});
 		});
 
-		if (i === popArray.length-1){
-			app.displayPopsCompleted = true;
+		if (i === app.popArray.length-1){
+			app.completed.displayPops = true;
 		}
 	});
 }
@@ -162,10 +160,10 @@ $(function(){
 		map.width = vpw;
 		map.height = vph;
 
-		displayGrid(sideLen*d);
+		displayGrid(app.sideLen*d);
 
-		fireOnCompletion(app.displayGridCompleted, function(){
-			displayPops(sideLen*d);
+		fireOnCompletion(app.completed.displayGrid, function(){
+			displayPops(app.sideLen*d);
 		});
 	};
 
@@ -193,12 +191,12 @@ $(function(){
 	// _Build Map
 	$('document').ready(function(){
 		setTimeout(function(){
-			game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
+			// game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
 
 			updateUI(myPop);
-			mapVis(minZoom);
+			mapVis(app.viewport.minZoom);
 		}, 1000);
-		zoom = minZoom;
+		app.viewport.zoom = app.viewport.minZoom;
 	});
 
 	$('#main-menu-opener').click(function(){
@@ -236,15 +234,15 @@ $(function(){
 
 	// _Zoom
 	function zoomIn(){
-		if (zoom < maxZoom && app.mouse.down === false){
-			zoom = zoom+1;
-			mapVis(zoom);
+		if (app.viewport.zoom < app.viewport.maxZoom && app.mouse.down === false){
+			app.viewport.zoom = app.viewport.zoom+1;
+			mapVis(app.viewport.zoom);
 		}
 	}
 	function zoomOut(){
-		if (zoom > minZoom && app.mouse.down === false){
-			zoom = zoom-1;
-			mapVis(zoom);
+		if (app.viewport.zoom > app.viewport.minZoom && app.mouse.down === false){
+			app.viewport.zoom = app.viewport.zoom-1;
+			mapVis(app.viewport.zoom);
 		}
 	}
 	$('#zoomIn').click(function(){

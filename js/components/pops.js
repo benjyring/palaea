@@ -1,15 +1,15 @@
 var myPop,
-	wherePops = [],
-	popCount = (platesArray.filter(plate => !app.inaccessible.includes(plate.env.type)).length) * 4,
+	popCount = (app.platesArray.filter(plate => !app.inaccessible.includes(plate.env.type)).length) * 4,
 	max = 10;
 
-function Pop(type,species,population,supplies,strength,location,territory,ap,turn){
+function Pop(type,species,population,supplies,strength,cell,tile,territory,ap,turn){
 	this.type = type;
 	this.species = species;
 	this.population = population;
 	this.supplies = supplies;
 	this.strength = strength;
-	this.location = location;
+	this.cell = cell;
+	this.tile = tile;
 	this.territory = territory;
 	this.ap = ap || max;
 	this.turn = turn;
@@ -19,13 +19,13 @@ function Pop(type,species,population,supplies,strength,location,territory,ap,tur
 // Movement
 //
 function whereTo(pop, modX, modY){
-	return getCellByXY((pop.location.x + (modX)), (pop.location.y + (modY)));
+	return getCellByXY((pop.cell.x + (modX)), (pop.cell.y + (modY)));
 }
 
 function move(pop, endCell){
 	var playerAlert,
-		dx = diffXY(pop.location, endCell).x,
-		dy = diffXY(pop.location, endCell).y;;
+		dx = diffXY(pop.cell, endCell).x,
+		dy = diffXY(pop.cell, endCell).y;;
 
 	if ((dx + dy) > pop.ap){
 		playerAlert = 'Not enough AP to move ' + (dx + dy) + ' cells.';
@@ -33,19 +33,19 @@ function move(pop, endCell){
 		if (app.inaccessible.includes(endCell.env.type)){
 			playerAlert = 'Can\'t rest on a ' + endCell.env.type + ' cell.';
 		} else {
-			pop.location = endCell;
+			pop.cell = endCell;
 			pop.ap = pop.ap - 1;
 
 			if (pop.ap === 0){
 				playerAlert = 'Turn complete.';
 				pop.turn = pop.turn + 1;
-				game.turn = game.turn + 1;
+				app.game.turn += 1;
 				pop.ap = max;
 			}
 		}
 	}
 
-	mapVis(zoom);
+	mapVis(app.viewport.zoom);
 
 	if (pop === myPop){
 		updateUI(pop);
@@ -60,11 +60,11 @@ function move(pop, endCell){
 // AI
 //
 function nearestOfEnv(currentCell, envType){
-	var desiredCells = cellArray.filter(cell => cell.env.type === envType);
+	var desiredCells = app.cellArray.filter(cell => cell.env.type === envType);
 
 	var distances = desiredCells.map(dCell => {
-		var dx = diffXY(myPop.location, dCell).diffX,
-			dy = diffXY(myPop.location, dCell).diffY,
+		var dx = diffXY(currentCell, dCell).x,
+			dy = diffXY(currentCell, dCell).x,
 			distance = dx + dy,
 			cellI = (dCell.y-1)*app.totalX + (dCell.x-1);
 
@@ -84,7 +84,7 @@ function nearestOfEnv(currentCell, envType){
 // Generation
 //
 function generatePops(numberOfPops, callback){
-	var inhabitableCells = cellArray.filter(cell => !app.inaccessible.includes(cell.env.type));
+	var inhabitableCells = app.cellArray.filter(cell => !app.inaccessible.includes(cell.env.type));
 
 	for (var i = 0; i < numberOfPops; i++){
 		var type;
@@ -94,7 +94,8 @@ function generatePops(numberOfPops, callback){
 		} else {
 			type = 'herbivore';
 		}
-		popArray.push(
+
+		app.popArray.push(
 			new Pop(
 				type,
 				undefined,
@@ -108,6 +109,10 @@ function generatePops(numberOfPops, callback){
 					morale: max
 				},
 				inhabitableCells[rand(1, inhabitableCells.length)],
+				{
+					x: undefined,
+					y: undefined
+				},
 				[],
 				max,
 				1
@@ -118,27 +123,12 @@ function generatePops(numberOfPops, callback){
 	callback();
 }
 
-function addToWherePops(callback){
-	for (i = 0; i < popArray.length; i++){
-		for (n = 0; n < popArray[i].location.length; n++){
-			wherePops.push(popArray[i].location[n]);
-		}
-	}
-
-	callback();
-}
-
 // =============================
 // Create Populations on the map
 // =============================
 
 generatePops(popCount, function(){
-	// addToWherePops(function(){
-		// Temporarily set myPop to random among pops
-		// Eventually, will create new pop for each joined player,
-		// and remove a pop from the earlier array
-		myPop = popArray[rand(0, popArray.length)];
-		myPop.myPop = true;
-		myPop.species = 'human';
-	// });
+	// Temporarily set myPop to random among pops
+	myPop = app.popArray[rand(0, (popCount-1))];
+	myPop.species = 'human';
 });

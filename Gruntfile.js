@@ -47,7 +47,6 @@ module.exports = function(grunt){
 					'js/app.min.js': [
 						'js/lib/jquery-3.2.1.min.js',
 						'js/lib/bootstrap.min.js',
-						// 'js/lib/dragscroll.js',
 						'js/components/app.js'
 					]
 				}
@@ -179,7 +178,6 @@ module.exports = function(grunt){
 	grunt.registerTask('watch-local', ['watch']);
 
 	grunt.registerTask('prepare-js', ['jshint', 'uglify']);
-	// grunt.registerTask('prepare-images', ['clean:images', 'imagemin', 'copy:images', 'clean:images']);
 	grunt.registerTask('prepare-css', ['less:compile', 'autoprefixer', 'usebanner', 'less:minify']);
 
 	grunt.registerTask('source-map', ['less:compile_minify']);

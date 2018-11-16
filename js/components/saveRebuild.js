@@ -35,7 +35,7 @@ function cellEncrypt(){
 		shortened = [],
 		counter = 0;
 
-	cellArray.forEach(function(el, i){
+	app.cellArray.forEach(function(el, i){
 		savedCells.push(
 			cellEncryptKey[el.z + '' + el.m]
 		);
@@ -66,7 +66,7 @@ function cellDecrypt(rbString){
 	var cells = rbString.match(/([a-zA-Z])([0-9]+)?/ig),
 		newCellArray = [],
 		counter = 0,
-		yCounter = 0,
+		counterXY = 0,
 		pushNewCell = function(array, el){
 			array.push({
 				env: app.environmentArray['env' + getKeyByValue(cellEncryptKey, el.toString())],
@@ -97,20 +97,13 @@ function cellDecrypt(rbString){
 		}
 	});
 
-	newCellArray.forEach(function(el, i){
-		var testX = (i+1) % app.totalX;
-
-		if (testX === 0){
-			testX = app.totalX;
+	for (y=0; y<app.totalY; y++){
+		for (x=0; x<app.totalX; x++){
+			newCellArray[counterXY].x = x+1;
+			newCellArray[counterXY].y = y+1;
+			counterXY += 1;
 		}
-
-		if (testX === 1){
-			yCounter += 1;
-		}
-
-		el.x = testX;
-		el.y = yCounter;
-	});
+	}
 
 	return newCellArray;
 }

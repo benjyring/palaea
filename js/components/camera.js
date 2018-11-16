@@ -1,15 +1,3 @@
-app.viewport = new Object;
-app.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-app.viewport.h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-app.viewport._offset = new Object;
-app.viewport._offset.x = 0;
-app.viewport._offset.y = 0;
-app.viewport._offset.startX = app.viewport._offset.x;
-app.viewport._offset.startY = app.viewport._offset.y;
-app.mouse = new Object;
-app.mouse.down = false;
-
 var lastMove = 0;
 var eventThrottle = 16;
 
@@ -55,14 +43,14 @@ addEvent(document, 'mousemove', function(e){
 
 		//Do stuff with app.mouse from here on
 		if (app.mouse.down === true){
-			var endMouseX = app.mouse.x/zoom,
-				endMouseY = app.mouse.y/zoom,
+			var endMouseX = app.mouse.x/app.viewport.zoom,
+				endMouseY = app.mouse.y/app.viewport.zoom,
 				tempOffsetX = app.viewport._offset.startX - endMouseX,
 				tempOffsetY = app.viewport._offset.startY - endMouseY,
 				potentialOffsetX = app.viewport._offset.x + tempOffsetX,
 				potentialOffsetY = app.viewport._offset.y + tempOffsetY,
-				availableOffsetX = (app.totalX * sideLen * zoom) - app.viewport.w,
-				availableOffsetY = (app.totalY * sideLen * zoom) - app.viewport.h;
+				availableOffsetX = (app.totalX * app.sideLen * app.viewport.zoom) - app.viewport.w,
+				availableOffsetY = (app.totalY * app.sideLen * app.viewport.zoom) - app.viewport.h;
 
 			if (potentialOffsetX >= 0){
 				if (potentialOffsetX >= availableOffsetX){
@@ -84,14 +72,14 @@ addEvent(document, 'mousemove', function(e){
 				app.viewport._offset.y = 0;
 			}
 
-			mapVis(zoom);
+			mapVis(app.viewport.zoom);
 		}
 	}
 });
 
 addEvent(document, 'mousedown', function(e){
-	app.viewport._offset.startX = app.mouse.x/zoom;
-	app.viewport._offset.startY = app.mouse.y/zoom;
+	app.viewport._offset.startX = app.mouse.x/app.viewport.zoom;
+	app.viewport._offset.startY = app.mouse.y/app.viewport.zoom;
 
 	app.mouse.down = true;
 });
