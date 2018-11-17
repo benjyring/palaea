@@ -18,7 +18,9 @@ if (isEmpty(localStorage.savedGame)){
 								// Create Populations on the map
 								// =============================
 								generatePops(function(){
-									setMyPop();
+									setMyPop(function(){
+										setFrame();
+									});
 								});
 								// =============================
 							});
@@ -35,4 +37,5 @@ if (isEmpty(localStorage.savedGame)){
 		mapVis(app.viewport.minZoom);
 	}, 4000);
 	app = JSON.parse(localStorage.savedGame);
+	setFrame();
 }

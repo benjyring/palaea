@@ -6,6 +6,7 @@ var app = new Object;
 app.viewport = new Object;
 app.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 app.viewport.h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+app.viewport.view = 'cell';
 app.viewport.zoom = 1;
 app.viewport.maxZoom = 16;
 
@@ -14,11 +15,45 @@ app.viewport._offset.x = 0;
 app.viewport._offset.y = 0;
 app.viewport._offset.startX = app.viewport._offset.x;
 app.viewport._offset.startY = app.viewport._offset.y;
+
 app.mouse = new Object;
 app.mouse.down = false;
 
 app.game = new Object;
 app.sideLen = 8;
+
+// =====
+// INNER
+// =====
+app.inner = new Object;
+
+app.inner.animate = undefined;
+app.inner.fps = 60;
+app.inner.moveBy = 5;
+app.inner.sideLen = app.sidelen * 20;
+
+app.gameArea = {
+	offsetX: 0,
+	offsetY: 0,
+	draw: function(){
+		drawCells(app.inner.sideLen);
+		drawChar(app.inner.sideLen/2);
+	},
+	start: function(){
+		app.inner.animate = setInterval(updateGameArea, 1000/app.inner.fps);
+
+		window.addEventListener('keydown', function(e){
+			app.gameArea.keys = (app.gameArea.keys || []);
+			app.gameArea.keys[e.keyCode] = (e.type == "keydown");
+		});
+		window.addEventListener('keyup', function(e){
+			app.gameArea.keys[e.keyCode] = (e.type == "keydown");
+		});
+	},
+	clear: function(){
+		app.innerCtx.clearRect(0, 0, app.innerMap.width, app.innerMap.height);
+	}
+}
 
 // ===========
 // COMPLETIONS
@@ -48,110 +83,245 @@ app.platesArray = [];
 app.environmentArray = {
 	env03: {
 		color: '#0b0a32',
+		density: 0,
+		// fruitfulness: 1,
+		// smallGame: 'ocean-fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'ocean'
 	},
 	env02: {
 		color: '#1f3078',
+		density: 1,
+		// fruitfulness: 1,
+		// smallGame: 'sea-fish',
+		// largeGame: 'shark',
+		// vegetation: 'seaweed',
 		type: 'sea'
 	},
 	env01: {
 		color: '#5078b3',
+		density: 2,
+		// fruitfulness: 1,
+		// smallGame: 'river-fish',
+		// largeGame: 'catfish',
+		// vegetation: 'cattails',
 		type: 'river'
 	},
 	env11: {
 		color: '#eed19f',
+		density: 0,
+		// fruitfulness: 1,
+		// smallGame: 'seagull',
+		// largeGame: 'seal',
+		// vegetation: 'shrub',
 		type: 'beach'
 	},
 	env12: {
 		color: '#6c6d36',
+		density: 1,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'prairie'
 	},
 	env13: {
 		color: '#2e421d',
+		density: 7,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'thickforest'
 	},
 	env14: {
 		color: '#2e421d',
+		density: 7,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'thickforest'
 	},
 	env15: {
 		color: '#214c25',
+		density: 6,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'evergreenforest'
 	},
 	env16: {
 		color: '#214c25',
+		density: 6,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'evergreenforest'
 	},
 	env21: {
 		color: '#efb08e',
+		density: 3,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'shrubland'
 	},
 	env22: {
 		color: '#6c6d36',
+		density: 1,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'prairie'
 	},
 	env23: {
 		color: '#6c6d36',
+		density: 1,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'prairie'
 	},
 	env24: {
 		color: '#34511d',
+		density: 5,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'deciduousforest'
 	},
 	env25: {
 		color: '#34511d',
+		density: 5,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'deciduousforest'
 	},
 	env26: {
 		color: '#3a5419',
+		density: 5,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'deciduousforest'
 	},
 	env31: {
 		color: '#efb08e',
+		density: 3,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'shrubland'
 	},
 	env32: {
 		color: '#efb08e',
+		density: 3,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'shrubland'
 	},
 	env33: {
 		color: '#506b2a',
+		density: 4,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'lightforest'
 	},
 	env34: {
 		color: '#506b2a',
+		density: 4,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'lightforest'
 	},
 	env35: {
 		color: '#557432',
+		density: 5,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'rockyforest'
 	},
 	env36: {
 		color: '#557432',
+		density: 5,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'rockyforest'
 	},
 	env41: {
 		color: '#bb9673',
+		density: 4,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'rocky'
 	},
 	env42: {
 		color: '#9f6e50',
+		density: 2,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'snow'
 	},
 	env43: {
 		color: '#aa622e',
+		density: 2,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'snow'
 	},
 	env44: {
 		color: '#ffffff',
+		density: 2,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'snow'
 	},
 	env45: {
 		color: '#ffffff',
+		density: 2,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'snow'
 	},
 	env46: {
 		color: '#ffffff',
+		density: 2,
+		// fruitfulness: 1,
+		// smallGame: 'fish',
+		// largeGame: 'whale',
+		// vegetation: 'kelp',
 		type: 'snow'
 	}
 };

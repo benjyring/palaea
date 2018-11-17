@@ -1,10 +1,9 @@
-// _Constants/Variables
-var vph = app.viewport.h,
-	vpw = app.viewport.w,
-	map = document.getElementById('map'),
+// Variables
+var map = document.getElementById('map'),
 	ctx = map.getContext('2d');
 
-app.viewport.minZoom = Math.max(Math.ceil(vpw/(app.totalX*app.sideLen)), Math.ceil(vph/(app.totalY*app.sideLen)));
+app.innerMap = document.getElementById('innerMap');
+app.innerCtx = innerMap.getContext('2d');
 
 //
 // +++++++++++++++++++++++++++++++++++++++++++
@@ -33,7 +32,7 @@ function drawAvailable(elX, elY, d, callback){
 	var _elx = elX - cellOffset(d).x;
 	var _ely = elY - cellOffset(d).y;
 
-	if ((_elx-1) < Math.ceil(vpw/d) && (_ely-1) < Math.ceil(vph/d) ){
+	if ((_elx-1) < Math.ceil(app.viewport.w/d) && (_ely-1) < Math.ceil(app.viewport.h/d) ){
 		callback();
 	}
 }
@@ -157,8 +156,8 @@ $(function(){
 
 	window.mapVis = function(d){
 		// Visualize map
-		map.width = vpw;
-		map.height = vph;
+		map.width = app.viewport.w;
+		map.height = app.viewport.h;
 
 		displayGrid(app.sideLen*d);
 
@@ -208,9 +207,25 @@ $(function(){
 
 	$('#cell-tile-switcher').click(function(){
 		if ($('#map').hasClass('hidden')){
-			$('#map').removeClass('hidden zoomIn');
+			app.viewport.view = 'cell';
+			$('#map').removeClass('hidden');
+			$('.wrap').addClass('dragscroll');
+			$(this).text('Return');
+
+			setTimeout(function(){
+				$('#map').removeClass('zoomIn');
+				stopAnimation();
+			}, 100);
 		} else {
+			app.viewport.view = 'tile';
 			$('#map').addClass('zoomIn');
+			$('.wrap').removeClass('dragscroll');
+			$(this).text('Map');
+
+			setTimeout(function(){
+				startGame();
+			}, 500);
+
 			setTimeout(function(){
 				$('#map').addClass('hidden');
 			}, 1000);
@@ -263,22 +278,22 @@ $(function(){
 		if(e.charCode==45){
 			zoomOut();
 		}
-		//W
-		if(e.charCode==119){
-			move(app.myPop, whereTo(app.myPop, 0, -1));
-		}
-		//A
-		if(e.charCode==97){
-			move(app.myPop, whereTo(app.myPop, -1, 0));
-		}
-		//S
-		if(e.charCode==115){
-			move(app.myPop, whereTo(app.myPop, 0, 1));
-		}
-		//D
-		if(e.charCode==100){
-			move(app.myPop, whereTo(app.myPop, 1, 0));
-		}
+		// //W
+		// if(e.charCode==119){
+		// 	move(app.myPop, whereTo(app.myPop, 0, -1));
+		// }
+		// //A
+		// if(e.charCode==97){
+		// 	move(app.myPop, whereTo(app.myPop, -1, 0));
+		// }
+		// //S
+		// if(e.charCode==115){
+		// 	move(app.myPop, whereTo(app.myPop, 0, 1));
+		// }
+		// //D
+		// if(e.charCode==100){
+		// 	move(app.myPop, whereTo(app.myPop, 1, 0));
+		// }
 	});
 
 });
