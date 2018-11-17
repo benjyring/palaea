@@ -206,6 +206,17 @@ $(function(){
 		$('#ui-sidebar').removeClass('open');
 	});
 
+	$('#cell-tile-switcher').click(function(){
+		if ($('#map').hasClass('hidden')){
+			$('#map').removeClass('hidden zoomIn');
+		} else {
+			$('#map').addClass('zoomIn');
+			setTimeout(function(){
+				$('#map').addClass('hidden');
+			}, 1000);
+		}
+	});
+
 	$('a.icon-inventory').click(function(){
 		$('#inventory-modal').toggleClass('hidden');
 	});
