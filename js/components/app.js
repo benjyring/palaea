@@ -201,12 +201,9 @@ $(function(){
 
 	$('#main-menu-opener').click(function(){
 		$('#ui-sidebar').toggleClass('open');
-
-		if ($(this).text() === 'X'){
-			$(this).text('MENU');
-		} else {
-			$(this).text('X');
-		}
+	});
+	$('#ui-sidebar .drawer-background').click(function(){
+		$('#ui-sidebar').removeClass('open');
 	});
 
 	$('a.icon-inventory').click(function(){
