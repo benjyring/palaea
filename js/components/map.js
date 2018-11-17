@@ -382,7 +382,7 @@ function makeIslands(callback){
 	callback();
 }
 
-function minimizeCellData(){
+function minimizeCellData(callback){
 	app.cellArray.forEach(function(cell){
 		cell.env = app.environmentArray['env' + cell.z.toString() + cell.m.toString()];
 		cell.inner = [];
@@ -394,28 +394,5 @@ function minimizeCellData(){
 	});
 
 	app.completed.minimizeCellData = true;
-}
-
-
-if (isEmpty(localStorage.savedGame)){
-	// BUILD THE WORLD
-	mapGrid(app.totalY, app.totalX, function(){
-		createPlates(rand(36, 48), function(){
-			pathFinder(function(){
-				plateGeography(function(){
-					// _Build Map
-					mapBorderPlates(function(){
-						landTexture(function(){});
-						makeIslands(function(){
-							minimizeCellData();
-						});
-					});
-				});
-			});
-		});
-	});
-} else {
-	// app.cellArray = cellDecrypt(localStorage.savedGame);
-	app.cellArray = JSON.parse(localStorage.savedGame);
-	console.log(app.cellArray);
+	callback();
 }

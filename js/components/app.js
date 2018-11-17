@@ -107,7 +107,7 @@ function displayPops(d){
 		var img;
 
 		// Determine which icon to draw
-		if (el === myPop || el.species === 'human'){
+		if (el === app.myPop || el.species === 'human'){
 			img = document.getElementById('human');
 		} else {
 			if (el.species === undefined){
@@ -193,7 +193,7 @@ $(function(){
 		setTimeout(function(){
 			// game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
 
-			updateUI(myPop);
+			updateUI(app.myPop);
 			mapVis(app.viewport.minZoom);
 		}, 1000);
 		app.viewport.zoom = app.viewport.minZoom;
@@ -210,23 +210,10 @@ $(function(){
 		$('#inventory-modal').toggleClass('hidden');
 	});
 
-	$('#loadRebuildMap').click(function(){
-		if ($(this).text() == 'Cancel'){
-			$(this).text('Load Saved Game');
-		} else {
-			$(this).text('Cancel');
-		}
-	});
 	// _Save Game
 	$('#saveGame').click(function(){
-		alert(saveGameAsString());
-	});
-	$('#rebuildMap').click(function(){
-		rebuildGameFromSave();
-	});
-	// _Colors
-	$('#colorPalette').click(function(){
-		$('#colors').toggleClass('visible');
+		localStorage.savedGame = JSON.stringify(app);
+		alert('Saved!');
 	});
 
 	// _Zoom
@@ -267,19 +254,19 @@ $(function(){
 		}
 		//W
 		if(e.charCode==119){
-			move(myPop, whereTo(myPop, 0, -1));
+			move(app.myPop, whereTo(app.myPop, 0, -1));
 		}
 		//A
 		if(e.charCode==97){
-			move(myPop, whereTo(myPop, -1, 0));
+			move(app.myPop, whereTo(app.myPop, -1, 0));
 		}
 		//S
 		if(e.charCode==115){
-			move(myPop, whereTo(myPop, 0, 1));
+			move(app.myPop, whereTo(app.myPop, 0, 1));
 		}
 		//D
 		if(e.charCode==100){
-			move(myPop, whereTo(myPop, 1, 0));
+			move(app.myPop, whereTo(app.myPop, 1, 0));
 		}
 	});
 

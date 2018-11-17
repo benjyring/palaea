@@ -1,7 +1,3 @@
-var myPop,
-	popCount = (app.platesArray.filter(plate => !app.inaccessible.includes(plate.env.type)).length) * 4,
-	max = 10;
-
 function Pop(type,species,population,supplies,strength,cell,tile,territory,ap,turn){
 	this.type = type;
 	this.species = species;
@@ -11,7 +7,7 @@ function Pop(type,species,population,supplies,strength,cell,tile,territory,ap,tu
 	this.cell = cell;
 	this.tile = tile;
 	this.territory = territory;
-	this.ap = ap || max;
+	this.ap = ap || app.max;
 	this.turn = turn;
 }
 
@@ -40,14 +36,14 @@ function move(pop, endCell){
 				playerAlert = 'Turn complete.';
 				pop.turn = pop.turn + 1;
 				app.game.turn += 1;
-				pop.ap = max;
+				pop.ap = app.max;
 			}
 		}
 	}
 
 	mapVis(app.viewport.zoom);
 
-	if (pop === myPop){
+	if (pop === app.myPop){
 		updateUI(pop);
 
 		if (!isEmpty(playerAlert)){
@@ -83,10 +79,10 @@ function nearestOfEnv(currentCell, envType){
 //
 // Generation
 //
-function generatePops(numberOfPops, callback){
+function generatePops(callback){
 	var inhabitableCells = app.cellArray.filter(cell => !app.inaccessible.includes(cell.env.type));
 
-	for (var i = 0; i < numberOfPops; i++){
+	for (var i = 0; i < app.popCount; i++){
 		var type;
 
 		if ((i != 0) && (i % 7 === 0)){
@@ -101,12 +97,12 @@ function generatePops(numberOfPops, callback){
 				undefined,
 				rand(paleolithic.minGroupSize, paleolithic.maxGroupSize),
 				{
-					water: max,
-					food: max
+					water: app.max,
+					food: app.max
 				},
 				{
-					health: max,
-					morale: max
+					health: app.max,
+					morale: app.max
 				},
 				inhabitableCells[rand(1, inhabitableCells.length)],
 				{
@@ -114,7 +110,7 @@ function generatePops(numberOfPops, callback){
 					y: undefined
 				},
 				[],
-				max,
+				app.max,
 				1
 			)
 		);
@@ -123,12 +119,13 @@ function generatePops(numberOfPops, callback){
 	callback();
 }
 
-// =============================
-// Create Populations on the map
-// =============================
-
-generatePops(popCount, function(){
+function setMyPop(callback){
 	// Temporarily set myPop to random among pops
-	myPop = app.popArray[rand(0, (popCount-1))];
-	myPop.species = 'human';
-});
+	app.myPop = app.popArray[rand(0, (app.popCount-1))];
+	app.myPop.species = 'human';
+	app.myPop.type = 'human';
+
+	if (callback){
+		callback();
+	}
+}
