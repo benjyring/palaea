@@ -1,35 +1,35 @@
-function generateCells(){
+function generateTiles(){
 	for (y=0; y<app.totalY; y++){
 		for (x=0; x<app.totalX; x++){
+			var oBool;
+
 			if (rand(0,(10 - app.myPop.cell.env.density)) === 1){
-				app.myPop.cell.inner.push({
-					x: x,
-					y: y,
-					o: true
-				});
+				oBool = true;
 			} else {
-				app.myPop.cell.inner.push({
-					x: x,
-					y: y,
-					o: false
-				});
+				oBool = false;
 			}
+
+			app.myPop.cell.inner.push({
+				x: x+1,
+				y: y+1,
+				o: oBool
+			});
 		}
 	}
 	getCellByXY(app.myPop.cell.x,app.myPop.cell.y).inner = app.myPop.cell.inner;
 }
 
-function drawCells(d){
+function drawTiles(d){
 	app.myPop.cell.inner.forEach(function(el){
-		if ((el.y+1)*app.inner.sideLen > app.gameArea.offsetY){
-			if ((el.x+1)*app.inner.sideLen > app.gameArea.offsetX){
+		if ((el.y)*app.inner.sideLen > app.gameArea.offsetY){
+			if ((el.x)*app.inner.sideLen > app.gameArea.offsetX){
 				if (el.o === true){
 					app.innerCtx.fillStyle = 'darkgrey';
 					app.innerCtx.fillRect(((el.x*d)-app.gameArea.offsetX), ((el.y*d)-app.gameArea.offsetY), d, d);
 					app.innerCtx.strokeStyle = 'black';
 					app.innerCtx.strokeRect(((el.x*d)-app.gameArea.offsetX), ((el.y*d)-app.gameArea.offsetY), d, d);
 				} else {
-					// app.innerCtx.imageSmoothingEnabled = false;
+					app.innerCtx.imageSmoothingEnabled = false;
 					app.innerCtx.fillStyle = app.myPop.cell.env.color;
 					app.innerCtx.fillRect(((el.x*d)-app.gameArea.offsetX), ((el.y*d)-app.gameArea.offsetY), d, d);
 					app.innerCtx.strokeStyle = 'black';
@@ -49,16 +49,13 @@ function startGame(){
 	app.innerMap.width = app.viewport.w;
 	app.innerMap.height = app.viewport.h;
 
-	generateCells();
+	if (isEmpty(app.myPop.cell.inner)){
+		generateTiles();
+	}
 
-	app.gameArea.start();
+	app.gameArea.listen();
 
-	// requestAnimationFrame(function drawStartGame(e){
-	// 	app.inner.animate
-
-	// 	requestAnimationFrame(drawStartGame);
-	// });
-	requestAnimationFrame(app.inner.animate);
+	startAnimation();
 }
 
 function updateGameArea(){
@@ -80,6 +77,13 @@ function updateGameArea(){
 	app.gameArea.draw();
 }
 
+function startAnimation(){
+	animLoop(function(deltaT) {
+		updateGameArea();
+	}, app.innerMap );
+}
+
 function stopAnimation(){
-	clearInterval(app.inner.animate);
+	// window.cancelAnimationFrame(animLoop);
+	app.gameArea.running = false;
 }

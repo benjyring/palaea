@@ -12,6 +12,26 @@ function setFrame(callback){
 	}
 }
 
+function animLoop(render, element){
+	app.gameArea.running = undefined,
+		lastFrame = +new Date;
+
+	function loop(now){
+		// stop the loop if render returned false
+		if (app.gameArea.running !== false){
+			requestAnimationFrame(loop, element);
+
+			var deltaT = now - lastFrame;
+
+			if (deltaT < 160){
+				app.gameArea.running = render(deltaT);
+			}
+			lastFrame = now;
+		}
+	}
+	loop(lastFrame);
+}
+
 addEvent(window, 'resize', function(){
 	app.viewport.w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 	app.viewport.h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);

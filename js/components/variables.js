@@ -30,30 +30,27 @@ app.inner = new Object;
 app.inner.animate = undefined;
 app.inner.fps = 60;
 app.inner.moveBy = 5;
-app.inner.sideLen = app.sidelen * 20;
+app.inner.sideLen = 64;
 
-app.gameArea = {
-	offsetX: 0,
-	offsetY: 0,
-	draw: function(){
-		drawCells(app.inner.sideLen);
-		drawChar(app.inner.sideLen/2);
-	},
-	start: function(){
-		app.inner.animate = setInterval(updateGameArea, 1000/app.inner.fps);
-
-		window.addEventListener('keydown', function(e){
-			app.gameArea.keys = (app.gameArea.keys || []);
-			app.gameArea.keys[e.keyCode] = (e.type == "keydown");
-		});
-		window.addEventListener('keyup', function(e){
-			app.gameArea.keys[e.keyCode] = (e.type == "keydown");
-		});
-	},
-	clear: function(){
-		app.innerCtx.clearRect(0, 0, app.innerMap.width, app.innerMap.height);
-	}
-}
+app.gameArea = new Object;
+app.gameArea.offsetX = 0;
+app.gameArea.offsetY = 0;
+app.gameArea.draw = function(){
+	drawTiles(app.inner.sideLen);
+	drawChar(app.inner.sideLen/2);
+};
+app.gameArea.listen = function(){
+	window.addEventListener('keydown', function(e){
+		app.gameArea.keys = (app.gameArea.keys || []);
+		app.gameArea.keys[e.keyCode] = (e.type == "keydown");
+	});
+	window.addEventListener('keyup', function(e){
+		app.gameArea.keys[e.keyCode] = (e.type == "keydown");
+	});
+};
+app.gameArea.clear = function(){
+	app.innerCtx.clearRect(0, 0, app.innerMap.width, app.innerMap.height);
+};
 
 // ===========
 // COMPLETIONS

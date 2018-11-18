@@ -216,11 +216,16 @@ $(function(){
 				$('#map').removeClass('zoomIn');
 				stopAnimation();
 			}, 100);
+
+			setTimeout(function(){
+				$('#innerMap').addClass('hidden');
+			}, 1000);
 		} else {
 			app.viewport.view = 'tile';
 			$('#map').addClass('zoomIn');
 			$('.wrap').removeClass('dragscroll');
 			$(this).text('Map');
+			$('#innerMap').removeClass('hidden');
 
 			setTimeout(function(){
 				startGame();
