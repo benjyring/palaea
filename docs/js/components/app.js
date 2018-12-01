@@ -1,11 +1,9 @@
-// _Constants/Variables
-var codeArray = {'01':'a','02':'b','03':'c','11':'d','12':'e','13':'f','14':'g','15':'h','16':'i','21':'j','22':'k','23':'l','24':'m','25':'n','26':'o','31':'p','32':'q','33':'r','34':'s','35':'t','36':'u','41':'v','42':'w','43':'x','44':'y','45':'z','46':'A'},
-	vph = app.viewport.h,
-	vpw = app.viewport.w,
-	map = document.getElementById('map'),
+// Variables
+var map = document.getElementById('map'),
 	ctx = map.getContext('2d');
 
-var minZoom = Math.max(Math.ceil(vpw/(app.totalX*sideLen)), Math.ceil(vph/(app.totalY*sideLen)));
+app.innerMap = document.getElementById('innerMap');
+app.innerCtx = innerMap.getContext('2d');
 
 //
 // +++++++++++++++++++++++++++++++++++++++++++
@@ -19,7 +17,7 @@ function cellOffset(d){
 }
 
 function setAnimalSpecies(el, env, carnivore, herbivore){
-	if (el.location.env.type === env){
+	if (el.cell.env.type === env){
 		if (el.type === 'carnivore'){
 			el.species = carnivore;
 		} else {
@@ -31,12 +29,10 @@ function setAnimalSpecies(el, env, carnivore, herbivore){
 function drawAvailable(elX, elY, d, callback){
 	// Limits the portion of the map drawn to only what's
 	// within the viewport. Greatly improves performance.
-	// var _elx = elX;
-	// var _ely = elY;
 	var _elx = elX - cellOffset(d).x;
 	var _ely = elY - cellOffset(d).y;
 
-	if ((_elx-1) < Math.ceil(vpw/d) && (_ely-1) < Math.ceil(vph/d) ){
+	if ((_elx-1) < Math.ceil(app.viewport.w/d) && (_ely-1) < Math.ceil(app.viewport.h/d) ){
 		callback();
 	}
 }
@@ -49,11 +45,13 @@ function drawOffset(elX, elY, d, callback){
 	}
 }
 
-function drawCurrentWithOffset(context, id, location, d, width, height){
+function drawCurrentWithOffset(context, id, locationX, locationY, d, width, height){
+	context.imageSmoothingEnabled = false;
+
 	context.drawImage(
 		document.getElementById(id),
-		(d*((location.x - cellOffset(d).x)-1)),
-		(d*((location.y - cellOffset(d).y)-1)),
+		Math.round(d*((locationX - cellOffset(d).x)-1)),
+		Math.round(d*((locationY - cellOffset(d).y)-1)),
 		width,
 		height
 	);
@@ -68,34 +66,52 @@ function drawCurrentWithOffset(context, id, location, d, width, height){
 function displayGrid(d){
 	app.displayGrids = false;
 
-	$.each(cellArray, function(i, el){
+	$.each(app.cellArray, function(i, el){
 		drawOffset(el.x, el.y, d, function(){
 			drawAvailable(el.x, el.y, d, function(){
-				if (el.env.type != 'placeholder'){
-					drawCurrentWithOffset(ctx,el.env.type,el,d,d,d);
+
+				var tPlus = checkPlus(el);
+
+				drawCurrentWithOffset(ctx,el.env.type,el.x,el.y,d,d,d);
+
+				if (!isEmpty(tPlus[3]) && tPlus[3].env.type != el.env.type){
+					var blendLeft = '1-' + tPlus[3].env.type  + '-' + el.env.type;
+
+					if (document.getElementById(blendLeft)){
+						drawCurrentWithOffset(ctx,blendLeft,(el.x-0.5),el.y,d,d,d);
+					}
 				}
+
+				if (!isEmpty(tPlus[0]) && tPlus[0].env.type != el.env.type){
+					var blendTop = '2-' + tPlus[0].env.type  + '-' + el.env.type;
+
+					if (document.getElementById(blendTop)){
+						drawCurrentWithOffset(ctx,blendTop,el.x,(el.y-0.5),d,d,d);
+					}
+				}
+
 			});
 		});
 
-		if (i === cellArray.length-1){
-			app.displayGridCompleted = true;
+		if (i === app.cellArray.length-1){
+			app.completed.displayGrid = true;
 		}
 	});
 }
 
 function displayPops(d){
-	app.displayPopsCompleted = false;
+	app.completed.displayPops = false;
 
-	$.each(popArray, function(i, el){
+	$.each(app.popArray, function(i, el){
 		var img;
 
 		// Determine which icon to draw
-		if (el.myPop === true || el.species === 'human'){
+		if (el === app.myPop || el.species === 'human'){
 			img = document.getElementById('human');
 		} else {
 			if (el.species === undefined){
 
-				if (el.location.env.type === 'water'){
+				if (el.cell.env.type === 'water'){
 					// TEMPORARY - will remove when all environment types
 					// are accounted for
 				} else {
@@ -118,14 +134,14 @@ function displayPops(d){
 			}
 		}
 
-		drawOffset(el.location.x, el.location.y, d, function(){
-			drawAvailable(el.location.x, el.location.y, d, function(){
-				drawCurrentWithOffset(ctx, img.id, el.location, d, img.width, img.height);
+		drawOffset(el.cell.x, el.cell.y, d, function(){
+			drawAvailable(el.cell.x, el.cell.y, d, function(){
+				drawCurrentWithOffset(ctx, img.id, el.cell.x, el.cell.y, d, img.width, img.height);
 			});
 		});
 
-		if (i === popArray.length-1){
-			app.displayPopsCompleted = true;
+		if (i === app.popArray.length-1){
+			app.completed.displayPops = true;
 		}
 	});
 }
@@ -140,66 +156,15 @@ $(function(){
 
 	window.mapVis = function(d){
 		// Visualize map
-		map.width = vpw;
-		map.height = vph;
+		map.width = app.viewport.w;
+		map.height = app.viewport.h;
 
-		displayGrid(sideLen*d);
+		displayGrid(app.sideLen*d);
 
-		fireOnCompletion(app.displayGridCompleted, function(){
-			displayPops(sideLen*d);
+		fireOnCompletion(app.completed.displayGrid, function(){
+			displayPops(app.sideLen*d);
 		});
 	};
-
-	// _Save Game
-	function saveGameAsString(){
-		var saveGame = [];
-		var sameCellIndex = 1;
-
-		for (i = 0; i < cellArray.length; i++){
-			var cc = cellArray[i].z + '' + cellArray[i].m,
-			cellToPush = codeArray[cc],
-			cp,
-			cellToCheck;
-
-			if (i > 0){
-				cp = cellArray[i-1].z + '' + cellArray[i-1].m;
-				cellToCheck = codeArray[cp];
-
-				if (cellToPush != cellToCheck){
-					if (sameCellIndex != 1){
-						saveGame.push(sameCellIndex);
-						sameCellIndex = 1;
-					}
-					saveGame.push(cellToPush);
-				} else {
-					sameCellIndex++;
-				}
-			} else {
-				saveGame.push(cellToPush);
-			}
-		}
-
-		saveGame = saveGame.join("");
-		return saveGame;
-	}
-
-	function rebuildGameFromSave(){
-		var savedGame = $('#loadSavedGame input').val();
-		var sameCellIndex = 1;
-
-		// cellArray = [];
-
-		// // THESE NOTES ARE A START, BUT INCOMPLETE
-		// for (i = 0; i < savedGame.length; i++){
-		// 	for (var r = 0; r < app.totalX; ++r){
-		// 		for (var c = 0; c < app.totalY; ++c){
-		// 			var newMapCell = new mapCell(c+1,r+1,z,m);
-		// 			cellArray.push(newMapCell);
-		// 		}
-		// 	}
-		// }
-		return savedGame;
-	}
 
 	// _GAME
 	function Game(turn, nextMajorEvent, suddenDeath, endGameTurn){
@@ -225,56 +190,74 @@ $(function(){
 	// _Build Map
 	$('document').ready(function(){
 		setTimeout(function(){
-			$('#map').css('margin-top', $('#ui-header').height() + 'px');
+			// game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
 
-			game = new Game(1, rand(twoWeeks, Math.floor(maxTurns/twoWeeks)), (maxTurns-twoWeeks), maxTurns);
-
-			updateUI(myPop);
-			mapVis(minZoom);
+			updateUI(app.myPop);
+			mapVis(app.viewport.minZoom);
 		}, 1000);
-		zoom = minZoom;
+		app.viewport.zoom = app.viewport.minZoom;
 	});
 
 	$('#main-menu-opener').click(function(){
 		$('#ui-sidebar').toggleClass('open');
+	});
+	$('#ui-sidebar .drawer-background').click(function(){
+		$('#ui-sidebar').removeClass('open');
+	});
 
-		if ($(this).text() === 'X'){
-			$(this).text('MENU');
+	$('#cell-tile-switcher').click(function(){
+		if ($('#map').hasClass('hidden')){
+			app.viewport.view = 'cell';
+			$('#map').removeClass('hidden');
+			$('.wrap').addClass('dragscroll');
+			$(this).text('Return');
+
+			setTimeout(function(){
+				$('#map').removeClass('zoomIn');
+				stopAnimation();
+			}, 100);
+
+			setTimeout(function(){
+				$('#innerMap').addClass('hidden');
+			}, 1000);
 		} else {
-			$(this).text('X');
+			app.viewport.view = 'tile';
+			$('#map').addClass('zoomIn');
+			$('.wrap').removeClass('dragscroll');
+			$(this).text('Map');
+			$('#innerMap').removeClass('hidden');
+
+			setTimeout(function(){
+				startGame();
+			}, 500);
+
+			setTimeout(function(){
+				$('#map').addClass('hidden');
+			}, 1000);
 		}
 	});
 
-	$('#loadRebuildMap').click(function(){
-		if ($(this).text() == 'Cancel'){
-			$(this).text('Load Saved Game');
-		} else {
-			$(this).text('Cancel');
-		}
+	$('a.icon-inventory').click(function(){
+		$('#inventory-modal').toggleClass('hidden');
 	});
+
 	// _Save Game
 	$('#saveGame').click(function(){
-		alert(saveGameAsString());
-	});
-	$('#rebuildMap').click(function(){
-		rebuildGameFromSave();
-	});
-	// _Colors
-	$('#colorPalette').click(function(){
-		$('#colors').toggleClass('visible');
+		localStorage.savedGame = JSON.stringify(app);
+		alert('Saved!');
 	});
 
 	// _Zoom
 	function zoomIn(){
-		if (zoom < maxZoom && app.mouse.down === false){
-			zoom = zoom+1;
-			mapVis(zoom);
+		if (app.viewport.zoom < app.viewport.maxZoom && app.mouse.down === false){
+			app.viewport.zoom = app.viewport.zoom+1;
+			mapVis(app.viewport.zoom);
 		}
 	}
 	function zoomOut(){
-		if (zoom > minZoom && app.mouse.down === false){
-			zoom = zoom-1;
-			mapVis(zoom);
+		if (app.viewport.zoom > app.viewport.minZoom && app.mouse.down === false){
+			app.viewport.zoom = app.viewport.zoom-1;
+			mapVis(app.viewport.zoom);
 		}
 	}
 	$('#zoomIn').click(function(){
@@ -300,22 +283,22 @@ $(function(){
 		if(e.charCode==45){
 			zoomOut();
 		}
-		//W
-		if(e.charCode==119){
-			move(myPop, whereTo(myPop, 0, -1));
-		}
-		//A
-		if(e.charCode==97){
-			move(myPop, whereTo(myPop, -1, 0));
-		}
-		//S
-		if(e.charCode==115){
-			move(myPop, whereTo(myPop, 0, 1));
-		}
-		//D
-		if(e.charCode==100){
-			move(myPop, whereTo(myPop, 1, 0));
-		}
+		// //W
+		// if(e.charCode==119){
+		// 	move(app.myPop, whereTo(app.myPop, 0, -1));
+		// }
+		// //A
+		// if(e.charCode==97){
+		// 	move(app.myPop, whereTo(app.myPop, -1, 0));
+		// }
+		// //S
+		// if(e.charCode==115){
+		// 	move(app.myPop, whereTo(app.myPop, 0, 1));
+		// }
+		// //D
+		// if(e.charCode==100){
+		// 	move(app.myPop, whereTo(app.myPop, 1, 0));
+		// }
 	});
 
 });

@@ -5,8 +5,16 @@
 
 	<ul class="nav navbar-nav">
 		<li><a id="saveGame" class="text-right">Save Game</a></li>
-		<li><a id="minimap-display" class="text-right">Show/Hide Minimap</a></li>
+		<li>
+			<div class="input-group">
+				<input type="number" id="fpsSetting" class="form-control" placeholder="Frames/Second">
+				<span class="input-group-btn">
+					<button class="btn btn-default" id="fpsSettingSetter" type="button">Set</button>
+				</span>
+			</div>
+		</li>
 	</ul>
+	<div class="drawer-background"></div>
 </aside>
 
 <div id="minimap"></div>

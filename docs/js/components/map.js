@@ -1,6 +1,6 @@
 function getCellByXY(elX, elY){
 	// Returns a single cell by inputting X and Y coordinates
-	return cellArray.filter(cell => cell.x == elX && cell.y == elY)[0];
+	return app.cellArray.filter(cell => cell.x == elX && cell.y == elY)[0];
 }
 
 function checkPlus(el){
@@ -53,12 +53,12 @@ function mapCell(x,y,z,m,inland,plate,plateBorder,mapBorder){
 function mapGrid(rows, cols, callback){
 	for (var r = 0; r < rows; ++r){
 		for (var c = 0; c < cols; ++c){
-			cellArray.push(
+			app.cellArray.push(
 				new mapCell(c+1, r+1, 1)
 			);
 		}
 	}
-	app.mapGridCompleted = true;
+	app.completed.mapGrid = true;
 	callback();
 }
 
@@ -70,21 +70,21 @@ function createPlates(numberOfPlates, callback){
 		rXrY = getCellByXY(randX, randY);
 
 		rXrY.plate = plateNumber;
-		platesArray.push(rXrY);
+		app.platesArray.push(rXrY);
 	}
-	app.createPlatesCompleted = true;
+	app.completed.createPlates = true;
 	callback();
 }
 
 function pathFinder(callback){
-	for (var i = 0; i < cellArray.length; i++){
+	for (var i = 0; i < app.cellArray.length; i++){
 		var paths = [],
 		pathsObj = {};
 
-		for (var c = 0; c < platesArray.length; c++){
+		for (var c = 0; c < app.platesArray.length; c++){
 			paths.push(
-				(diffXY(cellArray[i], platesArray[c]).diffX + diffXY(cellArray[i], platesArray[c]).diffY) +
-				':' + platesArray[c].plate.toString()
+				(diffXY(app.cellArray[i], app.platesArray[c]).x + diffXY(app.cellArray[i], app.platesArray[c]).y) +
+				':' + app.platesArray[c].plate.toString()
 			);
 		}
 
@@ -97,35 +97,35 @@ function pathFinder(callback){
 		var min = Object.keys(pathsObj).min(),
 		shortest = pathsObj[min];
 
-		cellArray[i].plate = shortest;
+		app.cellArray[i].plate = shortest;
 	}
-	app.pathFinderCompleted = true;
+	app.completed.pathFinder = true;
 	callback();
 }
 
 function plateGeography(callback){
-	for (var c = 0; c < platesArray.length; c++){
-		platesArray[c].force = rand(1,10);
-		platesArray[c].direction = rand(1,4);
+	for (var c = 0; c < app.platesArray.length; c++){
+		app.platesArray[c].force = rand(1,10);
+		app.platesArray[c].direction = rand(1,4);
 	}
 
-	for (var i = 0; i < cellArray.length; i++){
-		var cc = cellArray[i],
-		cp = platesArray[parseInt(cc.plate) - 1],
+	for (var i = 0; i < app.cellArray.length; i++){
+		var cc = app.cellArray[i],
+		cp = app.platesArray[parseInt(cc.plate) - 1],
 		cpd = cp.direction,
 		ce, pe, ped, pef,
 		cs, ps, psd, psf;
 
 		if (getCellByXY(cc.x+1, cc.y)){
 			var ce = getCellByXY(cc.x+1, cc.y),
-			pe = platesArray[parseInt(ce.plate) - 1],
+			pe = app.platesArray[parseInt(ce.plate) - 1],
 			ped = pe.direction,
 			pef = pe.force;
 		}
 
 		if (getCellByXY(cc.x+1, cc.y)){
 			var cs = getCellByXY(cc.x+1, cc.y),
-			ps = platesArray[parseInt(cs.plate) - 1],
+			ps = app.platesArray[parseInt(cs.plate) - 1],
 			psd = ps.direction,
 			psf = ps.force;
 		}
@@ -185,19 +185,19 @@ function plateGeography(callback){
 			}
 		}
 	}
-	app.plateGeographyCompleted = true;
+	app.completed.plateGeography = true;
 	callback();
 }
 
 function mapBorderPlates(callback){
-	var mapBorderCells = cellArray.filter(cell => [1, app.totalX].indexOf(cell.x) > -1 || [1, app.totalY].indexOf(cell.y) > -1);
+	var mapBorderCells = app.cellArray.filter(cell => [1, app.totalX].indexOf(cell.x) > -1 || [1, app.totalY].indexOf(cell.y) > -1);
 
-	for (var c = 1; c <= platesArray.length; c++){
-		var cellsInThisPlate = cellArray.filter(cell => cell.plate == c);
+	for (var c = 1; c <= app.platesArray.length; c++){
+		var cellsInThisPlate = app.cellArray.filter(cell => cell.plate == c);
 
 		if (findOnce(cellsInThisPlate, mapBorderCells)){
-			if (!isEmpty(platesArray[c])){
-				platesArray[c].mapBorder = true;
+			if (!isEmpty(app.platesArray[c])){
+				app.platesArray[c].mapBorder = true;
 			}
 		}
 	}
@@ -206,10 +206,10 @@ function mapBorderPlates(callback){
 }
 
 function landTexture(callback){
-	for (n = 0; n < cellArray.length; n++){
-		let i = cellArray[n];
+	for (n = 0; n < app.cellArray.length; n++){
+		let i = app.cellArray[n];
 
-		if (i.plate > (platesArray.length / 2) || platesArray[i.plate].mapBorder == true){
+		if (i.plate > (app.platesArray.length / 2) || app.platesArray[i.plate].mapBorder == true){
 			// SEA
 			i.inland = false;
 
@@ -267,7 +267,7 @@ function landTexture(callback){
 		}
 	}
 
-	var inlandCells = cellArray.filter(cell => cell.inland === true);
+	var inlandCells = app.cellArray.filter(cell => cell.inland === true);
 
 	for (n = 0; n < inlandCells.length; n++){
 		var tc = inlandCells[n],
@@ -281,7 +281,7 @@ function landTexture(callback){
 		}
 
 		// Create Inland Textures
-		if (findOnce(cellArray.filter(cell => cell.inland === false), tPlus)){
+		if (findOnce(app.cellArray.filter(cell => cell.inland === false), tPlus)){
 			// Beaches
 			tc.m = 1;
 
@@ -291,8 +291,8 @@ function landTexture(callback){
 				tc.z = 3;
 			}
 		} else {
-			if (findOnce(cellArray.filter(cell => cell.inland === true && cell.z === 0), tPlus)){
-				var freshwater = cellArray.filter(cell => cell.inland === true && cell.z === 0);
+			if (findOnce(app.cellArray.filter(cell => cell.inland === true && cell.z === 0), tPlus)){
+				var freshwater = app.cellArray.filter(cell => cell.inland === true && cell.z === 0);
 
 				for (i = 0; i < freshwater.length; i++){
 					freshwater[i].m = 1;
@@ -327,7 +327,7 @@ function landTexture(callback){
 						}
 					}
 				}
-			} else if (findOnce(cellArray.filter(cell => cell.inland === true && cell.z >= 4), tPlus)){
+			} else if (findOnce(app.cellArray.filter(cell => cell.inland === true && cell.z >= 4), tPlus)){
 				// MOUNTAIN RANGES
 				// ===============
 				//
@@ -361,12 +361,12 @@ function landTexture(callback){
 			}
 		}
 	}
-	app.landTextureCompleted = true;
+	app.completed.landTexture = true;
 	callback();
 }
 
 function makeIslands(callback){
-	var islands = cellArray.filter(cell => cell.inland == false && cell.m > 3);
+	var islands = app.cellArray.filter(cell => cell.inland == false && cell.m > 3);
 
 	for (n = 0; n < islands.length; n++){
 		var island = checkPlus(islands[n]);
@@ -378,13 +378,14 @@ function makeIslands(callback){
 		}
 		islands[n].z = 3;
 	}
-	app.makeIslandsCompleted = true;
+	app.completed.makeIslands = true;
 	callback();
 }
 
-function minimizeCellData(){
-	cellArray.forEach(function(cell){
+function minimizeCellData(callback){
+	app.cellArray.forEach(function(cell){
 		cell.env = app.environmentArray['env' + cell.z.toString() + cell.m.toString()];
+		cell.inner = [];
 
 		delete cell.inland;
 		delete cell.mapBorder;
@@ -392,23 +393,6 @@ function minimizeCellData(){
 		delete cell.plateBorder;
 	});
 
-	app.minimizeCellDataCompleted = true;
+	app.completed.minimizeCellData = true;
+	callback();
 }
-
-
-// BUILD THE WORLD
-mapGrid(app.totalY, app.totalX, function(){
-	createPlates(rand(36, 48), function(){
-		pathFinder(function(){
-			plateGeography(function(){
-				// _Build Map
-				mapBorderPlates(function(){
-					landTexture(function(){});
-					makeIslands(function(){
-						minimizeCellData();
-					});
-				});
-			});
-		});
-	});
-});
